@@ -35,8 +35,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     // Add small delay for certain sites to avoid rate limiting
     const hostname = targetUrl.hostname.toLowerCase();
-    if (hostname.includes('speedtest') || hostname.includes('fast.com')) {
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+    if (hostname.includes("speedtest") || hostname.includes("fast.com")) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1000 + Math.random() * 2000),
+      );
     }
 
     // Fetch the content with better error handling
@@ -50,14 +52,16 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       ];
 
-      const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+      const randomUA =
+        userAgents[Math.floor(Math.random() * userAgents.length)];
 
       const headers: Record<string, string> = {
         "User-Agent": randomUA,
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Language": "en-US,en;q=0.9",
         "Accept-Encoding": "gzip, deflate, br",
         "Cache-Control": "max-age=0",
@@ -66,24 +70,27 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-Site": "none",
         "Sec-Fetch-User": "?1",
-        "Sec-Ch-Ua": '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+        "Sec-Ch-Ua":
+          '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
         "Sec-Ch-Ua-Mobile": "?0",
         "Sec-Ch-Ua-Platform": '"Windows"',
       };
 
       // Add referrer for subsequent requests
       const urlPath = targetUrl.pathname;
-      if (urlPath !== '/' && urlPath !== '') {
-        headers['Referer'] = targetUrl.origin + '/';
+      if (urlPath !== "/" && urlPath !== "") {
+        headers["Referer"] = targetUrl.origin + "/";
       }
 
       // Copy some headers from the original request if they exist
       const originalHeaders = req.headers;
-      if (originalHeaders['accept-language']) {
-        headers['Accept-Language'] = originalHeaders['accept-language'] as string;
+      if (originalHeaders["accept-language"]) {
+        headers["Accept-Language"] = originalHeaders[
+          "accept-language"
+        ] as string;
       }
-      if (originalHeaders['cookie']) {
-        headers['Cookie'] = originalHeaders['cookie'] as string;
+      if (originalHeaders["cookie"]) {
+        headers["Cookie"] = originalHeaders["cookie"] as string;
       }
 
       const response = await fetch(targetUrl.toString(), {
@@ -93,7 +100,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
       });
 
       clearTimeout(timeoutId);
-      console.log(`[PROXY] Response: ${response.status} ${response.statusText} for ${targetUrl.toString()}`);
+      console.log(
+        `[PROXY] Response: ${response.status} ${response.statusText} for ${targetUrl.toString()}`,
+      );
 
       if (!response.ok) {
         return res.status(200).send(`
@@ -139,25 +148,31 @@ export const handleProxy: RequestHandler = async (req, res) => {
         // Handle CSS files - rewrite url() references
         let cssContent = await response.text();
 
-        cssContent = cssContent.replace(/url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi, (match, url) => {
-          if (!url || url.startsWith('data:') || url.startsWith('blob:')) {
-            return match;
-          }
-
-          try {
-            let fullUrl: string;
-            if (url.startsWith('//')) {
-              fullUrl = targetUrl.protocol + url;
-            } else if (url.startsWith('http://') || url.startsWith('https://')) {
-              fullUrl = url;
-            } else {
-              fullUrl = new URL(url, targetUrl.href).href;
+        cssContent = cssContent.replace(
+          /url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi,
+          (match, url) => {
+            if (!url || url.startsWith("data:") || url.startsWith("blob:")) {
+              return match;
             }
-            return `url("/api/proxy?url=${encodeURIComponent(fullUrl)}")`;
-          } catch (e) {
-            return match;
-          }
-        });
+
+            try {
+              let fullUrl: string;
+              if (url.startsWith("//")) {
+                fullUrl = targetUrl.protocol + url;
+              } else if (
+                url.startsWith("http://") ||
+                url.startsWith("https://")
+              ) {
+                fullUrl = url;
+              } else {
+                fullUrl = new URL(url, targetUrl.href).href;
+              }
+              return `url("/api/proxy?url=${encodeURIComponent(fullUrl)}")`;
+            } catch (e) {
+              return match;
+            }
+          },
+        );
 
         res.setHeader("Content-Type", "text/css; charset=utf-8");
         res.setHeader("Access-Control-Allow-Origin", "*");
@@ -166,7 +181,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
         res.setHeader("Cache-Control", "public, max-age=3600");
 
         return res.send(cssContent);
-      } else if (contentType.includes("application/javascript") || contentType.includes("text/javascript")) {
+      } else if (
+        contentType.includes("application/javascript") ||
+        contentType.includes("text/javascript")
+      ) {
         // Handle JavaScript files - don't rewrite them, let our injected code handle everything
         const jsContent = await response.text();
 
@@ -242,10 +260,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
 function processHTML(content: string, targetUrl: URL): string {
   try {
     // Remove existing base tags to avoid conflicts
-    content = content.replace(/<base[^>]*>/gi, '');
+    content = content.replace(/<base[^>]*>/gi, "");
 
     // Set base tag to proxy the original domain
-    const baseTag = `<base href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + '/')}" target="_self">`;
+    const baseTag = `<base href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + "/")}" target="_self">`;
 
     // Insert base tag after <head>
     if (content.includes("<head>")) {
@@ -291,17 +309,25 @@ function processHTML(content: string, targetUrl: URL): string {
 
     // Simple HTML URL rewriting (avoiding infinite loops)
     const rewriteUrl = (url: string): string => {
-      if (!url || url.startsWith('/api/proxy') || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('javascript:') || url.startsWith('mailto:') || url.startsWith('tel:')) {
+      if (
+        !url ||
+        url.startsWith("/api/proxy") ||
+        url.startsWith("data:") ||
+        url.startsWith("blob:") ||
+        url.startsWith("javascript:") ||
+        url.startsWith("mailto:") ||
+        url.startsWith("tel:")
+      ) {
         return url;
       }
 
       try {
         let fullUrl: string;
-        if (url.startsWith('//')) {
+        if (url.startsWith("//")) {
           fullUrl = targetUrl.protocol + url;
-        } else if (url.startsWith('http://') || url.startsWith('https://')) {
+        } else if (url.startsWith("http://") || url.startsWith("https://")) {
           fullUrl = url;
-        } else if (url.startsWith('/')) {
+        } else if (url.startsWith("/")) {
           fullUrl = targetUrl.origin + url;
         } else {
           fullUrl = new URL(url, targetUrl.href).href;
@@ -323,9 +349,12 @@ function processHTML(content: string, targetUrl: URL): string {
     });
 
     // Rewrite action attributes
-    content = content.replace(/action\s*=\s*["']([^"']+)["']/gi, (match, url) => {
-      return `action="${rewriteUrl(url)}"`;
-    });
+    content = content.replace(
+      /action\s*=\s*["']([^"']+)["']/gi,
+      (match, url) => {
+        return `action="${rewriteUrl(url)}"`;
+      },
+    );
 
     return content;
   } catch (error) {
