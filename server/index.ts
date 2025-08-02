@@ -21,6 +21,7 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
   app.get("/api/proxy", handleProxy);
+  app.get("/api/proxy-check", handleProxyCheck);
 
   return app;
 }
