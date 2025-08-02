@@ -284,6 +284,16 @@ export default function Index() {
 
   const handleGamePlay = (gameUrl: string) => {
     setIsLoading(true);
+
+    // Check if about blank is enabled
+    if (settings.aboutBlank) {
+      setDisplayUrl("about:blank");
+      setCurrentUrl("about:blank");
+      setIsLoading(false);
+      setActiveTab("proxy");
+      return;
+    }
+
     setDisplayUrl(gameUrl);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}`);
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
