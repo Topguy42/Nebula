@@ -271,7 +271,7 @@ function processHTML(content: string, targetUrl: URL): string {
     );
     content = content.replace(/<meta[^>]*name[^>]*["\']?referrer[^>]*>/gi, "");
 
-    // Add simplified proxy interception
+    // Add simple iframe-friendly styles only
     const proxyEnhancements = `
       <style>
         /* Iframe-friendly styles */
@@ -280,130 +280,6 @@ function processHTML(content: string, targetUrl: URL): string {
         .fixed, [style*="position: fixed"], [style*="position:fixed"] { position: absolute !important; }
         a, button, [onclick], [role="button"] { pointer-events: auto !important; }
       </style>
-      <script>
-        (function() {
-          'use strict';
-
-          const TARGET_ORIGIN = '${targetUrl.origin}';
-          const TARGET_HOST = '${targetUrl.hostname}';
-          const PROXY_PREFIX = '/api/proxy?url=';
-
-          // Helper function to convert URL to proxy URL
-          function toProxyUrl(url) {
-            if (!url || typeof url !== 'string') {
-              return url;
-            }
-
-            // Skip if already proxied or special schemes
-            if (url.startsWith(PROXY_PREFIX) ||
-                url.startsWith('data:') ||
-                url.startsWith('blob:') ||
-                url.startsWith('javascript:') ||
-                url.startsWith('mailto:') ||
-                url.startsWith('tel:') ||
-                url.startsWith('about:') ||
-                url.includes('localhost:8080')) {
-              return url;
-            }
-
-            try {
-              let fullUrl;
-              if (url.startsWith('//')) {
-                fullUrl = '${targetUrl.protocol}' + url;
-              } else if (url.startsWith('http://') || url.startsWith('https://')) {
-                fullUrl = url;
-              } else if (url.startsWith('/')) {
-                fullUrl = TARGET_ORIGIN + url;
-              } else {
-                fullUrl = new URL(url, TARGET_ORIGIN).href;
-              }
-
-              // Don't proxy our own proxy URLs
-              if (fullUrl.includes('/api/proxy')) {
-                return url;
-              }
-
-              return PROXY_PREFIX + encodeURIComponent(fullUrl);
-            } catch (e) {
-              return url;
-            }
-          }
-
-          // Override fetch
-          if (window.fetch) {
-            const originalFetch = window.fetch;
-            window.fetch = function(input, init) {
-              try {
-                const url = typeof input === 'string' ? input : input.url;
-                const proxyUrl = toProxyUrl(url);
-
-                if (typeof input === 'string') {
-                  return originalFetch.call(this, proxyUrl, init);
-                } else {
-                  const newRequest = new Request(proxyUrl, input);
-                  return originalFetch.call(this, newRequest, init);
-                }
-              } catch (e) {
-                return originalFetch.call(this, input, init);
-              }
-            };
-          }
-
-          // Override XMLHttpRequest
-          if (window.XMLHttpRequest) {
-            const OriginalXHR = window.XMLHttpRequest;
-            window.XMLHttpRequest = function() {
-              const xhr = new OriginalXHR();
-              const originalOpen = xhr.open;
-
-              xhr.open = function(method, url, async, user, password) {
-                try {
-                  const proxyUrl = toProxyUrl(url);
-                  return originalOpen.call(this, method, proxyUrl, async, user, password);
-                } catch (e) {
-                  return originalOpen.call(this, method, url, async, user, password);
-                }
-              };
-
-              return xhr;
-            };
-
-            // Copy properties to maintain compatibility
-            Object.setPrototypeOf(window.XMLHttpRequest, OriginalXHR);
-            window.XMLHttpRequest.prototype = OriginalXHR.prototype;
-          }
-
-          // Override location to hide proxy (simplified)
-          try {
-            const originalLocation = window.location;
-            Object.defineProperty(window, 'location', {
-              value: {
-                hostname: TARGET_HOST,
-                host: '${targetUrl.host}',
-                origin: TARGET_ORIGIN,
-                protocol: '${targetUrl.protocol}',
-                href: '${targetUrl.href}',
-                pathname: '${targetUrl.pathname}',
-                search: '${targetUrl.search}',
-                hash: originalLocation.hash,
-                port: '${targetUrl.port}',
-                toString: () => '${targetUrl.href}',
-                assign: (url) => { window.parent.location = toProxyUrl(url); },
-                replace: (url) => { window.parent.location.replace(toProxyUrl(url)); },
-                reload: () => { window.parent.location.reload(); }
-              },
-              configurable: false
-            });
-          } catch(e) {}
-
-          // Hide iframe context
-          try {
-            Object.defineProperty(window, 'parent', { value: window, writable: false });
-            Object.defineProperty(window, 'top', { value: window, writable: false });
-          } catch(e) {}
-
-        })();
-      </script>
     `;
 
     // Insert enhancements before closing head tag
