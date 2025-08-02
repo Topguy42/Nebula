@@ -17,7 +17,7 @@ const referrerSources = [
 
 // Rate limiting for Google requests
 const googleRequestTimes = new Map<string, number>();
-const GOOGLE_RATE_LIMIT_MS = 3000; // 3 seconds between Google requests per IP
+const GOOGLE_RATE_LIMIT_MS = 1000; // 1 second between Google requests per IP
 const MAX_GOOGLE_RETRIES = 2;
 const requestCounts = new Map<string, { count: number; lastReset: number }>();
 
