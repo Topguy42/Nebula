@@ -1118,7 +1118,7 @@ export default function Index() {
             <div className="flex items-center justify-center gap-4">
               <VortexLogo className="w-8 h-8" />
               <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">VortexPortal</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">VortexPortal</span>
                 <p className="text-xs text-muted-foreground font-medium">Professional Web Proxy</p>
               </div>
             </div>
