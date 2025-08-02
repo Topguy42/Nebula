@@ -470,12 +470,36 @@ export default function Index() {
         const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
       } else {
-        // Handle as search query - redirect to Google
-        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        finalUrl = searchUrl;
-        setDisplayUrl(`Google Search: ${query}`);
+        // Handle as search query - use alternative search engines to avoid Google restrictions
+        const searchEngines = [
+          {
+            name: "DuckDuckGo",
+            url: `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
+            display: `DuckDuckGo Search: ${query}`
+          },
+          {
+            name: "Bing",
+            url: `https://www.bing.com/search?q=${encodeURIComponent(query)}`,
+            display: `Bing Search: ${query}`
+          },
+          {
+            name: "Startpage",
+            url: `https://www.startpage.com/search?q=${encodeURIComponent(query)}`,
+            display: `Startpage Search: ${query}`
+          },
+          {
+            name: "Google",
+            url: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+            display: `Google Search: ${query}`
+          }
+        ];
+
+        // Use DuckDuckGo as default since it's more privacy-friendly and works better in proxy environments
+        const selectedEngine = searchEngines[0]; // DuckDuckGo
+        finalUrl = selectedEngine.url;
+        setDisplayUrl(selectedEngine.display);
         const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
-        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
+        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(selectedEngine.url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
       }
 
       setProxyUrl("");
