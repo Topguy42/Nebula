@@ -809,7 +809,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "proxy"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Globe className="h-4 w-4" />
@@ -820,7 +820,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "games"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Gamepad2 className="h-4 w-4" />
@@ -831,7 +831,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "apps"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Grid3X3 className="h-4 w-4" />
@@ -842,7 +842,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "tools"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Wrench className="h-4 w-4" />
@@ -853,7 +853,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "settings"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <SettingsIcon className="h-4 w-4" />
