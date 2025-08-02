@@ -503,20 +503,66 @@ export default function Index() {
 
           {/* Tab Content */}
           {activeTab === "proxy" && (
-            <div className="max-w-4xl mx-auto">
-              <h3 className="text-2xl font-semibold mb-8">Quick Access</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-                {quickLinks.map((link) => (
-                  <Button
-                    key={link.name}
-                    variant="outline"
-                    onClick={() => handleQuickLink(link.url)}
-                    className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl"
-                  >
-                    <span className="text-2xl">{link.icon}</span>
-                    <span className="text-xs font-medium">{link.name}</span>
-                  </Button>
-                ))}
+            <div className="max-w-6xl mx-auto space-y-12">
+              <div>
+                <h3 className="text-2xl font-semibold mb-8">Quick Access</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                  {quickLinks.map((link) => (
+                    <Button
+                      key={link.name}
+                      variant="outline"
+                      onClick={() => handleQuickLink(link.url)}
+                      className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl"
+                    >
+                      <span className="text-2xl">{link.icon}</span>
+                      <span className="text-xs font-medium">{link.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {recentHistory.length > 0 && (
+                <div>
+                  <h3 className="text-xl font-semibold mb-6">Recent History</h3>
+                  <div className="grid gap-3">
+                    {recentHistory.map((url, index) => (
+                      <Button
+                        key={url}
+                        variant="outline"
+                        onClick={() => handleQuickLink(url)}
+                        className="justify-start h-auto p-4 bg-card/20 hover:bg-card/40 border-border/30"
+                      >
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
+                            {index + 1}
+                          </div>
+                          <span className="truncate flex-1 text-left">{url}</span>
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <h3 className="text-xl font-semibold mb-6">Favorites</h3>
+                <div className="grid gap-3">
+                  {favorites.map((url) => (
+                    <Button
+                      key={url}
+                      variant="outline"
+                      onClick={() => handleQuickLink(url)}
+                      className="justify-start h-auto p-4 bg-card/20 hover:bg-card/40 border-border/30"
+                    >
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                          ⭐
+                        </div>
+                        <span className="truncate flex-1 text-left">{url.replace(/^https?:\/\//, '')}</span>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
