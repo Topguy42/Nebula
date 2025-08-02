@@ -680,6 +680,12 @@ export default function Index() {
               )}
             </div>
           )}
+
+          {activeTab === "tools" && <Tools />}
+
+          {activeTab === "settings" && (
+            <Settings settings={settings} setSettings={setSettings} />
+          )}
         </div>
       </main>
 
