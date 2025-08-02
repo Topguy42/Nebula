@@ -401,7 +401,7 @@ export default function Index() {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>VortexPortal - Web Access</title>
+            <title>Vortex - Web Access</title>
             <style>
               body {
                 margin: 0;
