@@ -96,6 +96,7 @@ export default function Tools({}: ToolsProps) {
   const [cloakerFavicon, setCloakerFavicon] = useState("");
   const [originalTitle, setOriginalTitle] = useState("");
   const [originalFavicon, setOriginalFavicon] = useState("");
+  const [selectedSearchEngine, setSelectedSearchEngine] = useState("duckduckgo");
 
   // Initialize referrer rotation from localStorage
   useEffect(() => {
@@ -471,7 +472,7 @@ ${selectedMethod}
 • Color Depth: ${window.screen.colorDepth}-bit
 • Pixel Ratio: ${window.devicePixelRatio}
 
-�� Browser Features:
+🔧 Browser Features:
 • Cookies Enabled: ${navigator.cookieEnabled ? "Yes" : "No"}
 • JavaScript Enabled: Yes
 • Local Storage: ${typeof Storage !== "undefined" ? "Available" : "Not Available"}
