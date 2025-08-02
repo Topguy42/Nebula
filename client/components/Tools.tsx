@@ -93,14 +93,18 @@ export default function Tools({}: ToolsProps) {
 
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
-    
+
     setResult("Checking website accessibility...");
-    
+
     try {
       // Try to fetch the website
-      const url = websiteInput.startsWith('http') ? websiteInput : `https://${websiteInput}`;
-      const response = await fetch(`/api/proxy-check?url=${encodeURIComponent(url)}`);
-      
+      const url = websiteInput.startsWith("http")
+        ? websiteInput
+        : `https://${websiteInput}`;
+      const response = await fetch(
+        `/api/proxy-check?url=${encodeURIComponent(url)}`,
+      );
+
       if (response.ok) {
         setResult(`✅ ${websiteInput} is accessible`);
       } else {
@@ -155,26 +159,19 @@ iOS: WiFi Settings > Configure DNS
         "hidester.com",
         "proxysite.com",
         "hide.me",
-        "croxyproxy.com"
+        "croxyproxy.com",
       ],
-      us: [
-        "us-proxy.org",
-        "american-proxy.com",
-        "usa-proxy.net"
-      ],
-      eu: [
-        "european-proxy.com",
-        "eu-proxy.net",
-        "europeproxy.org"
-      ]
+      us: ["us-proxy.org", "american-proxy.com", "usa-proxy.net"],
+      eu: ["european-proxy.com", "eu-proxy.net", "europeproxy.org"],
     };
 
-    const selectedProxies = proxies[proxyRegion as keyof typeof proxies] || proxies.global;
+    const selectedProxies =
+      proxies[proxyRegion as keyof typeof proxies] || proxies.global;
 
     setResult(`🌐 Working Proxy Servers (${proxyRegion.toUpperCase()}):
 
 📡 Free Proxy Sites:
-${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
+${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 🔧 Manual Proxy Setup:
 • Chrome: Settings → Advanced → System → Open proxy settings
@@ -204,9 +201,9 @@ ${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
 
     setTimeLeft(studyTime * 60);
     setTimerRunning(true);
-    
+
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev <= 1) {
           setTimerRunning(false);
           setResult("🎉 Study session complete! Time for a break.");
@@ -242,10 +239,11 @@ ${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
 • Use text-only versions of sites
 • Access mobile versions (often less filtered)
 • Use RSS feeds for news content
-• Try reader mode in browsers`
+• Try reader mode in browsers`,
     };
 
-    const selectedMethod = methods[filterType as keyof typeof methods] || methods.keyword;
+    const selectedMethod =
+      methods[filterType as keyof typeof methods] || methods.keyword;
 
     setResult(`🛡️ Filter Bypass Methods:
 
@@ -277,7 +275,9 @@ ${selectedMethod}
   const generateReferrerLinks = () => {
     if (!targetUrl) return;
 
-    const cleanUrl = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`;
+    const cleanUrl = targetUrl.startsWith("http")
+      ? targetUrl
+      : `https://${targetUrl}`;
 
     setResult(`🔗 Referrer Manipulation for: ${cleanUrl}
 
@@ -321,22 +321,22 @@ ${selectedMethod}
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const checkPrivacy = async () => {
     try {
       // Get IP info
-      const ipResponse = await fetch('https://ipapi.co/json/');
+      const ipResponse = await fetch("https://ipapi.co/json/");
       const ipData = await ipResponse.json();
 
       const connectionInfo = `🌐 Your Connection Information:
 
 📍 Location & Network:
-• IP Address: ${ipData.ip || 'Unable to detect'}
-• Location: ${ipData.city || 'Unknown'}, ${ipData.region || 'Unknown'}, ${ipData.country_name || 'Unknown'}
-• ISP/Organization: ${ipData.org || 'Unknown'}
-• Network Type: ${ipData.network || 'Unknown'}
+• IP Address: ${ipData.ip || "Unable to detect"}
+• Location: ${ipData.city || "Unknown"}, ${ipData.region || "Unknown"}, ${ipData.country_name || "Unknown"}
+• ISP/Organization: ${ipData.org || "Unknown"}
+• Network Type: ${ipData.network || "Unknown"}
 • Timezone: ${ipData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
 
 💻 Browser & Device:
@@ -349,16 +349,16 @@ ${selectedMethod}
 • Pixel Ratio: ${window.devicePixelRatio}
 
 🔧 Browser Features:
-• Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
+• Cookies Enabled: ${navigator.cookieEnabled ? "Yes" : "No"}
 • JavaScript Enabled: Yes (obviously)
-• Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
-• Online Status: ${navigator.onLine ? 'Online' : 'Offline'}
-• Do Not Track: ${navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled'}
+• Local Storage: ${typeof Storage !== "undefined" ? "Available" : "Not Available"}
+• Online Status: ${navigator.onLine ? "Online" : "Offline"}
+• Do Not Track: ${navigator.doNotTrack === "1" ? "Enabled" : "Disabled"}
 
 ⏰ Time Information:
 • Local Time: ${new Date().toLocaleString()}
 • UTC Time: ${new Date().toUTCString()}
-• Timezone Offset: UTC${new Date().getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset() / 60)}`;
+• Timezone Offset: UTC${new Date().getTimezoneOffset() > 0 ? "-" : "+"}${Math.abs(new Date().getTimezoneOffset() / 60)}`;
 
       setResult(connectionInfo);
     } catch (error) {
@@ -375,17 +375,17 @@ ${selectedMethod}
 • Pixel Ratio: ${window.devicePixelRatio}
 
 🔧 Browser Features:
-• Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
+• Cookies Enabled: ${navigator.cookieEnabled ? "Yes" : "No"}
 • JavaScript Enabled: Yes
-• Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
-• Online Status: ${navigator.onLine ? 'Online' : 'Offline'}
-• Do Not Track: ${navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled'}
+• Local Storage: ${typeof Storage !== "undefined" ? "Available" : "Not Available"}
+• Online Status: ${navigator.onLine ? "Online" : "Offline"}
+• Do Not Track: ${navigator.doNotTrack === "1" ? "Enabled" : "Disabled"}
 
 ⏰ Time Information:
 • Local Time: ${new Date().toLocaleString()}
 • UTC Time: ${new Date().toUTCString()}
 • Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
-• Timezone Offset: UTC${new Date().getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset() / 60)}
+• Timezone Offset: UTC${new Date().getTimezoneOffset() > 0 ? "-" : "+"}${Math.abs(new Date().getTimezoneOffset() / 60)}
 
 ℹ️ Note: IP location data unavailable`;
 
@@ -467,15 +467,19 @@ ${selectedMethod}
           {selectedTool === "dnstools" && (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">DNS Server:</label>
-                <select 
+                <label className="text-sm font-medium mb-2 block">
+                  DNS Server:
+                </label>
+                <select
                   value={dnsServer}
                   onChange={(e) => setDnsServer(e.target.value)}
                   className="w-full p-2 border rounded-md bg-background"
                 >
                   <option value="8.8.8.8">Google DNS (8.8.8.8)</option>
                   <option value="1.1.1.1">Cloudflare DNS (1.1.1.1)</option>
-                  <option value="208.67.222.222">OpenDNS (208.67.222.222)</option>
+                  <option value="208.67.222.222">
+                    OpenDNS (208.67.222.222)
+                  </option>
                   <option value="9.9.9.9">Quad9 DNS (9.9.9.9)</option>
                 </select>
               </div>
@@ -493,7 +497,9 @@ ${selectedMethod}
           {selectedTool === "proxyfinder" && (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Region:</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Region:
+                </label>
                 <select
                   value={proxyRegion}
                   onChange={(e) => setProxyRegion(e.target.value)}
@@ -518,7 +524,9 @@ ${selectedMethod}
           {selectedTool === "studytimer" && (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Study Time (minutes):</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Study Time (minutes):
+                </label>
                 <input
                   type="range"
                   min="5"
@@ -527,26 +535,30 @@ ${selectedMethod}
                   onChange={(e) => setStudyTime(parseInt(e.target.value))}
                   className="w-full"
                 />
-                <p className="text-center text-sm text-muted-foreground">{studyTime} minutes</p>
+                <p className="text-center text-sm text-muted-foreground">
+                  {studyTime} minutes
+                </p>
               </div>
-              
+
               {timerRunning && (
                 <div className="text-center p-6 bg-primary/10 rounded-lg">
                   <div className="text-4xl font-mono font-bold text-primary">
                     {formatTime(timeLeft)}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">Focus time remaining</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Focus time remaining
+                  </p>
                 </div>
               )}
-              
-              <Button 
-                onClick={startStudyTimer} 
+
+              <Button
+                onClick={startStudyTimer}
                 className="w-full"
                 variant={timerRunning ? "destructive" : "default"}
               >
                 {timerRunning ? "Stop Timer" : "Start Study Session"}
               </Button>
-              
+
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-center text-lg font-medium">{result}</p>
@@ -558,7 +570,9 @@ ${selectedMethod}
           {selectedTool === "filterbypass" && (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Filter Type:</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Filter Type:
+                </label>
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
@@ -606,22 +620,22 @@ ${selectedMethod}
                 value={studyNotes}
                 onChange={(e) => {
                   setStudyNotes(e.target.value);
-                  localStorage.setItem('study-notes', e.target.value);
+                  localStorage.setItem("study-notes", e.target.value);
                 }}
                 className="min-h-[200px]"
                 onFocus={() => {
-                  const saved = localStorage.getItem('study-notes');
+                  const saved = localStorage.getItem("study-notes");
                   if (saved) setStudyNotes(saved);
                 }}
               />
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={() => {
-                    const blob = new Blob([studyNotes], { type: 'text/plain' });
+                    const blob = new Blob([studyNotes], { type: "text/plain" });
                     const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
+                    const a = document.createElement("a");
                     a.href = url;
-                    a.download = 'study-notes.txt';
+                    a.download = "study-notes.txt";
                     a.click();
                   }}
                   variant="outline"
@@ -630,9 +644,9 @@ ${selectedMethod}
                 </Button>
                 <Button
                   onClick={() => {
-                    localStorage.removeItem('study-notes');
-                    setStudyNotes('');
-                    setResult('Notes cleared!');
+                    localStorage.removeItem("study-notes");
+                    setStudyNotes("");
+                    setResult("Notes cleared!");
                   }}
                   variant="outline"
                 >
@@ -640,7 +654,8 @@ ${selectedMethod}
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground">
-                💡 Tip: Your notes are saved locally in your browser. Download them to keep permanently!
+                💡 Tip: Your notes are saved locally in your browser. Download
+                them to keep permanently!
               </div>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
