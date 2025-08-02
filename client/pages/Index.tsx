@@ -1067,7 +1067,7 @@ export default function Index() {
                             </div>
                             <Badge
                               variant="secondary"
-                              className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary border-primary/20 shrink-0"
+                              className="text-xs font-semibold px-3 py-1 bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20 shrink-0"
                             >
                               {app.category}
                             </Badge>
