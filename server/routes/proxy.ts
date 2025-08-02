@@ -59,6 +59,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       });
 
       clearTimeout(timeoutId);
+      console.log(`[PROXY] Response: ${response.status} ${response.statusText} for ${targetUrl.toString()}`);
 
       if (!response.ok) {
         return res.status(200).send(`
