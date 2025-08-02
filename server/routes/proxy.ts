@@ -45,6 +45,53 @@ export const handleProxy: RequestHandler = async (req, res) => {
       req.headers.referer === "https://www.google.com/" ||
       req.headers.origin === "https://www.google.com";
 
+    // Rate limiting for about:blank Google requests to prevent overwhelming Google's servers
+    if (isFromAboutBlank && (hostname.includes("google.com") || hostname.includes("google."))) {
+      const requestKey = `${clientIP}-google-aboutblank`;
+      const lastRequest = aboutBlankRequests.get(requestKey) || 0;
+      const timeSinceLastRequest = Date.now() - lastRequest;
+
+      if (timeSinceLastRequest < ABOUT_BLANK_COOLDOWN) {
+        const waitTime = ABOUT_BLANK_COOLDOWN - timeSinceLastRequest;
+        console.log(`[PROXY] Rate limiting about:blank Google request from ${clientIP}, wait ${waitTime}ms`);
+
+        return res.status(200).send(`
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title>Please wait...</title>
+              <script>
+                setTimeout(() => window.location.reload(), ${waitTime});
+              </script>
+            </head>
+            <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
+              <div style="background: white; border-radius: 8px; padding: 20px; max-width: 300px; margin: 100px auto;">
+                <div style="font-size: 24px; margin-bottom: 12px;">⏳</div>
+                <h3 style="margin: 0 0 8px 0;">Please wait...</h3>
+                <p style="color: #6b7280; margin: 0 0 16px 0;">Avoiding rate limits (${Math.ceil(waitTime/1000)}s)</p>
+                <div style="width: 100%; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                  <div style="width: 0%; height: 100%; background: #10b981; animation: progress ${waitTime}ms linear forwards;"></div>
+                </div>
+                <style>@keyframes progress { to { width: 100%; } }</style>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+
+      aboutBlankRequests.set(requestKey, Date.now());
+
+      // Clean up old entries every 100 requests
+      if (aboutBlankRequests.size > 100) {
+        const cutoff = Date.now() - ABOUT_BLANK_COOLDOWN * 10;
+        for (const [key, timestamp] of aboutBlankRequests.entries()) {
+          if (timestamp < cutoff) {
+            aboutBlankRequests.delete(key);
+          }
+        }
+      }
+    }
+
     // Fetch the content with better error handling
     const controller = new AbortController();
     // Longer timeout for Google in about:blank mode, normal timeouts for other cases
