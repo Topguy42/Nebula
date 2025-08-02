@@ -239,15 +239,59 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
-        // Skip rate limiting - just pass through the actual error
+        // For Google errors in about:blank, try to get content anyway or auto-retry
+        if ((hostname.includes("google.com") || hostname.includes("google.")) && isFromAboutBlank) {
+          // Try to get the content even if status is not ok - sometimes Google returns content with error status
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.includes("text/html")) {
+            try {
+              const content = await response.text();
+              if (content && content.length > 1000) {
+                // If we got substantial content, process and return it
+                const processedContent = processGoogleSearchFast(content, targetUrl);
+                res.setHeader("Content-Type", "text/html; charset=utf-8");
+                res.setHeader("X-Frame-Options", "SAMEORIGIN");
+                res.setHeader("Content-Security-Policy", "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *; frame-src *; child-src *; object-src *; media-src *;");
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader("Cache-Control", "private, max-age=60");
+                return res.send(processedContent);
+              }
+            } catch (e) {
+              console.log("[PROXY] Could not process Google content despite error status");
+            }
+          }
 
+          // If we can't get content, auto-retry with a slight delay
+          return res.status(200).send(`
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <title>Loading Google...</title>
+                <script>
+                  setTimeout(() => window.location.reload(), 1500);
+                </script>
+              </head>
+              <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
+                <div style="background: white; border-radius: 8px; padding: 20px; max-width: 300px; margin: 100px auto;">
+                  <div style="font-size: 24px; margin-bottom: 12px;">🔄</div>
+                  <h3 style="margin: 0 0 8px 0;">Connecting to Google...</h3>
+                  <div style="width: 100%; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                    <div style="width: 0%; height: 100%; background: #10b981; animation: progress 1.5s linear forwards;"></div>
+                  </div>
+                  <style>@keyframes progress { to { width: 100%; } }</style>
+                </div>
+              </body>
+            </html>
+          `);
+        }
+
+        // For other sites or non-about:blank, show minimal error
         return res.status(200).send(`
           <html>
             <body style="font-family: sans-serif; padding: 40px; text-align: center;">
               <h2>⚠️ Website Error</h2>
               <p>Failed to load: <strong>${targetUrl.hostname}</strong></p>
               <p>Status: ${response.status} ${response.statusText}</p>
-              <p><small>Some websites may block proxy access</small></p>
               <button onclick="history.back()">Go Back</button>
               <br><br>
               <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer">
