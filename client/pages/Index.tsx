@@ -390,8 +390,8 @@ export default function Index() {
         setDisplayUrl(url);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
       } else {
-        // Handle as search query - redirect to Google
-        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        // Handle as search query - redirect to Google with optimization parameters
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&tbs=li:1&lr=lang_en&safe=active`;
         finalUrl = searchUrl;
         setDisplayUrl(`Google Search: ${query}`);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
