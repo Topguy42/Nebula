@@ -185,20 +185,31 @@ export const handleProxy: RequestHandler = async (req, res) => {
             targetUrl.search = '';
           } else {
             if (isFromAboutBlank) {
-              // Special parameters for about:blank to avoid rate limiting
+              // Ultra-conservative parameters for about:blank - mimic direct Google access
               searchParams.set("safe", "active");
               searchParams.set("hl", "en");
+              searchParams.set("gl", "us");
               searchParams.set("lr", "lang_en");
               searchParams.set("num", "10");
               searchParams.set("start", searchParams.get("start") || "0");
-              searchParams.set("client", "safari"); // Safari works better from about:blank
+
+              // Use the most reliable client for about:blank environments
+              searchParams.set("client", "firefox-b-d");
               searchParams.set("source", "hp");
+              searchParams.set("channel", "fs");
+
+              // Standard encoding
               searchParams.set("ie", "UTF-8");
               searchParams.set("oe", "UTF-8");
 
-              // Remove all tracking parameters that might trigger detection
-              const trackingParams = ["ved", "uact", "gs_lcp", "sclient", "sourceid", "ei", "iflsig", "oq", "aqs", "gs_l", "gs_lcp", "pbx"];
-              trackingParams.forEach(param => searchParams.delete(param));
+              // Remove ALL tracking and analytics parameters
+              const allTrackingParams = [
+                "ved", "uact", "gs_lcp", "sclient", "sourceid", "ei", "iflsig",
+                "oq", "aqs", "gs_l", "pbx", "biw", "bih", "dpr", "bav",
+                "cad", "psj", "gs_sm", "gs_upl", "gs_hp", "pf", "complete",
+                "gws_rd", "cr", "dcr", "pws", "nfpr", "sa", "gbv", "gfe_rd"
+              ];
+              allTrackingParams.forEach(param => searchParams.delete(param));
             } else {
               // Normal search parameters
               searchParams.set("safe", "active");
