@@ -12,10 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Globe,
   Wifi,
-  Link2,
+  Zap,
   BookOpen,
   Timer,
-  Activity,
+  Eye,
   Search,
   Shield,
 } from "lucide-react";
