@@ -232,7 +232,7 @@ ${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
 • Try HTTPS instead of HTTP
 • Add 's' to domain: https://site.com
 • Use IP address instead of domain name
-�� Try different subdomains: m., www., mobile.
+• Try different subdomains: m., www., mobile.
 • Use port numbers: site.com:443
 • Try different TLDs: .net, .org, .io`,
 
@@ -271,11 +271,7 @@ ${selectedMethod}
 • Mobile versions often less restricted
 • Different app stores may have alternatives
 
-⚠️ Remember:
-• Always follow school/organization policies
-• Use for educational purposes only
-• Respect network administrator rules
-• Don't overuse - avoid detection`);
+`);
   };
 
   const findMirrors = () => {
