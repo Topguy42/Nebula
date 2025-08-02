@@ -311,11 +311,11 @@ function processHTML(content: string, targetUrl: URL): string {
       </script>
     `;
 
-    // Insert styles before closing head tag
+    // Insert enhancements before closing head tag
     if (content.includes("</head>")) {
-      content = content.replace("</head>", proxyStyles + "</head>");
+      content = content.replace("</head>", proxyEnhancements + "</head>");
     } else if (content.includes("</HEAD>")) {
-      content = content.replace("</HEAD>", proxyStyles + "</HEAD>");
+      content = content.replace("</HEAD>", proxyEnhancements + "</HEAD>");
     }
 
     // Helper function to rewrite URLs
