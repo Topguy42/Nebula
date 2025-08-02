@@ -134,27 +134,30 @@ export default function Tools({}: ToolsProps) {
       // Try to update the top-level window first (works when not in iframe)
       const targetDocument =
         window.top !== window ? window.top!.document : document;
-      let favicon = targetDocument.querySelector(
-        'link[rel="icon"]',
-      ) as HTMLLinkElement;
 
-      if (!favicon) {
-        favicon = targetDocument.createElement("link");
-        favicon.rel = "icon";
-        targetDocument.head.appendChild(favicon);
-      }
-      favicon.href = url;
+      // Remove existing favicon links to force refresh
+      const existingFavicons = targetDocument.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
+      existingFavicons.forEach(link => link.remove());
+
+      // Create new favicon element with cache-busting
+      const favicon = targetDocument.createElement("link");
+      favicon.rel = "icon";
+      favicon.type = "image/x-icon";
+      // Add timestamp to force browser to refresh the favicon
+      const separator = url.includes('?') ? '&' : '?';
+      favicon.href = `${url}${separator}_t=${Date.now()}`;
+      targetDocument.head.appendChild(favicon);
     } catch (error) {
       // Fallback to current document if cross-origin access is blocked
-      let favicon = document.querySelector(
-        'link[rel="icon"]',
-      ) as HTMLLinkElement;
-      if (!favicon) {
-        favicon = document.createElement("link");
-        favicon.rel = "icon";
-        document.head.appendChild(favicon);
-      }
-      favicon.href = url;
+      const existingFavicons = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
+      existingFavicons.forEach(link => link.remove());
+
+      const favicon = document.createElement("link");
+      favicon.rel = "icon";
+      favicon.type = "image/x-icon";
+      const separator = url.includes('?') ? '&' : '?';
+      favicon.href = `${url}${separator}_t=${Date.now()}`;
+      document.head.appendChild(favicon);
     }
   };
 
