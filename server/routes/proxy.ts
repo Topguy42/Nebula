@@ -110,6 +110,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
           "frame-ancestors *; default-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';",
         );
         res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "*");
+        res.setHeader("Access-Control-Allow-Methods", "*");
+        res.setHeader("Access-Control-Allow-Credentials", "true");
 
         return res.send(content);
       } else if (contentType.includes("text/css")) {
@@ -161,6 +164,8 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
         res.setHeader("Content-Type", contentType);
         res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "*");
+        res.setHeader("Access-Control-Allow-Methods", "*");
         res.setHeader("Cache-Control", "public, max-age=3600");
 
         return res.send(Buffer.from(uint8Array));
@@ -188,7 +193,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       return res.status(200).send(`
         <html>
           <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-            <h2>🌐 Connection Error</h2>
+            <h2>��� Connection Error</h2>
             <p>Could not connect to <strong>${targetUrl.hostname}</strong></p>
             <p><small>${fetchError instanceof Error ? fetchError.message : "Unknown error"}</small></p>
             <button onclick="history.back()">Go Back</button>
