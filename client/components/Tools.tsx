@@ -148,52 +148,52 @@ iOS: WiFi Settings > Configure DNS
 ⚠️ Note: Some schools may block DNS changes`);
   };
 
-  const processUrlTools = (action: string) => {
-    if (!urlToolsInput) return;
+  const findProxyServers = () => {
+    const proxies = {
+      global: [
+        "proxy-server.com",
+        "hidester.com",
+        "proxysite.com",
+        "hide.me",
+        "croxyproxy.com"
+      ],
+      us: [
+        "us-proxy.org",
+        "american-proxy.com",
+        "usa-proxy.net"
+      ],
+      eu: [
+        "european-proxy.com",
+        "eu-proxy.net",
+        "europeproxy.org"
+      ]
+    };
 
-    try {
-      let output = "";
+    const selectedProxies = proxies[proxyRegion as keyof typeof proxies] || proxies.global;
 
-      switch (action) {
-        case "encode":
-          output = `URL Encoded: ${encodeURIComponent(urlToolsInput)}`;
-          break;
-        case "decode":
-          output = `URL Decoded: ${decodeURIComponent(urlToolsInput)}`;
-          break;
-        case "base64encode":
-          output = `Base64 Encoded: ${btoa(urlToolsInput)}`;
-          break;
-        case "base64decode":
-          output = `Base64 Decoded: ${atob(urlToolsInput)}`;
-          break;
-        case "analyze":
-          try {
-            const url = new URL(urlToolsInput.startsWith('http') ? urlToolsInput : `https://${urlToolsInput}`);
-            output = `🔍 URL Analysis:
-Protocol: ${url.protocol}
-Host: ${url.hostname}
-Port: ${url.port || 'default'}
-Path: ${url.pathname}
-Query: ${url.search}
-Fragment: ${url.hash}
+    setResult(`🌐 Working Proxy Servers (${proxyRegion.toUpperCase()}):
 
-🔗 Alternative formats:
-• Without www: ${url.hostname.replace('www.', '')}
-• Mobile version: m.${url.hostname.replace('www.', '')}
-• HTTPS: https://${url.hostname}${url.pathname}`;
-          } catch {
-            output = "Error: Invalid URL format";
-          }
-          break;
-        default:
-          output = "Unknown action";
-      }
+📡 Free Proxy Sites:
+${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
 
-      setResult(output);
-    } catch (error) {
-      setResult(`Error: Invalid input for ${action}`);
-    }
+🔧 Manual Proxy Setup:
+• Chrome: Settings → Advanced → System → Open proxy settings
+• Firefox: Settings → Network Settings → Manual proxy
+• Edge: Settings → System → Open proxy settings
+
+🌍 Alternative Access Methods:
+• Google Translate: translate.google.com/translate?u=TARGET_URL
+• Archive.org: web.archive.org/web/*/TARGET_URL
+• Cached pages: cache:TARGET_URL in Google
+• Mobile versions: m.WEBSITE.com or mobile.WEBSITE.com
+
+🛡️ VPN Alternatives:
+• Tor Browser (if allowed)
+• Browser extensions (if permitted)
+• Mobile hotspot with different carrier
+• Change DNS to 1.1.1.1 or 8.8.8.8
+
+⚠️ Always follow school policies and use responsibly!`);
   };
 
   const startStudyTimer = () => {
