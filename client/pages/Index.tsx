@@ -275,12 +275,40 @@ const webApps = [
   },
 ];
 
-// Custom N Logo Component
-const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
-  <div
-    className={`${className} rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center font-bold text-white shadow-lg`}
-  >
-    <span className="text-xl font-black">N</span>
+// VortexPortal Logo Component
+const VortexLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
+  <div className={`${className} relative flex items-center justify-center group`}>
+    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 opacity-80 blur-sm group-hover:blur-none transition-all duration-300" />
+    <div className="relative z-10 w-full h-full rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 flex items-center justify-center shadow-2xl border border-white/20">
+      <svg className="w-3/5 h-3/5 text-white" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 2L2 22H22L12 2Z"
+          fill="currentColor"
+          fillOpacity="0.3"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+          fill="currentColor"
+          className="animate-pulse"
+        />
+        <path
+          d="M12 2L22 22"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.7"
+        />
+        <path
+          d="M12 2L2 22"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.7"
+        />
+      </svg>
+    </div>
   </div>
 );
 
@@ -394,7 +422,7 @@ export default function Index() {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>Nebula Proxy - About Blank Mode</title>
+            <title>VortexPortal - Professional Web Proxy</title>
             <style>
               body {
                 margin: 0;
@@ -573,9 +601,9 @@ export default function Index() {
                   Home
                 </Button>
               </div>
-              <div className="flex items-center gap-2">
-                <NebulaLogo className="w-6 h-6" />
-                <span className="font-semibold">Nebula</span>
+              <div className="flex items-center gap-3">
+                <VortexLogo className="w-7 h-7" />
+                <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">VortexPortal</span>
               </div>
             </div>
             <div className="flex-1 max-w-2xl mx-4">
@@ -697,8 +725,18 @@ export default function Index() {
       <header className="relative z-50 py-6">
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
-            {/* Logo */}
-            <NebulaLogo className="w-12 h-12" />
+            {/* Brand */}
+            <div className="flex items-center gap-4">
+              <VortexLogo className="w-12 h-12" />
+              <div className="hidden sm:block">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  VortexPortal
+                </h1>
+                <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">
+                  PROFESSIONAL WEB PROXY
+                </p>
+              </div>
+            </div>
 
             {/* Navigation */}
             <nav className="flex items-center space-x-4 text-sm font-medium">
@@ -767,12 +805,19 @@ export default function Index() {
         <div className="container mx-auto px-6 text-center">
           {/* Hero Section */}
           <div className="mb-16">
-            <h1 className="text-8xl md:text-9xl font-black tracking-tight mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent animate-pulse">
-              NEBULA
-            </h1>
-            <p className="text-lg text-muted-foreground mb-12">
-              Browse freely, play endlessly
-            </p>
+            <div className="mb-8">
+              <h1 className="text-7xl md:text-8xl font-black tracking-tighter mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                VortexPortal
+              </h1>
+              <div className="space-y-2">
+                <p className="text-xl font-medium text-foreground/90">
+                  Professional Web Proxy Solution
+                </p>
+                <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+                  Secure, fast, and reliable proxy service for seamless web browsing and application access
+                </p>
+              </div>
+            </div>
 
             {/* Main Search/Input */}
             <div className="max-w-4xl mx-auto">
@@ -1019,11 +1064,11 @@ export default function Index() {
         <div className="container mx-auto px-6">
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <NebulaLogo className="w-6 h-6" />
-              <span className="text-lg font-bold text-primary">Nebula</span>
+              <VortexLogo className="w-6 h-6" />
+              <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">VortexPortal</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Privacy First • No Logs • Lightning Fast
+              Enterprise-Grade Security • Zero-Log Policy • Lightning Fast Performance
             </p>
           </div>
         </div>
