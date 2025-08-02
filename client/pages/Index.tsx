@@ -100,6 +100,7 @@ export default function Index() {
     e.preventDefault();
     if (proxyUrl.trim()) {
       const query = proxyUrl.trim();
+      setIsLoading(true);
 
       // Check if it's a URL
       const isUrl = (
@@ -115,21 +116,30 @@ export default function Index() {
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
           url = "https://" + url;
         }
-        window.open(url, "_blank");
+        setCurrentUrl(url);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        window.open(searchUrl, "_blank");
+        setCurrentUrl(searchUrl);
       }
     }
   };
 
   const handleGamePlay = (gameUrl: string) => {
-    window.open(gameUrl, "_blank");
+    setIsLoading(true);
+    setCurrentUrl(gameUrl);
+    setActiveTab("proxy"); // Switch to proxy tab to show the iframe
   };
 
   const handleQuickLink = (url: string) => {
-    window.open(url, "_blank");
+    setIsLoading(true);
+    setCurrentUrl(url);
+  };
+
+  const handleBackToHome = () => {
+    setCurrentUrl("");
+    setProxyUrl("");
+    setIsLoading(false);
   };
 
   const filteredGames = popularGames.filter(game =>
