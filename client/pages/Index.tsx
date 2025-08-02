@@ -809,18 +809,38 @@ export default function Index() {
       <main className="relative z-10 flex-1 flex items-center justify-center">
         <div className="container mx-auto px-6 text-center">
           {/* Hero Section */}
-          <div className="mb-16">
-            <div className="mb-8">
-              <h1 className="text-7xl md:text-8xl font-black tracking-tighter mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-                VortexPortal
-              </h1>
-              <div className="space-y-2">
-                <p className="text-xl font-medium text-foreground/90">
-                  Professional Web Proxy Solution
-                </p>
-                <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-                  Secure, fast, and reliable proxy service for seamless web browsing and application access
-                </p>
+          <div className="mb-20">
+            <div className="space-y-8">
+              {/* Main Title */}
+              <div className="space-y-6">
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent leading-none">
+                  VortexPortal
+                </h1>
+                <div className="space-y-4">
+                  <p className="text-2xl md:text-3xl font-semibold text-foreground/90 leading-tight">
+                    Professional Web Proxy Solution
+                  </p>
+                  <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                    Experience secure, lightning-fast web browsing with enterprise-grade proxy technology.
+                    Access any website, stream content, and run applications with uncompromising privacy and performance.
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature Highlights */}
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                  <span className="font-medium">Zero-Log Policy</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20">
+                  <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                  <span className="font-medium">Enterprise Security</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  <span className="font-medium">Global Network</span>
+                </div>
               </div>
             </div>
 
