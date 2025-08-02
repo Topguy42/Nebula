@@ -90,16 +90,23 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["Origin"] = "https://www.google.com";
         headers["Referer"] = "https://www.google.com/";
         headers["DNT"] = "1";
-        headers["X-Requested-With"] = "XMLHttpRequest";
+        headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
+        headers["Accept-Language"] = "en-US,en;q=0.5";
+        headers["Connection"] = "keep-alive";
+        headers["Upgrade-Insecure-Requests"] = "1";
+
+        // Add small delay for Google to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
 
         // Use optimized Google parameters for faster loading
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
 
-          // Add fast loading parameters
-          searchParams.set("tbs", "li:1"); // Lighter interface
-          searchParams.set("safe", "active"); // Prevent extra filtering overhead
-          searchParams.set("lr", "lang_en"); // English results for speed
+          // Remove problematic parameters and add optimized ones
+          searchParams.delete("tbs"); // Remove this as it might trigger rate limiting
+          searchParams.set("safe", "active");
+          searchParams.set("lr", "lang_en");
+          searchParams.set("hl", "en"); // Interface language
 
           targetUrl.search = searchParams.toString();
         }
