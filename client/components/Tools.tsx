@@ -402,7 +402,7 @@ This tool demonstrates concepts and provides testing capabilities.`);
 
   const testReferrerRequests = async () => {
     if (!targetUrl) {
-      setResult("⚠️ Please enter a target URL first!");
+      setResult("��️ Please enter a target URL first!");
       return;
     }
 
@@ -410,71 +410,54 @@ This tool demonstrates concepts and provides testing capabilities.`);
       ? targetUrl
       : `https://${targetUrl}`;
 
-    setResult("🔄 Testing referrer requests...");
+    setResult("🔄 Testing referrer requests... This may take a moment.");
 
     const testResults = [];
 
-    for (const source of referrerSources.slice(0, 5)) { // Test first 5 sources
+    for (const source of referrerSources.slice(0, 6)) { // Test first 6 sources
       try {
-        // Create a temporary iframe to test the request
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.style.width = '1px';
-        iframe.style.height = '1px';
+        const response = await fetch(`/api/proxy-check?url=${encodeURIComponent(cleanUrl)}&referrer=${encodeURIComponent(source.url || 'none')}`);
+        const data = await response.json();
 
-        // Set referrer policy
-        if (source.value === 'none') {
-          iframe.referrerPolicy = 'no-referrer';
+        let status;
+        if (data.success && data.accessible) {
+          status = "✅ Accessible";
+        } else if (data.status === 403 || data.status === 401) {
+          status = "🚫 Blocked";
+        } else if (data.status === 0 || data.error) {
+          status = "⚠️ Error";
         } else {
-          iframe.referrerPolicy = 'unsafe-url';
+          status = "❓ Unknown";
         }
 
-        document.body.appendChild(iframe);
+        testResults.push({
+          source: source.name,
+          status: status,
+          time: data.loadTime > 0 ? `${data.loadTime}ms` : "N/A",
+          code: data.status,
+          referrer: source.url || "none"
+        });
 
-        // Test the request (simplified)
-        const startTime = Date.now();
-        try {
-          // For demonstration, we'll use a proxy endpoint
-          const response = await fetch(`/api/proxy-check?url=${encodeURIComponent(cleanUrl)}&referrer=${encodeURIComponent(source.url)}`, {
-            headers: {
-              'Referer': source.url || undefined
-            }
-          });
-
-          const loadTime = Date.now() - startTime;
-
-          testResults.push({
-            source: source.name,
-            status: response.ok ? "✅ Success" : "❌ Blocked",
-            time: `${loadTime}ms`,
-            code: response.status
-          });
-        } catch (error) {
-          testResults.push({
-            source: source.name,
-            status: "⚠️ Error",
-            time: "N/A",
-            code: "ERR"
-          });
-        }
-
-        document.body.removeChild(iframe);
-
-        // Add delay between requests
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Add delay between requests to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 800));
 
       } catch (error) {
         testResults.push({
           source: source.name,
           status: "❌ Failed",
           time: "N/A",
-          code: "ERR"
+          code: "ERR",
+          referrer: source.url || "none"
         });
       }
     }
 
+    const successCount = testResults.filter(r => r.status.includes("✅")).length;
+    const blockedCount = testResults.filter(r => r.status.includes("🚫")).length;
+    const errorCount = testResults.filter(r => r.status.includes("⚠️") || r.status.includes("❌")).length;
+
     const resultsText = testResults.map(result =>
-      `${result.source}: ${result.status} (${result.time})`
+      `${result.source.padEnd(15)}: ${result.status} (${result.time})`
     ).join("\n");
 
     setResult(`🧪 Referrer Test Results for: ${cleanUrl}
@@ -482,15 +465,27 @@ This tool demonstrates concepts and provides testing capabilities.`);
 📊 Test Results:
 ${resultsText}
 
+📈 Summary:
+• ✅ Accessible: ${successCount}/${testResults.length}
+• 🚫 Blocked: ${blockedCount}/${testResults.length}
+• ⚠️ Errors: ${errorCount}/${testResults.length}
+
 💡 Analysis:
-• ✅ Success = Request went through normally
-• ❌ Blocked = Likely referrer-based blocking
-• ⚠️ Error = Network or other issues
+• ✅ = Request successful with this referrer
+• 🚫 = Likely blocked due to referrer restrictions
+• ⚠️ = Network or server errors
+• ❓ = Unexpected response
 
 🔄 Current Auto-Rotation: ${referrerRotation ? "🟢 Active" : "🔴 Stopped"}
 Current Referrer: ${referrerSources.find(r => r.value === currentReferrer)?.name || "None"}
 
-🚀 Try opening the target URL now while auto-rotation is active!`);
+🚀 Recommendations:
+${successCount > 0 ? `• Use referrers that showed ✅ for best access
+• Consider starting auto-rotation with working referrers` :
+`• This site may not have referrer restrictions
+• Try manual access or different bypass methods`}
+
+⚡ Try opening the target URL now while auto-rotation is active!`);
   };
 
   const generateReferrerLinks = () => {
