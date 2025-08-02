@@ -65,7 +65,7 @@ const toolsList = [
   },
   {
     name: "Privacy Check",
-    icon: Shield,
+    icon: Eye,
     description: "Check your connection privacy and security",
     category: "Security",
   },
@@ -270,7 +270,7 @@ ${selectedMethod}
 🔧 General Bypass Techniques:
 • Change DNS servers (1.1.1.1, 8.8.8.8)
 • Use different browsers
-• Clear browser cache and cookies
+�� Clear browser cache and cookies
 • Disable JavaScript temporarily
 • Use incognito/private browsing mode
 • Try different network (mobile hotspot)
