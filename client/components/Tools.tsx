@@ -88,6 +88,7 @@ export default function Tools({}: ToolsProps) {
   const [referrerRotation, setReferrerRotation] = useState(false);
   const [currentReferrer, setCurrentReferrer] = useState("none");
   const [rotationInterval, setRotationInterval] = useState(5);
+  const [rotationIntervalId, setRotationIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   // Clear result when switching tools
   useEffect(() => {
