@@ -807,7 +807,7 @@ export default function Index() {
           {/* Hero Section */}
           <div className="mb-16">
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent leading-none mb-12">
-              VortexPortal
+              Vortex
             </h1>
 
             {/* Main Search/Input */}
