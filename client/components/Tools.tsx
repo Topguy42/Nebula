@@ -639,52 +639,6 @@ ${selectedMethod}
             </div>
           )}
 
-          {selectedTool === "studytimer" && (
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Study Time (minutes):
-                </label>
-                <input
-                  type="range"
-                  min="5"
-                  max="60"
-                  value={studyTime}
-                  onChange={(e) => setStudyTime(parseInt(e.target.value))}
-                  className="w-full"
-                />
-                <p className="text-center text-sm text-muted-foreground">
-                  {studyTime} minutes
-                </p>
-              </div>
-
-              {timerRunning && (
-                <div className="text-center p-6 bg-primary/10 rounded-lg">
-                  <div className="text-4xl font-mono font-bold text-primary">
-                    {formatTime(timeLeft)}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Focus time remaining
-                  </p>
-                </div>
-              )}
-
-              <Button
-                onClick={startStudyTimer}
-                className="w-full"
-                variant={timerRunning ? "destructive" : "default"}
-              >
-                {timerRunning ? "Stop Timer" : "Start Study Session"}
-              </Button>
-
-              {result && (
-                <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-center text-lg font-medium">{result}</p>
-                </div>
-              )}
-            </div>
-          )}
-
           {selectedTool === "filterbypass" && (
             <div className="space-y-4">
               <div>
