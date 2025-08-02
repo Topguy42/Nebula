@@ -153,24 +153,31 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       ];
 
-      // Use different UA selection for Google to avoid patterns
+      // Use more conservative UA selection for Google to avoid patterns
       const randomUA = hostname.includes("google")
-        ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
+        ? userAgents[Math.floor(Date.now() / 30000) % userAgents.length] // Changes every 30 seconds (less frequent)
         : userAgents[Math.floor(Math.random() * userAgents.length)];
 
-      // Dynamic referrer rotation
+      // More conservative dynamic referrer rotation for Google
       let dynamicReferrer = "";
       if (referrer_rotation === "true") {
-        // Rotate referrer based on current time to constantly change it
-        const rotationIndex =
-          Math.floor(Date.now() / 5000) % referrerSources.length; // Changes every 5 seconds
-        dynamicReferrer = referrerSources[rotationIndex];
-        if (dynamicReferrer && !dynamicReferrer.includes("search?")) {
-          // For non-search referrers, use as-is
-        } else if (dynamicReferrer) {
-          // For search engines, add the target domain as search query
-          const domain = new URL(targetUrl.toString()).hostname;
-          dynamicReferrer = dynamicReferrer + encodeURIComponent(domain);
+        if (hostname.includes("google")) {
+          // For Google, use more conservative rotation (every 60 seconds)
+          const rotationIndex = Math.floor(Date.now() / 60000) % 3; // Only use first 3 referrers
+          const conservativeReferrers = [
+            "https://www.google.com/",
+            "https://en.wikipedia.org/",
+            "https://www.youtube.com/"
+          ];
+          dynamicReferrer = conservativeReferrers[rotationIndex];
+        } else {
+          // For other sites, use normal rotation
+          const rotationIndex = Math.floor(Date.now() / 5000) % referrerSources.length;
+          dynamicReferrer = referrerSources[rotationIndex];
+          if (dynamicReferrer && dynamicReferrer.includes("search?")) {
+            const domain = new URL(targetUrl.toString()).hostname;
+            dynamicReferrer = dynamicReferrer + encodeURIComponent(domain);
+          }
         }
         console.log(
           `[PROXY] Using rotating referrer: ${dynamicReferrer || "none"}`,
@@ -233,14 +240,15 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
 
-        // Additional headers to bypass about:blank restrictions
-        headers["Sec-Fetch-Site"] = "same-origin";
+        // Conservative headers to avoid detection
+        headers["Sec-Fetch-Site"] = "none"; // More conservative
         headers["Sec-Fetch-Mode"] = "navigate";
         headers["Sec-Fetch-User"] = "?1";
         headers["Sec-Fetch-Dest"] = "document";
-        headers["X-Requested-With"] = "";
-        headers["X-Forwarded-For"] = "8.8.8.8";
-        headers["X-Real-IP"] = "8.8.8.8";
+        // Remove potentially suspicious headers
+        delete headers["X-Requested-With"];
+        delete headers["X-Forwarded-For"];
+        delete headers["X-Real-IP"];
 
         // Override referrer for about:blank environments
         if (dynamicReferrer) {
@@ -253,23 +261,37 @@ export const handleProxy: RequestHandler = async (req, res) => {
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
 
-          // Add parameters to bypass restrictions and improve compatibility
-          searchParams.set("safe", "active");
-          searchParams.set("lr", "lang_en");
-          searchParams.set("hl", "en");
-          searchParams.set("num", "20"); // More results per page
-          searchParams.set("start", "0"); // Ensure first page
-          searchParams.set("udm", "14"); // Use lighter search interface
-          searchParams.set("client", "firefox-b-d"); // Simulate Firefox browser
-          searchParams.set("source", "hp"); // Homepage source
-          searchParams.set("ei", Date.now().toString()); // Random event ID
-          searchParams.set("iflsig", "ALs-wAMAAAAAZr"); // Fake signature
+          // Check if we have a search query
+          const query = searchParams.get('q');
+          if (!query) {
+            // If no query, redirect to homepage to avoid empty search
+            targetUrl.pathname = '/';
+            targetUrl.search = '';
+          } else {
+            // Add parameters to reduce rate limiting risk
+            searchParams.set("safe", "active");
+            searchParams.set("lr", "lang_en");
+            searchParams.set("hl", "en");
+            searchParams.set("num", "10"); // Reduced from 20 to be less aggressive
+            searchParams.set("start", "0");
 
-          // Remove potentially problematic parameters
-          searchParams.delete("ved");
-          searchParams.delete("uact");
+            // Use more conservative client identifier
+            searchParams.set("client", "safari"); // Safari is less likely to be blocked than Firefox
+            searchParams.set("source", "hp");
 
-          targetUrl.search = searchParams.toString();
+            // Add randomization to avoid patterns
+            const randomSeed = Math.floor(Math.random() * 1000);
+            searchParams.set("gs_lcp", randomSeed.toString());
+
+            // Remove tracking and potentially problematic parameters
+            searchParams.delete("ved");
+            searchParams.delete("uact");
+            searchParams.delete("ei");
+            searchParams.delete("iflsig");
+            searchParams.delete("udm"); // Remove this as it might trigger detection
+
+            targetUrl.search = searchParams.toString();
+          }
         }
       }
 
