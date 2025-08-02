@@ -18,6 +18,70 @@ interface DevToolsPanelProps {
   iframeUrl: string;
 }
 
+interface DomNodeProps {
+  node: any;
+  depth?: number;
+  onSelectElement: (node: any) => void;
+}
+
+function DomNode({ node, depth = 0, onSelectElement }: DomNodeProps) {
+  const [isExpanded, setIsExpanded] = useState(depth < 2);
+
+  return (
+    <div
+      key={`${node.tagName}-${depth}`}
+      style={{ marginLeft: `${depth * 16}px` }}
+    >
+      <div
+        className="flex items-center gap-1 hover:bg-accent/50 rounded px-1 py-0.5 cursor-pointer text-sm"
+        onClick={() => onSelectElement(node)}
+      >
+        {node.children.length > 0 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
+          >
+            {isExpanded ? (
+              <ChevronDown className="h-3 w-3" />
+            ) : (
+              <ChevronRight className="h-3 w-3" />
+            )}
+          </button>
+        )}
+        <span className="text-blue-600 dark:text-blue-400">
+          &lt;{node.tagName}
+        </span>
+        {node.attributes.slice(0, 2).map((attr: any) => (
+          <span
+            key={attr.name}
+            className="text-green-600 dark:text-green-400 text-xs"
+          >
+            {attr.name}="{attr.value.slice(0, 20)}
+            {attr.value.length > 20 ? "..." : ""}"
+          </span>
+        ))}
+        <span className="text-blue-600 dark:text-blue-400">&gt;</span>
+        {node.textContent && (
+          <span className="text-gray-600 dark:text-gray-400 text-xs truncate">
+            {node.textContent.trim()}
+          </span>
+        )}
+      </div>
+      {isExpanded &&
+        node.children.map((child: any, index: number) => (
+          <DomNode
+            key={`${child.tagName}-${depth + 1}-${index}`}
+            node={child}
+            depth={depth + 1}
+            onSelectElement={onSelectElement}
+          />
+        ))}
+    </div>
+  );
+}
+
 export default function DevToolsPanel({
   isOpen,
   onClose,
@@ -96,57 +160,6 @@ export default function DevToolsPanel({
     };
   };
 
-  const renderDomNode = (node: any, depth = 0) => {
-    const [isExpanded, setIsExpanded] = useState(depth < 2);
-
-    return (
-      <div
-        key={`${node.tagName}-${depth}`}
-        style={{ marginLeft: `${depth * 16}px` }}
-      >
-        <div
-          className="flex items-center gap-1 hover:bg-accent/50 rounded px-1 py-0.5 cursor-pointer text-sm"
-          onClick={() => setSelectedElement(node)}
-        >
-          {node.children.length > 0 && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded(!isExpanded);
-              }}
-            >
-              {isExpanded ? (
-                <ChevronDown className="h-3 w-3" />
-              ) : (
-                <ChevronRight className="h-3 w-3" />
-              )}
-            </button>
-          )}
-          <span className="text-blue-600 dark:text-blue-400">
-            &lt;{node.tagName}
-          </span>
-          {node.attributes.slice(0, 2).map((attr: any) => (
-            <span
-              key={attr.name}
-              className="text-green-600 dark:text-green-400 text-xs"
-            >
-              {attr.name}="{attr.value.slice(0, 20)}
-              {attr.value.length > 20 ? "..." : ""}"
-            </span>
-          ))}
-          <span className="text-blue-600 dark:text-blue-400">&gt;</span>
-          {node.textContent && (
-            <span className="text-gray-600 dark:text-gray-400 text-xs truncate">
-              {node.textContent.trim()}
-            </span>
-          )}
-        </div>
-        {isExpanded &&
-          node.children.map((child: any) => renderDomNode(child, depth + 1))}
-      </div>
-    );
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -183,7 +196,10 @@ export default function DevToolsPanel({
             <div className="flex-1 p-4">
               <ScrollArea className="h-full">
                 {domTree ? (
-                  renderDomNode(domTree)
+                  <DomNode
+                    node={domTree}
+                    onSelectElement={setSelectedElement}
+                  />
                 ) : (
                   <div className="text-muted-foreground text-center py-8">
                     <FileText className="h-8 w-8 mx-auto mb-2" />
