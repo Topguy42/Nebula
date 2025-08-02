@@ -101,6 +101,15 @@ export default function Tools({}: ToolsProps) {
     setResult("");
   }, [selectedTool]);
 
+  // Initialize original title and favicon
+  useEffect(() => {
+    setOriginalTitle(document.title);
+    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    if (favicon) {
+      setOriginalFavicon(favicon.href);
+    }
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -109,8 +118,76 @@ export default function Tools({}: ToolsProps) {
       if (iframe) {
         iframe.remove();
       }
+      // Restore original title and favicon
+      if (originalTitle) {
+        document.title = originalTitle;
+      }
+      if (originalFavicon) {
+        updateFavicon(originalFavicon);
+      }
     };
-  }, []);
+  }, [originalTitle, originalFavicon]);
+
+  const updateFavicon = (url: string) => {
+    let favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      document.head.appendChild(favicon);
+    }
+    favicon.href = url;
+  };
+
+  const applyCloaker = () => {
+    if (!cloakerTitle && !cloakerFavicon) {
+      setResult("⚠️ Please enter a title or favicon URL to apply cloaker!");
+      return;
+    }
+
+    let changes = [];
+
+    if (cloakerTitle) {
+      document.title = cloakerTitle;
+      changes.push(`• Title changed to: "${cloakerTitle}"`);
+    }
+
+    if (cloakerFavicon) {
+      try {
+        updateFavicon(cloakerFavicon);
+        changes.push(`• Favicon changed to: ${cloakerFavicon}`);
+      } catch (error) {
+        changes.push(`• Favicon update failed: Invalid URL`);
+      }
+    }
+
+    setResult(`🥸 Cloaker Applied Successfully!
+
+${changes.join('\n')}
+
+💡 Tips:
+• Your browser tab now appears as the disguised site
+• Use common websites like "Google Classroom" or "Khan Academy"
+• Remember to restore when done to avoid confusion
+
+⚠️ Note: This only changes the appearance of THIS tab.
+Other tabs and windows are not affected.`);
+  };
+
+  const restoreCloaker = () => {
+    if (originalTitle) {
+      document.title = originalTitle;
+    }
+    if (originalFavicon) {
+      updateFavicon(originalFavicon);
+    }
+
+    setResult(`🔄 Cloaker Restored!
+
+• Title restored to: "${originalTitle || 'Original'}"
+• Favicon restored to original
+
+Your tab appearance has been reset to normal.`);
+  };
 
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
