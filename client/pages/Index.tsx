@@ -292,17 +292,7 @@ export default function Index() {
       // Check if about blank is enabled
       if (settings.aboutBlank) {
         if (aboutBlankWindow && !aboutBlankWindow.closed) {
-          // Load content in existing about:blank window
-          if (isUrl) {
-            let url = query;
-            if (!url.startsWith("http://") && !url.startsWith("https://")) {
-              url = "https://" + url;
-            }
-            loadInAboutBlank(url, url);
-          } else {
-            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            loadInAboutBlank(searchUrl, `Search: ${query}`);
-          }
+          // Focus the about:blank window that contains the full Nebula app
           aboutBlankWindow.focus();
         }
         setIsLoading(false);
