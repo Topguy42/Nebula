@@ -362,7 +362,76 @@ export default function Index() {
 
     // Check if about blank is enabled
     if (settings.aboutBlank) {
-      window.open("about:blank", "_blank");
+      const newWindow = window.open("about:blank", "_blank");
+      if (newWindow) {
+        newWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>About Blank - Nebula Proxy</title>
+            <style>
+              body {
+                font-family: system-ui, -apple-system, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+              }
+              .container {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 3rem;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+              }
+              h1 {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                font-weight: 800;
+              }
+              p {
+                font-size: 1.2rem;
+                opacity: 0.9;
+                margin-bottom: 1rem;
+              }
+              .status {
+                background: rgba(34, 197, 94, 0.2);
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 2rem;
+                border: 1px solid rgba(34, 197, 94, 0.3);
+              }
+              .url {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 0.5rem 1rem;
+                border-radius: 8px;
+                margin: 1rem 0;
+                font-family: monospace;
+                font-size: 0.9rem;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>🌌 Nebula</h1>
+              <p>About Blank Mode Active</p>
+              <div class="url">Blocked: ${url}</div>
+              <p>Your proxy request has been intercepted and redirected to this safe page.</p>
+              <div class="status">
+                ✅ Privacy Protected • No Tracking • No Logs
+              </div>
+            </div>
+          </body>
+          </html>
+        `);
+        newWindow.document.close();
+      }
       setIsLoading(false);
       return;
     }
