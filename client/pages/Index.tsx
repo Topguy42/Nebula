@@ -123,20 +123,41 @@ export default function Index() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-purple-400 to-blue-400 bg-clip-text text-transparent">
-                  Interstellar
+                  Nebula
                 </h1>
                 <p className="text-sm text-muted-foreground font-medium">Web Proxy & Gaming Hub</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Badge variant="secondary" className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
-                <Shield className="h-3.5 w-3.5" />
-                Secure
-              </Badge>
-              <Badge variant="secondary" className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
-                <Zap className="h-3.5 w-3.5" />
-                Fast
-              </Badge>
+            <div className="flex items-center space-x-4">
+              {/* Tabs in header */}
+              <Tabs defaultValue="proxy" className="w-auto">
+                <TabsList className="grid grid-cols-2 h-10 p-1 bg-card/50 backdrop-blur-sm border border-border/50">
+                  <TabsTrigger
+                    value="proxy"
+                    className="flex items-center gap-2 h-8 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3"
+                  >
+                    <Globe className="h-4 w-4" />
+                    Proxy
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="games"
+                    className="flex items-center gap-2 h-8 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3"
+                  >
+                    <Gamepad2 className="h-4 w-4" />
+                    Games
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+              <div className="flex items-center space-x-3">
+                <Badge variant="secondary" className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
+                  <Shield className="h-3.5 w-3.5" />
+                  Secure
+                </Badge>
+                <Badge variant="secondary" className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
+                  <Zap className="h-3.5 w-3.5" />
+                  Fast
+                </Badge>
+              </div>
             </div>
           </div>
         </div>
