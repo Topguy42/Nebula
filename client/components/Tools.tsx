@@ -148,30 +148,52 @@ iOS: WiFi Settings > Configure DNS
 ⚠️ Note: Some schools may block DNS changes`);
   };
 
-  const getVideoDownloadInfo = () => {
-    if (!videoUrl) return;
-    
-    setResult(`📹 Video Download Options for studying:
+  const processUrlTools = (action: string) => {
+    if (!urlToolsInput) return;
 
-🎯 For YouTube videos:
-• Add 'ss' before youtube: ssyoutube.com/watch?v=...
-• Use YouTube Premium for offline (if available)
-• Try KeepVid or similar services
-• Use browser extensions (if allowed)
+    try {
+      let output = "";
 
-📚 Educational Content:
-• Khan Academy has offline app
-• TED Talks downloadable
-• MIT OpenCourseWare PDFs
-• Coursera offline mode
+      switch (action) {
+        case "encode":
+          output = `URL Encoded: ${encodeURIComponent(urlToolsInput)}`;
+          break;
+        case "decode":
+          output = `URL Decoded: ${decodeURIComponent(urlToolsInput)}`;
+          break;
+        case "base64encode":
+          output = `Base64 Encoded: ${btoa(urlToolsInput)}`;
+          break;
+        case "base64decode":
+          output = `Base64 Decoded: ${atob(urlToolsInput)}`;
+          break;
+        case "analyze":
+          try {
+            const url = new URL(urlToolsInput.startsWith('http') ? urlToolsInput : `https://${urlToolsInput}`);
+            output = `🔍 URL Analysis:
+Protocol: ${url.protocol}
+Host: ${url.hostname}
+Port: ${url.port || 'default'}
+Path: ${url.pathname}
+Query: ${url.search}
+Fragment: ${url.hash}
 
-⚡ Quick tips:
-• Right-click → Save video (sometimes works)
-• Use 'Save Page As' for full content
-• Screenshot important slides
-• Take notes while watching
+🔗 Alternative formats:
+• Without www: ${url.hostname.replace('www.', '')}
+• Mobile version: m.${url.hostname.replace('www.', '')}
+• HTTPS: https://${url.hostname}${url.pathname}`;
+          } catch {
+            output = "Error: Invalid URL format";
+          }
+          break;
+        default:
+          output = "Unknown action";
+      }
 
-⚠️ Always respect copyright and school policies!`);
+      setResult(output);
+    } catch (error) {
+      setResult(`Error: Invalid input for ${action}`);
+    }
   };
 
   const startStudyTimer = () => {
