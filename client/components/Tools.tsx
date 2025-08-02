@@ -23,7 +23,7 @@ import {
 const toolsList = [
   {
     name: "Site Checker",
-    icon: Globe,
+    icon: ExternalLink,
     description: "Check if websites are accessible and find alternatives",
     category: "Access",
   },
