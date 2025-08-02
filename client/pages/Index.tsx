@@ -909,26 +909,38 @@ export default function Index() {
 
           {/* Tab Content */}
           {activeTab === "proxy" && (
-            <div className="max-w-6xl mx-auto space-y-12">
+            <div className="max-w-7xl mx-auto space-y-16">
               <div>
-                <h3 className="text-2xl font-semibold mb-8">Quick Access</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                <div className="text-center mb-12">
+                  <h3 className="text-3xl font-bold mb-3">Quick Access</h3>
+                  <p className="text-muted-foreground">Jump to your favorite websites instantly</p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
                   {quickLinks.map((link) => {
                     const IconComponent = link.icon;
                     return (
-                      <Button
+                      <div
                         key={link.name}
-                        variant="outline"
                         onClick={() => handleQuickLink(link.url)}
-                        className="h-20 flex-col gap-3 backdrop-blur-glass hover:backdrop-blur-glass border-border/50 hover:border-primary/50 transition-all duration-300 hover:scale-105 rounded-xl group hover:shadow-xl"
+                        className="group cursor-pointer"
                       >
-                        <div
-                          className={`${link.color} group-hover:scale-110 transition-transform duration-200`}
-                        >
-                          <IconComponent />
+                        <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-background/60 border border-border/50 hover:border-primary/40 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:bg-background/80">
+                          {/* Icon */}
+                          <div className="flex justify-center mb-4">
+                            <div className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-background/80 shadow-lg`}>
+                              <IconComponent />
+                            </div>
+                          </div>
+                          {/* Label */}
+                          <div className="text-center">
+                            <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {link.name}
+                            </span>
+                          </div>
+                          {/* Hover effect */}
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
-                        <span className="text-xs font-medium">{link.name}</span>
-                      </Button>
+                      </div>
                     );
                   })}
                 </div>
