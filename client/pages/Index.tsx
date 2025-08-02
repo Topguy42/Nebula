@@ -835,11 +835,11 @@ export default function Index() {
                 </h1>
                 <div className="space-y-4">
                   <p className="text-2xl md:text-3xl font-semibold text-foreground/90 leading-tight">
-                    Professional Web Proxy Solution
+                    Fast & Secure Web Access
                   </p>
                   <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                    Experience secure, lightning-fast web browsing with enterprise-grade proxy technology.
-                    Access any website, stream content, and run applications with uncompromising privacy and performance.
+                    Browse any website freely with lightning-fast speeds and complete privacy.
+                    Access blocked content, stream videos, and use your favorite apps without restrictions.
                   </p>
                 </div>
               </div>
