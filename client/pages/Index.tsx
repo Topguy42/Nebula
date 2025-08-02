@@ -983,7 +983,7 @@ export default function Index() {
                         </div>
                         <Badge
                           variant="secondary"
-                          className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary border-primary/20"
+                          className="text-xs font-semibold px-3 py-1 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
                         >
                           {game.category}
                         </Badge>
