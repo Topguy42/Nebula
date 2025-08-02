@@ -144,22 +144,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
         return res.send(cssContent);
       } else if (contentType.includes("application/javascript") || contentType.includes("text/javascript")) {
-        // Handle JavaScript files
-        let jsContent = await response.text();
-
-        // Basic JS URL rewriting for common patterns (fetch, XMLHttpRequest, etc.)
-        // Note: This is limited - sophisticated JS apps may still have issues
-        jsContent = jsContent.replace(/(["'`])((https?:)?\/\/[^"'`\s]+)(["'`])/gi, (match, quote1, url, protocol, quote2) => {
-          try {
-            let fullUrl = url.startsWith('//') ? targetUrl.protocol + url : url;
-            return `${quote1}/api/proxy?url=${encodeURIComponent(fullUrl)}${quote2}`;
-          } catch (e) {
-            return match;
-          }
-        });
+        // Handle JavaScript files - don't rewrite them, let our injected code handle everything
+        const jsContent = await response.text();
 
         res.setHeader("Content-Type", "application/javascript; charset=utf-8");
         res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "*");
+        res.setHeader("Access-Control-Allow-Methods", "*");
         res.setHeader("Cache-Control", "public, max-age=3600");
 
         return res.send(jsContent);
