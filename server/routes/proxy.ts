@@ -10,8 +10,7 @@ const detectAboutBlank = (req: any): boolean => {
 
   // Only detect about:blank if we have strong indicators
   return (
-    referer === "https://www.google.com/" ||
-    origin === "https://www.google.com"
+    referer === "https://www.google.com/" || origin === "https://www.google.com"
   );
 };
 
@@ -21,13 +20,15 @@ const generateRealHeaders = (hostname: string, isAboutBlank: boolean) => {
 
     // Simple, reliable headers that work
     return {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
       "Accept-Language": "en-US,en;q=0.9",
       "Accept-Encoding": "gzip, deflate, br",
-      "Connection": "keep-alive",
+      Connection: "keep-alive",
       "Upgrade-Insecure-Requests": "1",
-      "Cache-Control": "no-cache"
+      "Cache-Control": "no-cache",
     };
   }
 
@@ -72,9 +73,12 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     // Simple detection without complex rate limiting for now
     const isAboutBlank = detectAboutBlank(req);
-    const isGoogleRequest = hostname.includes("google.com") || hostname.includes("google.");
+    const isGoogleRequest =
+      hostname.includes("google.com") || hostname.includes("google.");
 
-    console.log(`[PROXY] About:blank detected: ${isAboutBlank}, Google request: ${isGoogleRequest}`);
+    console.log(
+      `[PROXY] About:blank detected: ${isAboutBlank}, Google request: ${isGoogleRequest}`,
+    );
 
     // Fetch the content with better error handling
     const controller = new AbortController();
@@ -95,7 +99,8 @@ export const handleProxy: RequestHandler = async (req, res) => {
       ];
 
       // Use simple, reliable headers for all requests
-      const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+      const randomUA =
+        userAgents[Math.floor(Math.random() * userAgents.length)];
 
       // Simple referrer rotation
       let dynamicReferrer = "";
@@ -162,7 +167,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
       ) {
         // Standard Google headers that work for all environments
         headers["Referer"] = dynamicReferrer || "https://www.google.com/";
-        headers["Sec-Fetch-Site"] = dynamicReferrer ? "cross-site" : "same-origin";
+        headers["Sec-Fetch-Site"] = dynamicReferrer
+          ? "cross-site"
+          : "same-origin";
         headers["Sec-Fetch-Mode"] = "navigate";
         headers["Sec-Fetch-User"] = "?1";
         headers["Sec-Fetch-Dest"] = "document";
@@ -398,8 +405,6 @@ export const handleProxy: RequestHandler = async (req, res) => {
       }
     } catch (fetchError) {
       clearTimeout(timeoutId);
-
-
 
       if (fetchError instanceof Error && fetchError.name === "AbortError") {
         return res.status(200).send(`
