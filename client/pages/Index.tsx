@@ -402,11 +402,15 @@ export default function Index() {
           <html>
           <head>
             <title>about:blank</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="referrer" content="no-referrer">
             <style>
               body {
                 margin: 0;
                 padding: 0;
                 overflow: hidden;
+                background: white;
               }
               iframe {
                 width: 100vw;
@@ -415,13 +419,22 @@ export default function Index() {
                 display: block;
               }
             </style>
+            <script>
+              // Override document.referrer to help with restrictions
+              Object.defineProperty(document, 'referrer', {
+                value: 'https://www.google.com/',
+                writable: false,
+                configurable: false
+              });
+            </script>
           </head>
           <body>
             <iframe
               src="${currentUrl}"
               allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
               allowfullscreen
-              sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
+              referrerpolicy="no-referrer-when-downgrade"
+              sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation allow-downloads"
             ></iframe>
           </body>
           </html>
