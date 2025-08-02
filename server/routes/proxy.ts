@@ -1,19 +1,6 @@
 import { RequestHandler } from "express";
 
-const referrerSources = [
-  "https://www.google.com/search?q=",
-  "https://www.bing.com/search?q=",
-  "https://duckduckgo.com/?q=",
-  "https://search.yahoo.com/search?p=",
-  "https://www.facebook.com/",
-  "https://twitter.com/",
-  "https://www.reddit.com/",
-  "https://en.wikipedia.org/",
-  "https://www.youtube.com/",
-  "https://github.com/",
-  "https://stackoverflow.com/",
-  "",
-];
+
 
 
 
