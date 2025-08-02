@@ -5,7 +5,16 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useTheme } from "@/hooks/use-theme";
-import { Settings as SettingsIcon, Shield, Zap, Volume2, Moon, Sun, Search, RotateCcw } from "lucide-react";
+import {
+  Settings as SettingsIcon,
+  Shield,
+  Zap,
+  Volume2,
+  Moon,
+  Sun,
+  Search,
+  RotateCcw,
+} from "lucide-react";
 
 interface SettingsProps {
   settings: {
@@ -146,7 +155,10 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               <Switch
                 checked={settings.antiGoGuardian}
                 onCheckedChange={(checked) =>
-                  setSettings((prev: any) => ({ ...prev, antiGoGuardian: checked }))
+                  setSettings((prev: any) => ({
+                    ...prev,
+                    antiGoGuardian: checked,
+                  }))
                 }
               />
             </div>
@@ -160,9 +172,14 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
                   </p>
                 </div>
                 <Switch
-                  checked={localStorage.getItem('proxy-referrer-rotation') === 'true'}
+                  checked={
+                    localStorage.getItem("proxy-referrer-rotation") === "true"
+                  }
                   onCheckedChange={(checked) => {
-                    localStorage.setItem('proxy-referrer-rotation', checked.toString());
+                    localStorage.setItem(
+                      "proxy-referrer-rotation",
+                      checked.toString(),
+                    );
                     // Force re-render
                     setSettings((prev: any) => ({ ...prev }));
                   }}
@@ -211,24 +228,39 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { key: 'duckduckgo', name: 'DuckDuckGo', desc: 'Privacy-focused' },
-                  { key: 'google', name: 'Google', desc: 'Most comprehensive' },
-                  { key: 'bing', name: 'Bing', desc: 'Microsoft search' },
-                  { key: 'startpage', name: 'Startpage', desc: 'Private Google results' },
+                  {
+                    key: "duckduckgo",
+                    name: "DuckDuckGo",
+                    desc: "Privacy-focused",
+                  },
+                  { key: "google", name: "Google", desc: "Most comprehensive" },
+                  { key: "bing", name: "Bing", desc: "Microsoft search" },
+                  {
+                    key: "startpage",
+                    name: "Startpage",
+                    desc: "Private Google results",
+                  },
                 ].map((engine) => {
-                  const isSelected = (localStorage.getItem('preferred-search-engine') || 'google') === engine.key;
+                  const isSelected =
+                    (localStorage.getItem("preferred-search-engine") ||
+                      "google") === engine.key;
                   return (
                     <Button
                       key={engine.key}
                       variant={isSelected ? "default" : "outline"}
                       onClick={() => {
-                        localStorage.setItem('preferred-search-engine', engine.key);
+                        localStorage.setItem(
+                          "preferred-search-engine",
+                          engine.key,
+                        );
                         setSettings((prev: any) => ({ ...prev })); // Force re-render
                       }}
                       className="h-auto p-3 flex flex-col items-start text-left"
                     >
                       <span className="font-medium">{engine.name}</span>
-                      <span className="text-xs text-muted-foreground">{engine.desc}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {engine.desc}
+                      </span>
                     </Button>
                   );
                 })}
@@ -288,8 +320,8 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               <Button
                 variant="destructive"
                 onClick={() => {
-                  localStorage.removeItem('preferred-search-engine');
-                  localStorage.removeItem('proxy-referrer-rotation');
+                  localStorage.removeItem("preferred-search-engine");
+                  localStorage.removeItem("proxy-referrer-rotation");
                   setSettings({
                     notifications: true,
                     autoplay: false,
