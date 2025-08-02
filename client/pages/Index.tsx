@@ -313,6 +313,17 @@ export default function Index() {
     }
   }, [settings.aboutBlank]);
 
+  // Function to load content in about:blank window
+  const loadInAboutBlank = (url: string, title = "Website") => {
+    if (aboutBlankWindow && !aboutBlankWindow.closed) {
+      const loadingEl = aboutBlankWindow.document.getElementById('loading');
+      if (loadingEl) {
+        loadingEl.innerHTML = `Loading ${title}...`;
+        loadingEl.innerHTML = `<iframe src="/api/proxy?url=${encodeURIComponent(url)}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+      }
+    }
+  };
+
   const handleProxySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (proxyUrl.trim()) {
