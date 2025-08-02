@@ -467,13 +467,15 @@ export default function Index() {
         }
         finalUrl = url;
         setDisplayUrl(url);
-        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
+        const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
+        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         finalUrl = searchUrl;
         setDisplayUrl(`Google Search: ${query}`);
-        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
+        const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
+        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
       }
 
       setProxyUrl("");
