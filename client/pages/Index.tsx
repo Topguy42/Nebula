@@ -304,6 +304,7 @@ export default function Index() {
     volume: [75],
     quality: "high",
     aboutBlank: false,
+    antiGoGuardian: false,
   });
 
   // Store reference to about:blank window
