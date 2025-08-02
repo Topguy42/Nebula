@@ -241,9 +241,9 @@ export default function Index() {
 
       // Check if about blank is enabled
       if (settings.aboutBlank) {
-        setDisplayUrl("about:blank");
-        setCurrentUrl("about:blank");
+        window.open("about:blank", "_blank");
         setIsLoading(false);
+        setProxyUrl("");
         return;
       }
 
