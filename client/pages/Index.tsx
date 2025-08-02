@@ -1068,8 +1068,8 @@ export default function Index() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 mt-32 border-t border-border/40 backdrop-blur-sm bg-background/80">
-        <div className="container mx-auto px-6 py-12">
+      <footer className="relative z-10 mt-8 border-t border-border/40 backdrop-blur-sm bg-background/80">
+        <div className="container mx-auto px-6 py-6">
           <div className="text-center space-y-6">
             <div className="flex items-center justify-center gap-4">
               <VortexLogo className="w-8 h-8" />
