@@ -12,10 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Globe,
   Wifi,
-  Download,
+  Link2,
   BookOpen,
   Timer,
-  FileText,
+  Activity,
   Search,
   Shield,
 } from "lucide-react";
@@ -233,7 +233,7 @@ iOS: WiFi Settings > Configure DNS
 🪞 Mirror Site Methods:
 • Add 'mirror' to search: "${searchQuery} mirror site"
 • Try different TLDs: .org, .net, .info, .me
-��� Use proxy sites (be careful!)
+• Use proxy sites (be careful!)
 • Check if site has official mirrors
 
 🔗 Alternative access methods:
@@ -303,7 +303,7 @@ iOS: WiFi Settings > Configure DNS
       // Fallback if IP service fails
       const basicInfo = `🌐 Your Connection Information:
 
-💻 Browser & Device:
+���� Browser & Device:
 • User Agent: ${navigator.userAgent}
 • Browser Language: ${navigator.language}
 • Platform: ${navigator.platform}
