@@ -238,12 +238,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       if (!response.ok) {
         // Enhanced handling for rate limiting
         if (response.status === 429) {
-          // For Google, add to our internal rate limiting
-          if (hostname.includes('google.com') || hostname.includes('google.')) {
-            googleRequestTimes.set(clientIP, Date.now() + (GOOGLE_RATE_LIMIT_MS * 2)); // Extend cooldown
-          }
-
-          const retryDelay = hostname.includes('google') ? 3 : 2; // Shorter delay for better UX
+          const retryDelay = 2; // Short delay for better UX
 
           return res.status(200).send(`
             <html>
