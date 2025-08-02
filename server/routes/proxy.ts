@@ -247,11 +247,6 @@ export const handleProxy: RequestHandler = async (req, res) => {
       console.log(`[PROXY] Making request to: ${targetUrl.toString()}`);
       console.log(`[PROXY] Headers:`, headers);
 
-      // Add small delay for Google requests to appear more natural
-      if (isGoogleRequest) {
-        await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400)); // 800-1200ms delay
-      }
-
       const response = await fetch(targetUrl.toString(), {
         signal: controller.signal,
         headers,
