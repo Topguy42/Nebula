@@ -185,7 +185,7 @@ iOS: WiFi Settings > Configure DNS
 
     setResult(`🌐 Working Proxy Servers (${proxyRegion.toUpperCase()}):
 
-📡 Free Proxy Sites:
+���� Free Proxy Sites:
 ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 🔧 Manual Proxy Setup:
@@ -304,7 +304,12 @@ ${selectedMethod}
 
   const startReferrerRotation = () => {
     if (referrerRotation) {
+      // Stop rotation
       setReferrerRotation(false);
+      if (rotationIntervalId) {
+        clearInterval(rotationIntervalId);
+        setRotationIntervalId(null);
+      }
       setResult("🔄 Referrer rotation stopped.");
       return;
     }
@@ -313,34 +318,44 @@ ${selectedMethod}
     let currentIndex = 0;
 
     const rotateReferrer = () => {
+      if (!referrerRotation) return; // Safety check
+
       const referrer = referrerSources[currentIndex];
       setCurrentReferrer(referrer.value);
 
       // Dynamically create and inject meta tag for referrer policy
-      const metaTag = document.querySelector('meta[name="referrer"]') || document.createElement('meta');
-      metaTag.setAttribute('name', 'referrer');
-      metaTag.setAttribute('content', referrer.value === 'none' ? 'no-referrer' : 'unsafe-url');
-
-      if (!document.querySelector('meta[name="referrer"]')) {
+      const existingMeta = document.querySelector('meta[name="referrer"]');
+      if (existingMeta) {
+        existingMeta.setAttribute('content', referrer.value === 'none' ? 'no-referrer' : 'unsafe-url');
+      } else {
+        const metaTag = document.createElement('meta');
+        metaTag.setAttribute('name', 'referrer');
+        metaTag.setAttribute('content', referrer.value === 'none' ? 'no-referrer' : 'unsafe-url');
         document.head.appendChild(metaTag);
       }
 
-      // Override document.referrer in a non-standard way (for demonstration)
-      try {
-        Object.defineProperty(document, 'referrer', {
-          value: referrer.url,
-          writable: true,
-          configurable: true
-        });
-      } catch (e) {
-        // Fallback if can't override referrer
+      // Create a hidden iframe with the referrer source for better simulation
+      const existingIframe = document.getElementById('referrer-simulation-frame');
+      if (existingIframe) {
+        existingIframe.remove();
+      }
+
+      if (referrer.url) {
+        const iframe = document.createElement('iframe');
+        iframe.id = 'referrer-simulation-frame';
+        iframe.style.display = 'none';
+        iframe.style.width = '1px';
+        iframe.style.height = '1px';
+        iframe.src = referrer.url;
+        iframe.referrerPolicy = 'unsafe-url';
+        document.body.appendChild(iframe);
       }
 
       setResult(`🔄 Active Referrer Rotation (Every ${rotationInterval}s)
 
 Current Referrer: ${referrer.name}
 URL: ${referrer.url || "No referrer"}
-Status: ${referrerRotation ? "🟢 Active" : "🔴 Stopped"}
+Status: 🟢 Active (Rotation #${Math.floor(Date.now() / 1000) % 1000})
 
 🌍 Rotation Sequence:
 ${referrerSources.map((r, i) =>
@@ -349,12 +364,19 @@ ${referrerSources.map((r, i) =>
 
 💡 How it works:
 • Automatically rotates referrer every ${rotationInterval} seconds
-• Changes meta referrer policy
-• Simulates requests from different sources
+• Changes meta referrer policy dynamically
+• Simulates browsing from different sources
+• Creates hidden iframe with referrer source
 • Helps bypass referrer-based restrictions
 
-⚠️ Note: Some restrictions may require actual navigation
-from the referrer source for full effectiveness.`);
+🚀 Pro Tips:
+• Make requests while rotation is active
+• Each rotation changes your apparent source
+• Works best with sites that check referrer headers
+• Some sites may need actual navigation from referrer
+
+⚠️ Note: Browser security may limit some referrer manipulation.
+This tool demonstrates concepts and provides testing capabilities.`);
 
       currentIndex = (currentIndex + 1) % referrerSources.length;
     };
@@ -364,12 +386,10 @@ from the referrer source for full effectiveness.`);
 
     // Set up interval for rotation
     const interval = setInterval(() => {
-      if (referrerRotation) {
-        rotateReferrer();
-      } else {
-        clearInterval(interval);
-      }
+      rotateReferrer();
     }, rotationInterval * 1000);
+
+    setRotationIntervalId(interval);
   };
 
   const testReferrerRequests = async () => {
