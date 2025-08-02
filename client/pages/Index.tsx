@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Tools from "@/components/Tools";
 import Settings from "@/components/Settings";
+import DevToolsPanel from "@/components/DevToolsPanel";
 import {
   Gamepad2,
   Star,
