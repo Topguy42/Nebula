@@ -825,7 +825,7 @@ export default function Index() {
             <div className="space-y-8">
               {/* Main Title */}
               <div className="space-y-6">
-                <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent leading-none">
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent leading-none">
                   VortexPortal
                 </h1>
                 <div className="space-y-4">
