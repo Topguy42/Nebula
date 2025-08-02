@@ -18,6 +18,7 @@ interface SettingsProps {
     privacy: boolean;
     volume: number[];
     quality: string;
+    aboutBlank: boolean;
   };
   setSettings: (settings: any) => void;
 }
