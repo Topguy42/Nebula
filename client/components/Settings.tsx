@@ -89,6 +89,17 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               />
             </div>
             <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">About Blank Mode</p>
+                <p className="text-sm text-muted-foreground">All proxy requests go to about:blank</p>
+              </div>
+              <Switch
+                checked={settings.aboutBlank}
+                onCheckedChange={(checked) => setSettings((prev: any) => ({ ...prev, aboutBlank: checked }))}
+              />
+            </div>
+            <Separator />
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
