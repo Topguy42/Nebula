@@ -909,7 +909,7 @@ export default function Index() {
                     placeholder="Search games by name or category..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                    className="h-16 text-lg backdrop-blur-sm bg-background/80 border-2 border-border focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/90 group-hover:border-primary/60 placeholder:text-muted-foreground shadow-lg"
                   />
                 </div>
               ) : activeTab === "apps" ? (
@@ -920,7 +920,7 @@ export default function Index() {
                     placeholder="Search web applications..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                    className="h-16 text-lg backdrop-blur-sm bg-background/80 border-2 border-border focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/90 group-hover:border-primary/60 placeholder:text-muted-foreground shadow-lg"
                   />
                 </div>
               ) : activeTab === "tools" ? (
