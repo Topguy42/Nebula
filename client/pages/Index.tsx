@@ -496,7 +496,8 @@ export default function Index() {
     }
 
     setDisplayUrl(gameUrl);
-    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}`);
+    const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
+    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
     setIsLoading(true); // Set loading after URL change
   };
