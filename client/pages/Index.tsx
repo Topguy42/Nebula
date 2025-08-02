@@ -647,6 +647,13 @@ export default function Index() {
             loading="eager"
           />
         )}
+
+        {/* Custom Dev Tools Panel */}
+        <DevToolsPanel
+          isOpen={devToolsOpen}
+          onClose={() => setDevToolsOpen(false)}
+          iframeUrl={displayUrl}
+        />
       </div>
     );
   }
