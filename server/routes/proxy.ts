@@ -9,7 +9,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       return res.status(400).send(`
         <html>
           <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-            <h2>��� Error</h2>
+            <h2>❌ Error</h2>
             <p>URL parameter is required</p>
             <button onclick="history.back()">Go Back</button>
           </body>
@@ -37,7 +37,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     // Fetch the content with better error handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    // Faster timeout for Google search, longer for other sites
+    const timeout = hostname.includes("google") ? 6000 : 10000;
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
       console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
