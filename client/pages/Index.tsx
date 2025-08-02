@@ -477,15 +477,19 @@ export default function Index() {
       const query = proxyUrl.trim();
       setProxyError(null);
 
-      // Check if about blank is enabled
-      if (settings.aboutBlank) {
+      // Check if about blank is enabled AND we're not already inside the about:blank iframe
+      if (settings.aboutBlank && window.parent === window) {
+        // We're in the main window, not inside the about:blank iframe
         if (aboutBlankWindow && !aboutBlankWindow.closed) {
-          // Focus the about:blank window that contains the full Nebula app
+          // Focus the about:blank window that contains the full Vortex app
           aboutBlankWindow.focus();
         }
         setProxyUrl("");
         return;
       }
+
+      // If we reach here, either about:blank is disabled OR we're inside the about:blank iframe
+      // In both cases, we should process the proxy request normally
 
       // Check if it's a URL
       const isUrl =
