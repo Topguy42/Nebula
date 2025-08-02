@@ -100,10 +100,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
       let selectedUA;
       if (isGoogleRequest) {
         // Use client IP to select consistent UA for each user
-        const uaIndex = Math.abs(clientIP.split('').reduce((a, b) => {
-          a = ((a << 5) - a) + b.charCodeAt(0);
-          return a & a;
-        }, 0)) % userAgents.length;
+        const uaIndex =
+          Math.abs(
+            clientIP.split("").reduce((a, b) => {
+              a = (a << 5) - a + b.charCodeAt(0);
+              return a & a;
+            }, 0),
+          ) % userAgents.length;
         selectedUA = userAgents[uaIndex];
       } else {
         selectedUA = userAgents[Math.floor(Math.random() * userAgents.length)];

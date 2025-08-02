@@ -136,26 +136,30 @@ export default function Tools({}: ToolsProps) {
         window.top !== window ? window.top!.document : document;
 
       // Remove existing favicon links to force refresh
-      const existingFavicons = targetDocument.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
-      existingFavicons.forEach(link => link.remove());
+      const existingFavicons = targetDocument.querySelectorAll(
+        'link[rel="icon"], link[rel="shortcut icon"]',
+      );
+      existingFavicons.forEach((link) => link.remove());
 
       // Create new favicon element with cache-busting
       const favicon = targetDocument.createElement("link");
       favicon.rel = "icon";
       favicon.type = "image/x-icon";
       // Add timestamp to force browser to refresh the favicon
-      const separator = url.includes('?') ? '&' : '?';
+      const separator = url.includes("?") ? "&" : "?";
       favicon.href = `${url}${separator}_t=${Date.now()}`;
       targetDocument.head.appendChild(favicon);
     } catch (error) {
       // Fallback to current document if cross-origin access is blocked
-      const existingFavicons = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
-      existingFavicons.forEach(link => link.remove());
+      const existingFavicons = document.querySelectorAll(
+        'link[rel="icon"], link[rel="shortcut icon"]',
+      );
+      existingFavicons.forEach((link) => link.remove());
 
       const favicon = document.createElement("link");
       favicon.rel = "icon";
       favicon.type = "image/x-icon";
-      const separator = url.includes('?') ? '&' : '?';
+      const separator = url.includes("?") ? "&" : "?";
       favicon.href = `${url}${separator}_t=${Date.now()}`;
       document.head.appendChild(favicon);
     }
