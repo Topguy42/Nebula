@@ -209,60 +209,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
-        // For Google errors in about:blank, try to get content anyway but don't auto-retry
-        if (
-          (hostname.includes("google.com") || hostname.includes("google.")) &&
-          isFromAboutBlank
-        ) {
-          // Try to get the content even if status is not ok - sometimes Google returns content with error status
-          const contentType = response.headers.get("content-type") || "";
-          if (contentType.includes("text/html")) {
-            try {
-              const content = await response.text();
-              if (content && content.length > 1000) {
-                // If we got substantial content, process and return it
-                const processedContent = processGoogleSearchFast(
-                  content,
-                  targetUrl,
-                );
-                res.setHeader("Content-Type", "text/html; charset=utf-8");
-                res.setHeader("X-Frame-Options", "SAMEORIGIN");
-                res.setHeader(
-                  "Content-Security-Policy",
-                  "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *; frame-src *; child-src *; object-src *; media-src *;",
-                );
-                res.setHeader("Access-Control-Allow-Origin", "*");
-                res.setHeader("Cache-Control", "private, max-age=60");
-                return res.send(processedContent);
-              }
-            } catch (e) {
-              console.log(
-                "[PROXY] Could not process Google content despite error status",
-              );
-            }
-          }
-
-          // Show error without auto-retry to avoid rate limiting
-          return res.status(200).send(`
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <title>Google Error</title>
-              </head>
-              <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
-                <div style="background: white; border-radius: 8px; padding: 24px; max-width: 400px; margin: 100px auto;">
-                  <div style="font-size: 32px; margin-bottom: 16px;">⚠️</div>
-                  <h3 style="margin: 0 0 12px 0;">Google Request Failed</h3>
-                  <p style="color: #6b7280; margin: 0 0 16px 0;">Status: ${response.status} ${response.statusText}</p>
-                  <button onclick="window.location.reload();" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 8px;">Retry</button>
-                  <button onclick="history.back();" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Go Back</button>
-                </div>
-              </body>
-            </html>
-          `);
-        }
-
-        // For other sites or non-about:blank, show minimal error
+        // Standard error handling for all requests
         return res.status(200).send(`
           <html>
             <body style="font-family: sans-serif; padding: 40px; text-align: center;">
