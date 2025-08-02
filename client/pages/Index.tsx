@@ -278,13 +278,13 @@ const webApps = [
 // VortexPortal Logo Component
 const VortexLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
   <div className={`${className} relative flex items-center justify-center group`}>
-    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 opacity-80 blur-sm group-hover:blur-none transition-all duration-300" />
-    <div className="relative z-10 w-full h-full rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 flex items-center justify-center shadow-2xl border border-white/20">
+    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 opacity-90 blur-sm group-hover:blur-none transition-all duration-300" />
+    <div className="relative z-10 w-full h-full rounded-xl bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 flex items-center justify-center shadow-2xl border border-white/30">
       <svg className="w-3/5 h-3/5 text-white" viewBox="0 0 24 24" fill="none">
         <path
           d="M12 2L2 22H22L12 2Z"
           fill="currentColor"
-          fillOpacity="0.3"
+          fillOpacity="0.4"
         />
         <circle
           cx="12"
@@ -296,16 +296,16 @@ const VortexLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
         <path
           d="M12 2L22 22"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
-          opacity="0.7"
+          opacity="0.8"
         />
         <path
           d="M12 2L2 22"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
-          opacity="0.7"
+          opacity="0.8"
         />
       </svg>
     </div>
@@ -638,7 +638,7 @@ export default function Index() {
         {proxyError ? (
           <div className="flex-1 flex items-center justify-center bg-background">
             <div className="text-center p-8 max-w-md">
-              <div className="text-4xl mb-4">⚠️</div>
+              <div className="text-4xl mb-4">⚠���</div>
               <h3 className="text-xl font-semibold mb-2">Proxy Error</h3>
               <p className="text-muted-foreground mb-4">{proxyError}</p>
               <Button
