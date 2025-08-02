@@ -229,9 +229,6 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
                     >
                       <span className="font-medium">{engine.name}</span>
                       <span className="text-xs text-muted-foreground">{engine.desc}</span>
-                      {engine.key === 'google' && (
-                        <span className="text-xs text-orange-600 dark:text-orange-400 mt-1">⚠️ Rate limited</span>
-                      )}
                     </Button>
                   );
                 })}
