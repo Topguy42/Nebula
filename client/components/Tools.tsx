@@ -91,7 +91,7 @@ export default function Tools({}: ToolsProps) {
 
   // Initialize referrer rotation from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('proxy-referrer-rotation') === 'true';
+    const saved = localStorage.getItem("proxy-referrer-rotation") === "true";
     setReferrerRotation(saved);
   }, []);
 
@@ -103,7 +103,9 @@ export default function Tools({}: ToolsProps) {
   // Initialize original title and favicon
   useEffect(() => {
     setOriginalTitle(document.title);
-    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    const favicon = document.querySelector(
+      'link[rel="icon"]',
+    ) as HTMLLinkElement;
     if (favicon) {
       setOriginalFavicon(favicon.href);
     }
@@ -113,7 +115,7 @@ export default function Tools({}: ToolsProps) {
   useEffect(() => {
     return () => {
       // Clean up any simulation elements
-      const iframe = document.getElementById('referrer-simulation-frame');
+      const iframe = document.getElementById("referrer-simulation-frame");
       if (iframe) {
         iframe.remove();
       }
@@ -130,21 +132,26 @@ export default function Tools({}: ToolsProps) {
   const updateFavicon = (url: string) => {
     try {
       // Try to update the top-level window first (works when not in iframe)
-      const targetDocument = window.top !== window ? window.top!.document : document;
-      let favicon = targetDocument.querySelector('link[rel="icon"]') as HTMLLinkElement;
+      const targetDocument =
+        window.top !== window ? window.top!.document : document;
+      let favicon = targetDocument.querySelector(
+        'link[rel="icon"]',
+      ) as HTMLLinkElement;
 
       if (!favicon) {
-        favicon = targetDocument.createElement('link');
-        favicon.rel = 'icon';
+        favicon = targetDocument.createElement("link");
+        favicon.rel = "icon";
         targetDocument.head.appendChild(favicon);
       }
       favicon.href = url;
     } catch (error) {
       // Fallback to current document if cross-origin access is blocked
-      let favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+      let favicon = document.querySelector(
+        'link[rel="icon"]',
+      ) as HTMLLinkElement;
       if (!favicon) {
-        favicon = document.createElement('link');
-        favicon.rel = 'icon';
+        favicon = document.createElement("link");
+        favicon.rel = "icon";
         document.head.appendChild(favicon);
       }
       favicon.href = url;
@@ -186,7 +193,7 @@ export default function Tools({}: ToolsProps) {
 
     setResult(`🥸 Cloaker Applied Successfully!
 
-${changes.join('\n')}
+${changes.join("\n")}
 
 💡 Tips:
 • Your browser tab now appears as the disguised site
@@ -218,7 +225,7 @@ ${changes.join('\n')}
 
     setResult(`🔄 Cloaker Restored!
 
-• Title restored to: "${originalTitle || 'Original'}"
+• Title restored to: "${originalTitle || "Original"}"
 • Favicon restored to original
 
 Your tab appearance has been reset to normal.`);
@@ -229,37 +236,37 @@ Your tab appearance has been reset to normal.`);
       id: "duckduckgo",
       name: "DuckDuckGo",
       url: "https://duckduckgo.com/?q=",
-      description: "Privacy-focused, works well in proxy environments"
+      description: "Privacy-focused, works well in proxy environments",
     },
     {
       id: "bing",
       name: "Bing",
       url: "https://www.bing.com/search?q=",
-      description: "Microsoft's search engine, reliable proxy compatibility"
+      description: "Microsoft's search engine, reliable proxy compatibility",
     },
     {
       id: "startpage",
       name: "Startpage",
       url: "https://www.startpage.com/search?q=",
-      description: "Private Google results, good for bypassing restrictions"
+      description: "Private Google results, good for bypassing restrictions",
     },
     {
       id: "searx",
       name: "SearX",
       url: "https://searx.org/search?q=",
-      description: "Open source, aggregates results from multiple engines"
+      description: "Open source, aggregates results from multiple engines",
     },
     {
       id: "google",
       name: "Google",
       url: "https://www.google.com/search?q=",
-      description: "May have restrictions in proxy/about:blank environments"
-    }
+      description: "May have restrictions in proxy/about:blank environments",
+    },
   ];
 
   const updateSearchEngine = () => {
-    localStorage.setItem('preferred-search-engine', selectedSearchEngine);
-    const engine = searchEngines.find(e => e.id === selectedSearchEngine);
+    localStorage.setItem("preferred-search-engine", selectedSearchEngine);
+    const engine = searchEngines.find((e) => e.id === selectedSearchEngine);
 
     setResult(`🔍 Search Engine Updated!
 
@@ -275,7 +282,7 @@ Your new search engine will take effect on the next search.
 
   // Initialize search engine from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('preferred-search-engine');
+    const saved = localStorage.getItem("preferred-search-engine");
     if (saved) {
       setSelectedSearchEngine(saved);
     }
@@ -439,8 +446,6 @@ ${selectedMethod}
 
 `);
   };
-
-
 
   const checkPrivacy = async () => {
     try {
@@ -669,15 +674,24 @@ ${selectedMethod}
           {selectedTool === "referrercontrol" && (
             <div className="space-y-4">
               <div className="text-center p-6 bg-muted/50 rounded-lg border">
-                <h3 className="text-lg font-semibold mb-2">Proxy Referrer Rotation</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  Proxy Referrer Rotation
+                </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  When enabled, the proxy will automatically rotate referrer headers every 5 seconds to bypass referrer-based restrictions.
+                  When enabled, the proxy will automatically rotate referrer
+                  headers every 5 seconds to bypass referrer-based restrictions.
                 </p>
 
                 <div className="flex items-center justify-center gap-4 mb-4">
                   <div className="text-sm">
                     <span className="font-medium">Status: </span>
-                    <span className={referrerRotation ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                    <span
+                      className={
+                        referrerRotation
+                          ? "text-green-600 font-semibold"
+                          : "text-red-600 font-semibold"
+                      }
+                    >
                       {referrerRotation ? "🟢 Active" : "🔴 Disabled"}
                     </span>
                   </div>
@@ -696,7 +710,10 @@ ${selectedMethod}
                   onClick={() => {
                     setReferrerRotation(!referrerRotation);
                     // Store the setting in localStorage
-                    localStorage.setItem('proxy-referrer-rotation', (!referrerRotation).toString());
+                    localStorage.setItem(
+                      "proxy-referrer-rotation",
+                      (!referrerRotation).toString(),
+                    );
 
                     if (!referrerRotation) {
                       setResult(`🔄 Referrer rotation enabled!
@@ -725,7 +742,9 @@ When you browse through the proxy, your referrer will automatically rotate every
 
 🚀 Just browse normally through the proxy - the referrer rotation happens automatically in the background!`);
                     } else {
-                      setResult("🔄 Referrer rotation disabled. Proxy will use standard referrer behavior.");
+                      setResult(
+                        "🔄 Referrer rotation disabled. Proxy will use standard referrer behavior.",
+                      );
                     }
                   }}
                   variant={referrerRotation ? "destructive" : "default"}
@@ -743,8 +762,14 @@ When you browse through the proxy, your referrer will automatically rotate every
               )}
 
               <div className="text-xs text-muted-foreground text-center space-y-1">
-                <p>💡 Tip: Enable this before browsing to automatically bypass referrer restrictions</p>
-                <p>⚡ Works with all proxy browsing - no need to enter specific URLs</p>
+                <p>
+                  💡 Tip: Enable this before browsing to automatically bypass
+                  referrer restrictions
+                </p>
+                <p>
+                  ⚡ Works with all proxy browsing - no need to enter specific
+                  URLs
+                </p>
               </div>
             </div>
           )}
@@ -810,7 +835,9 @@ When you browse through the proxy, your referrer will automatically rotate every
                     size="sm"
                     onClick={() => {
                       setCloakerTitle("Google Classroom");
-                      setCloakerFavicon("https://ssl.gstatic.com/classroom/favicon.png");
+                      setCloakerFavicon(
+                        "https://ssl.gstatic.com/classroom/favicon.png",
+                      );
                     }}
                     className="justify-start"
                   >
@@ -821,7 +848,9 @@ When you browse through the proxy, your referrer will automatically rotate every
                     size="sm"
                     onClick={() => {
                       setCloakerTitle("Khan Academy");
-                      setCloakerFavicon("https://cdn.kastatic.org/images/favicon.ico");
+                      setCloakerFavicon(
+                        "https://cdn.kastatic.org/images/favicon.ico",
+                      );
                     }}
                     className="justify-start"
                   >
@@ -832,7 +861,9 @@ When you browse through the proxy, your referrer will automatically rotate every
                     size="sm"
                     onClick={() => {
                       setCloakerTitle("Google Docs");
-                      setCloakerFavicon("https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico");
+                      setCloakerFavicon(
+                        "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
+                      );
                     }}
                     className="justify-start"
                   >
@@ -843,7 +874,9 @@ When you browse through the proxy, your referrer will automatically rotate every
                     size="sm"
                     onClick={() => {
                       setCloakerTitle("Wikipedia");
-                      setCloakerFavicon("https://en.wikipedia.org/static/favicon/wikipedia.ico");
+                      setCloakerFavicon(
+                        "https://en.wikipedia.org/static/favicon/wikipedia.ico",
+                      );
                     }}
                     className="justify-start"
                   >
@@ -868,9 +901,12 @@ When you browse through the proxy, your referrer will automatically rotate every
           {selectedTool === "searchengine" && (
             <div className="space-y-4">
               <div className="text-center p-4 bg-muted/50 rounded-lg border">
-                <h3 className="text-lg font-semibold mb-2">Default Search Engine</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  Default Search Engine
+                </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Choose your preferred search engine. Some work better than others in proxy environments.
+                  Choose your preferred search engine. Some work better than
+                  others in proxy environments.
                 </p>
 
                 <div className="space-y-3">
@@ -888,12 +924,16 @@ When you browse through the proxy, your referrer will automatically rotate every
                         name="searchEngine"
                         value={engine.id}
                         checked={selectedSearchEngine === engine.id}
-                        onChange={(e) => setSelectedSearchEngine(e.target.value)}
+                        onChange={(e) =>
+                          setSelectedSearchEngine(e.target.value)
+                        }
                         className="sr-only"
                       />
                       <div className="flex-1 text-left">
                         <div className="font-medium">{engine.name}</div>
-                        <div className="text-xs text-muted-foreground">{engine.description}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {engine.description}
+                        </div>
                       </div>
                       {selectedSearchEngine === engine.id && (
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
@@ -902,10 +942,7 @@ When you browse through the proxy, your referrer will automatically rotate every
                   ))}
                 </div>
 
-                <Button
-                  onClick={updateSearchEngine}
-                  className="w-full mt-4"
-                >
+                <Button onClick={updateSearchEngine} className="w-full mt-4">
                   Set as Default Search Engine
                 </Button>
               </div>
@@ -917,8 +954,13 @@ When you browse through the proxy, your referrer will automatically rotate every
               )}
 
               <div className="text-xs text-muted-foreground text-center space-y-1">
-                <p>🔍 Google is the default with enhanced proxy compatibility</p>
-                <p>💡 Alternative engines available if you experience restrictions</p>
+                <p>
+                  🔍 Google is the default with enhanced proxy compatibility
+                </p>
+                <p>
+                  💡 Alternative engines available if you experience
+                  restrictions
+                </p>
               </div>
             </div>
           )}

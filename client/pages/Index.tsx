@@ -480,46 +480,55 @@ export default function Index() {
         }
         finalUrl = url;
         setDisplayUrl(url);
-        const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
-        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
+        const referrerRotation =
+          localStorage.getItem("proxy-referrer-rotation") === "true";
+        setCurrentUrl(
+          `/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+        );
       } else {
         // Handle as search query - use saved search engine preference
         const searchEngines = {
           duckduckgo: {
             name: "DuckDuckGo",
             url: `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
-            display: `DuckDuckGo Search: ${query}`
+            display: `DuckDuckGo Search: ${query}`,
           },
           bing: {
             name: "Bing",
             url: `https://www.bing.com/search?q=${encodeURIComponent(query)}`,
-            display: `Bing Search: ${query}`
+            display: `Bing Search: ${query}`,
           },
           startpage: {
             name: "Startpage",
             url: `https://www.startpage.com/search?q=${encodeURIComponent(query)}`,
-            display: `Startpage Search: ${query}`
+            display: `Startpage Search: ${query}`,
           },
           searx: {
             name: "SearX",
             url: `https://searx.org/search?q=${encodeURIComponent(query)}`,
-            display: `SearX Search: ${query}`
+            display: `SearX Search: ${query}`,
           },
           google: {
             name: "Google",
             url: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
-            display: `Google Search: ${query}`
-          }
+            display: `Google Search: ${query}`,
+          },
         };
 
         // Get saved search engine preference, default to Google
-        const savedEngine = localStorage.getItem('preferred-search-engine') || 'google';
-        const selectedEngine = searchEngines[savedEngine as keyof typeof searchEngines] || searchEngines.google;
+        const savedEngine =
+          localStorage.getItem("preferred-search-engine") || "google";
+        const selectedEngine =
+          searchEngines[savedEngine as keyof typeof searchEngines] ||
+          searchEngines.google;
 
         finalUrl = selectedEngine.url;
         setDisplayUrl(selectedEngine.display);
-        const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
-        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(selectedEngine.url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
+        const referrerRotation =
+          localStorage.getItem("proxy-referrer-rotation") === "true";
+        setCurrentUrl(
+          `/api/proxy?url=${encodeURIComponent(selectedEngine.url)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+        );
       }
 
       setProxyUrl("");
@@ -540,8 +549,11 @@ export default function Index() {
     }
 
     setDisplayUrl(gameUrl);
-    const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
-    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
+    const referrerRotation =
+      localStorage.getItem("proxy-referrer-rotation") === "true";
+    setCurrentUrl(
+      `/api/proxy?url=${encodeURIComponent(gameUrl)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+    );
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
     setIsLoading(true); // Set loading after URL change
   };
@@ -558,8 +570,11 @@ export default function Index() {
     }
 
     setDisplayUrl(url);
-    const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
-    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
+    const referrerRotation =
+      localStorage.getItem("proxy-referrer-rotation") === "true";
+    setCurrentUrl(
+      `/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+    );
     setIsLoading(true); // Set loading after URL change
   };
 
@@ -638,7 +653,7 @@ export default function Index() {
             <div className="flex-1 max-w-2xl mx-4">
               <div className="backdrop-blur-glass rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate flex items-center gap-2">
                 <span className="flex-1 truncate">{displayUrl}</span>
-                {localStorage.getItem('proxy-referrer-rotation') === 'true' && (
+                {localStorage.getItem("proxy-referrer-rotation") === "true" && (
                   <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-100/80 dark:bg-emerald-900/30 px-2 py-1 rounded-full shrink-0">
                     <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-pulse"></div>
                     Referrer Rotating

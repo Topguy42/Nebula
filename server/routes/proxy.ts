@@ -12,7 +12,7 @@ const referrerSources = [
   "https://www.youtube.com/",
   "https://github.com/",
   "https://stackoverflow.com/",
-  ""
+  "",
 ];
 
 // Rate limiting for Google requests
@@ -22,7 +22,7 @@ const GOOGLE_RATE_LIMIT_MS = 2000; // 2 seconds between Google requests per IP
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
     const { url, referrer_rotation } = req.query;
-    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+    const clientIP = req.ip || req.connection.remoteAddress || "unknown";
     console.log(`[PROXY] Request for: ${url} from IP: ${clientIP}`);
 
     if (!url || typeof url !== "string") {
@@ -82,7 +82,8 @@ export const handleProxy: RequestHandler = async (req, res) => {
       let dynamicReferrer = "";
       if (referrer_rotation === "true") {
         // Rotate referrer based on current time to constantly change it
-        const rotationIndex = Math.floor(Date.now() / 5000) % referrerSources.length; // Changes every 5 seconds
+        const rotationIndex =
+          Math.floor(Date.now() / 5000) % referrerSources.length; // Changes every 5 seconds
         dynamicReferrer = referrerSources[rotationIndex];
         if (dynamicReferrer && !dynamicReferrer.includes("search?")) {
           // For non-search referrers, use as-is
@@ -91,7 +92,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
           const domain = new URL(targetUrl.toString()).hostname;
           dynamicReferrer = dynamicReferrer + encodeURIComponent(domain);
         }
-        console.log(`[PROXY] Using rotating referrer: ${dynamicReferrer || 'none'}`);
+        console.log(
+          `[PROXY] Using rotating referrer: ${dynamicReferrer || "none"}`,
+        );
       }
 
       const headers: Record<string, string> = {
@@ -294,7 +297,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
           // Additional headers to improve Google compatibility
           res.setHeader("X-Content-Type-Options", "nosniff");
           res.setHeader("Referrer-Policy", "no-referrer-when-downgrade");
-          res.setHeader("Permissions-Policy", "camera=*, microphone=*, geolocation=*");
+          res.setHeader(
+            "Permissions-Policy",
+            "camera=*, microphone=*, geolocation=*",
+          );
         } else {
           res.setHeader(
             "Content-Security-Policy",
