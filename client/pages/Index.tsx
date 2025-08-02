@@ -635,6 +635,74 @@ export default function Index() {
               )}
             </div>
           )}
+
+          {activeTab === "apps" && (
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {webApps
+                  .filter(app =>
+                    app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    app.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    app.description.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((app) => {
+                    const IconComponent = app.icon;
+                    return (
+                      <Card
+                        key={app.name}
+                        className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer"
+                        onClick={() => handleQuickLink(app.url)}
+                      >
+                        <CardHeader className="pb-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-lg bg-primary/10">
+                                <IconComponent className="h-6 w-6 text-primary" />
+                              </div>
+                              <div>
+                                <CardTitle className="text-xl">{app.name}</CardTitle>
+                                <CardDescription className="text-base mt-1">
+                                  {app.description}
+                                </CardDescription>
+                              </div>
+                            </div>
+                            <Badge
+                              variant="secondary"
+                              className="text-xs font-medium"
+                            >
+                              {app.category}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <Button
+                            size="sm"
+                            className="w-full gap-2 group-hover:scale-105 transition-transform font-medium"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            Launch App
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+              </div>
+
+              {webApps.filter(app =>
+                app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                app.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                app.description.toLowerCase().includes(searchQuery.toLowerCase())
+              ).length === 0 && (
+                <div className="text-center py-12">
+                  <ExternalLink className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No apps found</h3>
+                  <p className="text-muted-foreground">
+                    Try searching for a different application or category.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 
