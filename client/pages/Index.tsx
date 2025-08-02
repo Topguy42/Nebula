@@ -401,12 +401,16 @@ export default function Index() {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>Vortex - Web Access</title>
+            <title>about:blank</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="referrer" content="no-referrer">
             <style>
               body {
                 margin: 0;
                 padding: 0;
                 overflow: hidden;
+                background: white;
               }
               iframe {
                 width: 100vw;
@@ -415,13 +419,22 @@ export default function Index() {
                 display: block;
               }
             </style>
+            <script>
+              // Override document.referrer to help with restrictions
+              Object.defineProperty(document, 'referrer', {
+                value: 'https://www.google.com/',
+                writable: false,
+                configurable: false
+              });
+            </script>
           </head>
           <body>
             <iframe
               src="${currentUrl}"
               allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
               allowfullscreen
-              sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
+              referrerpolicy="no-referrer-when-downgrade"
+              sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation allow-downloads"
             ></iframe>
           </body>
           </html>
@@ -467,13 +480,55 @@ export default function Index() {
         }
         finalUrl = url;
         setDisplayUrl(url);
-        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
+        const referrerRotation =
+          localStorage.getItem("proxy-referrer-rotation") === "true";
+        setCurrentUrl(
+          `/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+        );
       } else {
-        // Handle as search query - redirect to Google
-        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        finalUrl = searchUrl;
-        setDisplayUrl(`Google Search: ${query}`);
-        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
+        // Handle as search query - use saved search engine preference
+        const searchEngines = {
+          duckduckgo: {
+            name: "DuckDuckGo",
+            url: `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
+            display: `DuckDuckGo Search: ${query}`,
+          },
+          bing: {
+            name: "Bing",
+            url: `https://www.bing.com/search?q=${encodeURIComponent(query)}`,
+            display: `Bing Search: ${query}`,
+          },
+          startpage: {
+            name: "Startpage",
+            url: `https://www.startpage.com/search?q=${encodeURIComponent(query)}`,
+            display: `Startpage Search: ${query}`,
+          },
+          searx: {
+            name: "SearX",
+            url: `https://searx.org/search?q=${encodeURIComponent(query)}`,
+            display: `SearX Search: ${query}`,
+          },
+          google: {
+            name: "Google",
+            url: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+            display: `Google Search: ${query}`,
+          },
+        };
+
+        // Get saved search engine preference, default to Google
+        const savedEngine =
+          localStorage.getItem("preferred-search-engine") || "google";
+        const selectedEngine =
+          searchEngines[savedEngine as keyof typeof searchEngines] ||
+          searchEngines.google;
+
+        finalUrl = selectedEngine.url;
+        setDisplayUrl(selectedEngine.display);
+        const referrerRotation =
+          localStorage.getItem("proxy-referrer-rotation") === "true";
+        setCurrentUrl(
+          `/api/proxy?url=${encodeURIComponent(selectedEngine.url)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+        );
       }
 
       setProxyUrl("");
@@ -494,7 +549,11 @@ export default function Index() {
     }
 
     setDisplayUrl(gameUrl);
-    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}`);
+    const referrerRotation =
+      localStorage.getItem("proxy-referrer-rotation") === "true";
+    setCurrentUrl(
+      `/api/proxy?url=${encodeURIComponent(gameUrl)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+    );
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
     setIsLoading(true); // Set loading after URL change
   };
@@ -511,7 +570,11 @@ export default function Index() {
     }
 
     setDisplayUrl(url);
-    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
+    const referrerRotation =
+      localStorage.getItem("proxy-referrer-rotation") === "true";
+    setCurrentUrl(
+      `/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? "&referrer_rotation=true" : ""}`,
+    );
     setIsLoading(true); // Set loading after URL change
   };
 
@@ -588,8 +651,14 @@ export default function Index() {
               </div>
             </div>
             <div className="flex-1 max-w-2xl mx-4">
-              <div className="backdrop-blur-glass rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate">
-                {displayUrl}
+              <div className="backdrop-blur-glass rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate flex items-center gap-2">
+                <span className="flex-1 truncate">{displayUrl}</span>
+                {localStorage.getItem("proxy-referrer-rotation") === "true" && (
+                  <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-100/80 dark:bg-emerald-900/30 px-2 py-1 rounded-full shrink-0">
+                    <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-pulse"></div>
+                    Referrer Rotating
+                  </div>
+                )}
               </div>
             </div>
             <Button
@@ -886,14 +955,14 @@ export default function Index() {
                     Jump to your favorite websites instantly
                   </p>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+                <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
                   {quickLinks.map((link) => {
                     const IconComponent = link.icon;
                     return (
                       <div
                         key={link.name}
                         onClick={() => handleQuickLink(link.url)}
-                        className="group cursor-pointer"
+                        className="group cursor-pointer w-24 sm:w-28"
                       >
                         <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-gradient-to-br from-background/80 via-emerald-50/30 to-teal-50/30 dark:from-background/60 dark:via-emerald-950/20 dark:to-teal-950/20 border border-emerald-200/30 dark:border-emerald-800/30 hover:border-emerald-400/50 dark:hover:border-emerald-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                           {/* Icon */}

@@ -14,16 +14,16 @@ import {
   Wifi,
   Zap,
   BookOpen,
-  Timer,
   Eye,
   ExternalLink,
   Shield,
+  Search,
 } from "lucide-react";
 
 const toolsList = [
   {
     name: "Site Checker",
-    icon: Globe,
+    icon: ExternalLink,
     description: "Check if websites are accessible and find alternatives",
     category: "Access",
   },
@@ -35,37 +35,38 @@ const toolsList = [
   },
   {
     name: "Proxy Finder",
-    icon: Zap,
+    icon: Globe,
     description: "Find working proxy servers and bypass methods",
     category: "Bypass",
   },
-  {
-    name: "Study Timer",
-    icon: Timer,
-    description: "Pomodoro timer and focus sessions",
-    category: "Productivity",
-  },
+
   {
     name: "Filter Bypass",
-    icon: Eye,
+    icon: Zap,
     description: "Methods to bypass content filters and restrictions",
     category: "Bypass",
   },
   {
     name: "Referrer Control",
-    icon: ExternalLink,
+    icon: BookOpen,
     description: "Manipulate referrer headers to bypass restrictions",
     category: "Bypass",
   },
   {
-    name: "Study Notes",
-    icon: BookOpen,
-    description: "Offline note-taking and study guides",
-    category: "Education",
+    name: "Cloaker",
+    icon: Shield,
+    description: "Change website title and favicon for privacy",
+    category: "Privacy",
+  },
+  {
+    name: "Search Engine",
+    icon: Search,
+    description: "Choose your default search engine",
+    category: "Settings",
   },
   {
     name: "Privacy Check",
-    icon: Shield,
+    icon: Eye,
     description: "Check your connection privacy and security",
     category: "Security",
   },
@@ -77,19 +78,215 @@ export default function Tools({}: ToolsProps) {
   const [websiteInput, setWebsiteInput] = useState("");
   const [dnsServer, setDnsServer] = useState("8.8.8.8");
   const [proxyRegion, setProxyRegion] = useState("global");
-  const [studyTime, setStudyTime] = useState(25);
-  const [timerRunning, setTimerRunning] = useState(false);
   const [filterType, setFilterType] = useState("keyword");
   const [targetUrl, setTargetUrl] = useState("");
-  const [studyNotes, setStudyNotes] = useState("");
   const [result, setResult] = useState("");
   const [selectedTool, setSelectedTool] = useState("sitechecker");
-  const [timeLeft, setTimeLeft] = useState(studyTime * 60);
+  const [referrerRotation, setReferrerRotation] = useState(false);
+  const [cloakerTitle, setCloakerTitle] = useState("");
+  const [cloakerFavicon, setCloakerFavicon] = useState("");
+  const [originalTitle, setOriginalTitle] = useState("");
+  const [originalFavicon, setOriginalFavicon] = useState("");
+  const [selectedSearchEngine, setSelectedSearchEngine] = useState("google");
+
+  // Initialize referrer rotation from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("proxy-referrer-rotation") === "true";
+    setReferrerRotation(saved);
+  }, []);
 
   // Clear result when switching tools
   useEffect(() => {
     setResult("");
   }, [selectedTool]);
+
+  // Initialize original title and favicon
+  useEffect(() => {
+    setOriginalTitle(document.title);
+    const favicon = document.querySelector(
+      'link[rel="icon"]',
+    ) as HTMLLinkElement;
+    if (favicon) {
+      setOriginalFavicon(favicon.href);
+    }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Clean up any simulation elements
+      const iframe = document.getElementById("referrer-simulation-frame");
+      if (iframe) {
+        iframe.remove();
+      }
+      // Restore original title and favicon
+      if (originalTitle) {
+        document.title = originalTitle;
+      }
+      if (originalFavicon) {
+        updateFavicon(originalFavicon);
+      }
+    };
+  }, [originalTitle, originalFavicon]);
+
+  const updateFavicon = (url: string) => {
+    try {
+      // Try to update the top-level window first (works when not in iframe)
+      const targetDocument =
+        window.top !== window ? window.top!.document : document;
+      let favicon = targetDocument.querySelector(
+        'link[rel="icon"]',
+      ) as HTMLLinkElement;
+
+      if (!favicon) {
+        favicon = targetDocument.createElement("link");
+        favicon.rel = "icon";
+        targetDocument.head.appendChild(favicon);
+      }
+      favicon.href = url;
+    } catch (error) {
+      // Fallback to current document if cross-origin access is blocked
+      let favicon = document.querySelector(
+        'link[rel="icon"]',
+      ) as HTMLLinkElement;
+      if (!favicon) {
+        favicon = document.createElement("link");
+        favicon.rel = "icon";
+        document.head.appendChild(favicon);
+      }
+      favicon.href = url;
+    }
+  };
+
+  const applyCloaker = () => {
+    if (!cloakerTitle && !cloakerFavicon) {
+      setResult("⚠️ Please enter a title or favicon URL to apply cloaker!");
+      return;
+    }
+
+    let changes = [];
+
+    if (cloakerTitle) {
+      try {
+        // Try to update the top-level window title
+        if (window.top !== window) {
+          window.top!.document.title = cloakerTitle;
+        } else {
+          document.title = cloakerTitle;
+        }
+        changes.push(`• Title changed to: "${cloakerTitle}"`);
+      } catch (error) {
+        // Fallback to current document
+        document.title = cloakerTitle;
+        changes.push(`• Title changed to: "${cloakerTitle}" (local only)`);
+      }
+    }
+
+    if (cloakerFavicon) {
+      try {
+        updateFavicon(cloakerFavicon);
+        changes.push(`• Favicon changed to: ${cloakerFavicon}`);
+      } catch (error) {
+        changes.push(`• Favicon update failed: Invalid URL`);
+      }
+    }
+
+    setResult(`🥸 Cloaker Applied Successfully!
+
+${changes.join("\n")}
+
+💡 Tips:
+• Your browser tab now appears as the disguised site
+• Use common websites like "Google Classroom" or "Khan Academy"
+• Works even when browsing through proxy
+• Remember to restore when done to avoid confusion
+
+✅ The cloaker is now active and will disguise your tab!`);
+  };
+
+  const restoreCloaker = () => {
+    try {
+      // Try to restore top-level window title
+      if (window.top !== window && originalTitle) {
+        window.top!.document.title = originalTitle;
+      } else if (originalTitle) {
+        document.title = originalTitle;
+      }
+    } catch (error) {
+      // Fallback to current document
+      if (originalTitle) {
+        document.title = originalTitle;
+      }
+    }
+
+    if (originalFavicon) {
+      updateFavicon(originalFavicon);
+    }
+
+    setResult(`🔄 Cloaker Restored!
+
+• Title restored to: "${originalTitle || "Original"}"
+• Favicon restored to original
+
+Your tab appearance has been reset to normal.`);
+  };
+
+  const searchEngines = [
+    {
+      id: "duckduckgo",
+      name: "DuckDuckGo",
+      url: "https://duckduckgo.com/?q=",
+      description: "Privacy-focused, works well in proxy environments",
+    },
+    {
+      id: "bing",
+      name: "Bing",
+      url: "https://www.bing.com/search?q=",
+      description: "Microsoft's search engine, reliable proxy compatibility",
+    },
+    {
+      id: "startpage",
+      name: "Startpage",
+      url: "https://www.startpage.com/search?q=",
+      description: "Private Google results, good for bypassing restrictions",
+    },
+    {
+      id: "searx",
+      name: "SearX",
+      url: "https://searx.org/search?q=",
+      description: "Open source, aggregates results from multiple engines",
+    },
+    {
+      id: "google",
+      name: "Google",
+      url: "https://www.google.com/search?q=",
+      description: "May have restrictions in proxy/about:blank environments",
+    },
+  ];
+
+  const updateSearchEngine = () => {
+    localStorage.setItem("preferred-search-engine", selectedSearchEngine);
+    const engine = searchEngines.find((e) => e.id === selectedSearchEngine);
+
+    setResult(`🔍 Search Engine Updated!
+
+• Default search engine: ${engine?.name}
+• URL: ${engine?.url}
+• Description: ${engine?.description}
+
+💡 This will be used when you search from the main page.
+Your new search engine will take effect on the next search.
+
+🚀 ${engine?.name} is now your default search engine!`);
+  };
+
+  // Initialize search engine from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("preferred-search-engine");
+    if (saved) {
+      setSelectedSearchEngine(saved);
+    }
+  }, []);
 
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
@@ -186,33 +383,11 @@ ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 🛡️ VPN Alternatives:
 • Tor Browser (if allowed)
-• Browser extensions (if permitted)
+��� Browser extensions (if permitted)
 • Mobile hotspot with different carrier
 • Change DNS to 1.1.1.1 or 8.8.8.8
 
 `);
-  };
-
-  const startStudyTimer = () => {
-    if (timerRunning) {
-      setTimerRunning(false);
-      return;
-    }
-
-    setTimeLeft(studyTime * 60);
-    setTimerRunning(true);
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setTimerRunning(false);
-          setResult("🎉 Study session complete! Time for a break.");
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
   const getFilterBypassMethods = () => {
@@ -270,58 +445,6 @@ ${selectedMethod}
 • Different app stores may have alternatives
 
 `);
-  };
-
-  const generateReferrerLinks = () => {
-    if (!targetUrl) return;
-
-    const cleanUrl = targetUrl.startsWith("http")
-      ? targetUrl
-      : `https://${targetUrl}`;
-
-    setResult(`🔗 Referrer Manipulation for: ${cleanUrl}
-
-📡 No Referrer Methods:
-• Direct typing in address bar
-• Bookmark access
-• New tab/window opening
-• HTTPS → HTTP transition
-
-🌐 Trusted Referrer Sources:
-• Google Search: https://www.google.com/search?q=${encodeURIComponent(cleanUrl)}
-• Bing Search: https://www.bing.com/search?q=${encodeURIComponent(cleanUrl)}
-• DuckDuckGo: https://duckduckgo.com/?q=${encodeURIComponent(cleanUrl)}
-• Yahoo Search: https://search.yahoo.com/search?p=${encodeURIComponent(cleanUrl)}
-
-🔧 Browser Methods:
-• Right-click link → "Open in new tab"
-• Copy link and paste in new tab
-• Use incognito/private mode
-• Clear browser cache/cookies
-
-📱 Alternative Access:
-• Mobile browser (different referrer patterns)
-• Different browser entirely
-• Browser extensions that modify headers
-• Developer tools to modify requests
-
-💡 Referrer Bypassing Tips:
-• Some sites only check for specific referrers
-• Empty referrer often works better than wrong one
-• Social media platforms often whitelist each other
-• Educational sites (.edu) often have relaxed policies
-
-🔍 Test Methods:
-• Try accessing from different starting points
-• Use search engines as launching pad
-• Access through social media links
-• Try educational site redirects`);
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const checkPrivacy = async () => {
@@ -521,52 +644,6 @@ ${selectedMethod}
             </div>
           )}
 
-          {selectedTool === "studytimer" && (
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Study Time (minutes):
-                </label>
-                <input
-                  type="range"
-                  min="5"
-                  max="60"
-                  value={studyTime}
-                  onChange={(e) => setStudyTime(parseInt(e.target.value))}
-                  className="w-full"
-                />
-                <p className="text-center text-sm text-muted-foreground">
-                  {studyTime} minutes
-                </p>
-              </div>
-
-              {timerRunning && (
-                <div className="text-center p-6 bg-primary/10 rounded-lg">
-                  <div className="text-4xl font-mono font-bold text-primary">
-                    {formatTime(timeLeft)}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Focus time remaining
-                  </p>
-                </div>
-              )}
-
-              <Button
-                onClick={startStudyTimer}
-                className="w-full"
-                variant={timerRunning ? "destructive" : "default"}
-              >
-                {timerRunning ? "Stop Timer" : "Start Study Session"}
-              </Button>
-
-              {result && (
-                <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-center text-lg font-medium">{result}</p>
-                </div>
-              )}
-            </div>
-          )}
-
           {selectedTool === "filterbypass" && (
             <div className="space-y-4">
               <div>
@@ -596,72 +673,295 @@ ${selectedMethod}
 
           {selectedTool === "referrercontrol" && (
             <div className="space-y-4">
-              <Input
-                type="url"
-                placeholder="Enter target website URL (e.g., example.com)"
-                value={targetUrl}
-                onChange={(e) => setTargetUrl(e.target.value)}
-              />
-              <Button onClick={generateReferrerLinks} className="w-full">
-                Generate Referrer Bypass Methods
-              </Button>
+              <div className="text-center p-6 bg-muted/50 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-2">
+                  Proxy Referrer Rotation
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  When enabled, the proxy will automatically rotate referrer
+                  headers every 5 seconds to bypass referrer-based restrictions.
+                </p>
+
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <div className="text-sm">
+                    <span className="font-medium">Status: </span>
+                    <span
+                      className={
+                        referrerRotation
+                          ? "text-green-600 font-semibold"
+                          : "text-red-600 font-semibold"
+                      }
+                    >
+                      {referrerRotation ? "🟢 Active" : "🔴 Disabled"}
+                    </span>
+                  </div>
+
+                  {referrerRotation && (
+                    <div className="text-sm">
+                      <span className="font-medium">Mode: </span>
+                      <span className="font-mono text-xs bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded">
+                        Auto-Rotating
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  onClick={() => {
+                    setReferrerRotation(!referrerRotation);
+                    // Store the setting in localStorage
+                    localStorage.setItem(
+                      "proxy-referrer-rotation",
+                      (!referrerRotation).toString(),
+                    );
+
+                    if (!referrerRotation) {
+                      setResult(`🔄 Referrer rotation enabled!
+
+When you browse through the proxy, your referrer will automatically rotate every 5 seconds through these sources:
+
+🌍 Rotation Sources:
+• Google Search
+• Bing Search
+• DuckDuckGo
+• Yahoo Search
+• Facebook
+• Twitter
+• Reddit
+• Wikipedia
+• YouTube
+• GitHub
+• Stack Overflow
+• No referrer
+
+💡 How it works:
+• Referrer changes automatically every 5 seconds
+• No manual intervention needed
+• Works with all proxy browsing
+• Helps bypass referrer-based blocks
+
+🚀 Just browse normally through the proxy - the referrer rotation happens automatically in the background!`);
+                    } else {
+                      setResult(
+                        "🔄 Referrer rotation disabled. Proxy will use standard referrer behavior.",
+                      );
+                    }
+                  }}
+                  variant={referrerRotation ? "destructive" : "default"}
+                  size="lg"
+                  className="w-full max-w-xs"
+                >
+                  {referrerRotation ? "Disable Rotation" : "Enable Rotation"}
+                </Button>
+              </div>
+
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
                   <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
+
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>
+                  💡 Tip: Enable this before browsing to automatically bypass
+                  referrer restrictions
+                </p>
+                <p>
+                  ⚡ Works with all proxy browsing - no need to enter specific
+                  URLs
+                </p>
+              </div>
             </div>
           )}
 
-          {selectedTool === "studynotes" && (
+          {selectedTool === "cloaker" && (
             <div className="space-y-4">
-              <Textarea
-                placeholder="Type your study notes here. They'll be saved locally in your browser."
-                value={studyNotes}
-                onChange={(e) => {
-                  setStudyNotes(e.target.value);
-                  localStorage.setItem("study-notes", e.target.value);
-                }}
-                className="min-h-[200px]"
-                onFocus={() => {
-                  const saved = localStorage.getItem("study-notes");
-                  if (saved) setStudyNotes(saved);
-                }}
-              />
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Website Title:
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., Google Classroom, Khan Academy, etc."
+                    value={cloakerTitle}
+                    onChange={(e) => setCloakerTitle(e.target.value)}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This will change the title shown in your browser tab
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Favicon URL:
+                  </label>
+                  <Input
+                    type="url"
+                    placeholder="https://example.com/favicon.ico"
+                    value={cloakerFavicon}
+                    onChange={(e) => setCloakerFavicon(e.target.value)}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This will change the icon shown in your browser tab
+                  </p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-2">
                 <Button
-                  onClick={() => {
-                    const blob = new Blob([studyNotes], { type: "text/plain" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "study-notes.txt";
-                    a.click();
-                  }}
-                  variant="outline"
+                  onClick={applyCloaker}
+                  className="w-full"
+                  disabled={!cloakerTitle && !cloakerFavicon}
                 >
-                  Download Notes
+                  Apply Cloaker
                 </Button>
                 <Button
-                  onClick={() => {
-                    localStorage.removeItem("study-notes");
-                    setStudyNotes("");
-                    setResult("Notes cleared!");
-                  }}
+                  onClick={restoreCloaker}
                   variant="outline"
+                  className="w-full"
                 >
-                  Clear Notes
+                  Restore Original
                 </Button>
               </div>
-              <div className="text-sm text-muted-foreground">
-                💡 Tip: Your notes are saved locally in your browser. Download
-                them to keep permanently!
+
+              <div className="p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-medium mb-2">💡 Quick Presets:</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Google Classroom");
+                      setCloakerFavicon(
+                        "https://ssl.gstatic.com/classroom/favicon.png",
+                      );
+                    }}
+                    className="justify-start"
+                  >
+                    📚 Google Classroom
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Khan Academy");
+                      setCloakerFavicon(
+                        "https://cdn.kastatic.org/images/favicon.ico",
+                      );
+                    }}
+                    className="justify-start"
+                  >
+                    🎓 Khan Academy
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Google Docs");
+                      setCloakerFavicon(
+                        "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
+                      );
+                    }}
+                    className="justify-start"
+                  >
+                    📄 Google Docs
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Wikipedia");
+                      setCloakerFavicon(
+                        "https://en.wikipedia.org/static/favicon/wikipedia.ico",
+                      );
+                    }}
+                    className="justify-start"
+                  >
+                    📖 Wikipedia
+                  </Button>
+                </div>
               </div>
+
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm">{result}</p>
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
+
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>🥸 Changes the appearance of your browser tab for privacy</p>
+                <p>⚠️ Remember to restore when done to avoid confusion</p>
+              </div>
+            </div>
+          )}
+
+          {selectedTool === "searchengine" && (
+            <div className="space-y-4">
+              <div className="text-center p-4 bg-muted/50 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-2">
+                  Default Search Engine
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Choose your preferred search engine. Some work better than
+                  others in proxy environments.
+                </p>
+
+                <div className="space-y-3">
+                  {searchEngines.map((engine) => (
+                    <label
+                      key={engine.id}
+                      className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${
+                        selectedSearchEngine === engine.id
+                          ? "bg-primary/10 border-primary/50 text-primary"
+                          : "bg-background border-border hover:bg-muted/50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="searchEngine"
+                        value={engine.id}
+                        checked={selectedSearchEngine === engine.id}
+                        onChange={(e) =>
+                          setSelectedSearchEngine(e.target.value)
+                        }
+                        className="sr-only"
+                      />
+                      <div className="flex-1 text-left">
+                        <div className="font-medium">{engine.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {engine.description}
+                        </div>
+                      </div>
+                      {selectedSearchEngine === engine.id && (
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      )}
+                    </label>
+                  ))}
+                </div>
+
+                <Button onClick={updateSearchEngine} className="w-full mt-4">
+                  Set as Default Search Engine
+                </Button>
+              </div>
+
+              {result && (
+                <div className="p-4 bg-muted rounded-lg">
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
+                </div>
+              )}
+
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>
+                  🔍 Google is the default with enhanced proxy compatibility
+                </p>
+                <p>
+                  💡 Alternative engines available if you experience
+                  restrictions
+                </p>
+              </div>
             </div>
           )}
 

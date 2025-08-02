@@ -1,9 +1,29 @@
 import { RequestHandler } from "express";
 
+const referrerSources = [
+  "https://www.google.com/search?q=",
+  "https://www.bing.com/search?q=",
+  "https://duckduckgo.com/?q=",
+  "https://search.yahoo.com/search?p=",
+  "https://www.facebook.com/",
+  "https://twitter.com/",
+  "https://www.reddit.com/",
+  "https://en.wikipedia.org/",
+  "https://www.youtube.com/",
+  "https://github.com/",
+  "https://stackoverflow.com/",
+  "",
+];
+
+// Rate limiting for Google requests
+const googleRequestTimes = new Map<string, number>();
+const GOOGLE_RATE_LIMIT_MS = 2000; // 2 seconds between Google requests per IP
+
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
-    const { url } = req.query;
-    console.log(`[PROXY] Request for: ${url}`);
+    const { url, referrer_rotation } = req.query;
+    const clientIP = req.ip || req.connection.remoteAddress || "unknown";
+    console.log(`[PROXY] Request for: ${url} from IP: ${clientIP}`);
 
     if (!url || typeof url !== "string") {
       return res.status(400).send(`
@@ -58,6 +78,25 @@ export const handleProxy: RequestHandler = async (req, res) => {
         ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
         : userAgents[Math.floor(Math.random() * userAgents.length)];
 
+      // Dynamic referrer rotation
+      let dynamicReferrer = "";
+      if (referrer_rotation === "true") {
+        // Rotate referrer based on current time to constantly change it
+        const rotationIndex =
+          Math.floor(Date.now() / 5000) % referrerSources.length; // Changes every 5 seconds
+        dynamicReferrer = referrerSources[rotationIndex];
+        if (dynamicReferrer && !dynamicReferrer.includes("search?")) {
+          // For non-search referrers, use as-is
+        } else if (dynamicReferrer) {
+          // For search engines, add the target domain as search query
+          const domain = new URL(targetUrl.toString()).hostname;
+          dynamicReferrer = dynamicReferrer + encodeURIComponent(domain);
+        }
+        console.log(
+          `[PROXY] Using rotating referrer: ${dynamicReferrer || "none"}`,
+        );
+      }
+
       const headers: Record<string, string> = {
         "User-Agent": randomUA,
         Accept:
@@ -68,13 +107,18 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Upgrade-Insecure-Requests": "1",
         "Sec-Fetch-Dest": "document",
         "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-Site": dynamicReferrer ? "cross-site" : "none",
         "Sec-Fetch-User": "?1",
         "Sec-Ch-Ua":
           '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
         "Sec-Ch-Ua-Mobile": "?0",
         "Sec-Ch-Ua-Platform": '"Windows"',
       };
+
+      // Add dynamic referrer if rotation is enabled
+      if (referrer_rotation === "true" && dynamicReferrer) {
+        headers["Referer"] = dynamicReferrer;
+      }
 
       // YouTube-specific headers and handling
       if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
@@ -94,7 +138,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
         }
       }
 
-      // Google-specific optimizations for faster search
+      // Google-specific optimizations for about:blank and proxy environments
       if (
         hostname.includes("google.com") ||
         hostname.includes("google.") ||
@@ -109,17 +153,41 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
 
-        // Use optimized Google parameters for faster loading
+        // Additional headers to bypass about:blank restrictions
+        headers["Sec-Fetch-Site"] = "same-origin";
+        headers["Sec-Fetch-Mode"] = "navigate";
+        headers["Sec-Fetch-User"] = "?1";
+        headers["Sec-Fetch-Dest"] = "document";
+        headers["X-Requested-With"] = "";
+        headers["X-Forwarded-For"] = "8.8.8.8";
+        headers["X-Real-IP"] = "8.8.8.8";
+
+        // Override referrer for about:blank environments
+        if (dynamicReferrer) {
+          headers["Referer"] = dynamicReferrer;
+        } else {
+          headers["Referer"] = "https://www.google.com/";
+        }
+
+        // Use optimized Google parameters for proxy/about:blank environments
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
 
-          // Add speed-optimized parameters
+          // Add parameters to bypass restrictions and improve compatibility
           searchParams.set("safe", "active");
           searchParams.set("lr", "lang_en");
           searchParams.set("hl", "en");
           searchParams.set("num", "20"); // More results per page
           searchParams.set("start", "0"); // Ensure first page
           searchParams.set("udm", "14"); // Use lighter search interface
+          searchParams.set("client", "firefox-b-d"); // Simulate Firefox browser
+          searchParams.set("source", "hp"); // Homepage source
+          searchParams.set("ei", Date.now().toString()); // Random event ID
+          searchParams.set("iflsig", "ALs-wAMAAAAAZr"); // Fake signature
+
+          // Remove potentially problematic parameters
+          searchParams.delete("ved");
+          searchParams.delete("uact");
 
           targetUrl.search = searchParams.toString();
         }
@@ -223,7 +291,15 @@ export const handleProxy: RequestHandler = async (req, res) => {
         ) {
           res.setHeader(
             "Content-Security-Policy",
-            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *;",
+            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *; frame-src *; child-src *; object-src *; media-src *;",
+          );
+
+          // Additional headers to improve Google compatibility
+          res.setHeader("X-Content-Type-Options", "nosniff");
+          res.setHeader("Referrer-Policy", "no-referrer-when-downgrade");
+          res.setHeader(
+            "Permissions-Policy",
+            "camera=*, microphone=*, geolocation=*",
           );
         } else {
           res.setHeader(
