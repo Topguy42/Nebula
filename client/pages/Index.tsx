@@ -287,10 +287,8 @@ export default function Index() {
 
     // Check if about blank is enabled
     if (settings.aboutBlank) {
-      setDisplayUrl("about:blank");
-      setCurrentUrl("about:blank");
+      window.open("about:blank", "_blank");
       setIsLoading(false);
-      setActiveTab("proxy");
       return;
     }
 
@@ -356,7 +354,7 @@ export default function Index() {
               </div>
             </div>
             <div className="text-sm text-muted-foreground flex items-center gap-1">
-              🔒 Secure
+              �� Secure
             </div>
           </div>
         </div>
