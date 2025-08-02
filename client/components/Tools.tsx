@@ -193,7 +193,7 @@ ${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
 • Mobile hotspot with different carrier
 • Change DNS to 1.1.1.1 or 8.8.8.8
 
-⚠️ Always follow school policies and use responsibly!`);
+`);
   };
 
   const startStudyTimer = () => {
@@ -232,7 +232,7 @@ ${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
 • Try HTTPS instead of HTTP
 • Add 's' to domain: https://site.com
 • Use IP address instead of domain name
-• Try different subdomains: m., www., mobile.
+�� Try different subdomains: m., www., mobile.
 • Use port numbers: site.com:443
 • Try different TLDs: .net, .org, .io`,
 
