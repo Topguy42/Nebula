@@ -859,7 +859,7 @@ export default function Index() {
                     return (
                       <Card
                         key={app.name}
-                        className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer animate-float-delayed"
+                        className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer"
                         onClick={() => handleQuickLink(app.url)}
                       >
                         <CardHeader className="pb-4">
