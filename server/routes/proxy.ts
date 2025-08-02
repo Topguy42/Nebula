@@ -263,61 +263,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
-        // Enhanced handling for rate limiting
-        if (response.status === 429) {
-          const retryDelay = 2; // Short delay for better UX
-
-          return res.status(200).send(`
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <title>Rate Limited</title>
-                <script>
-                  let countdown = ${retryDelay};
-                  function updateCountdown() {
-                    const button = document.getElementById('retryBtn');
-                    if (countdown > 0) {
-                      button.textContent = 'Retry in ' + countdown + ' seconds';
-                      button.disabled = true;
-                      countdown--;
-                      setTimeout(updateCountdown, 1000);
-                    } else {
-                      button.textContent = 'Retry Now';
-                      button.disabled = false;
-                      button.onclick = () => window.location.reload();
-                    }
-                  }
-                  window.onload = updateCountdown;
-                </script>
-              </head>
-              <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; text-align: center; background: #f8fafc; margin: 0;">
-                <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                  <div style="font-size: 48px; margin-bottom: 16px;">🚦</div>
-                  <h2 style="color: #dc2626; margin: 0 0 12px 0; font-size: 24px;">Rate Limited</h2>
-                  <p style="color: #6b7280; margin: 0 0 24px 0; line-height: 1.5;"><strong>${targetUrl.hostname}</strong> is temporarily limiting requests. This helps prevent your IP from being blocked.</p>
-                  <div style="margin: 24px 0;">
-                    <button onclick="history.back()" style="background: #6b7280; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-right: 12px; font-size: 14px;">Go Back</button>
-                    <button id="retryBtn" style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;">Retry in ${retryDelay} seconds</button>
-                  </div>
-                  <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                    <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; font-size: 14px;">🔗 Open in New Tab Instead</a>
-                  </div>
-                  ${hostname.includes('google') ? `
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
-                      <p style="color: #6b7280; margin: 0 0 12px 0; font-size: 14px;">Try alternative search engines:</p>
-                      <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                        <a href="/api/proxy?url=${encodeURIComponent('https://duckduckgo.com/?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #f59e0b; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">DuckDuckGo</a>
-                        <a href="/api/proxy?url=${encodeURIComponent('https://www.bing.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #3b82f6; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Bing</a>
-                        <a href="/api/proxy?url=${encodeURIComponent('https://www.startpage.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #10b981; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Startpage</a>
-                      </div>
-                    </div>
-                  ` : ''}
-                </div>
-              </body>
-            </html>
-          `);
-        }
+        // Skip rate limiting - just pass through the actual error
 
         return res.status(200).send(`
           <html>
