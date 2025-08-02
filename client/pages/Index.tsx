@@ -242,69 +242,35 @@ export default function Index() {
       const newWindow = window.open("about:blank", "_blank");
       if (newWindow) {
         setAboutBlankWindow(newWindow);
+
+        // Load the actual Nebula app in the about:blank window
+        const currentUrl = window.location.href;
         newWindow.document.write(`
           <!DOCTYPE html>
           <html>
           <head>
-            <title>Nebula Proxy - Ready</title>
+            <title>Nebula Proxy - About Blank Mode</title>
             <style>
               body {
                 margin: 0;
                 padding: 0;
-                font-family: system-ui, -apple-system, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
+                overflow: hidden;
               }
-              .container {
-                background: rgba(255, 255, 255, 0.1);
-                padding: 3rem;
-                border-radius: 20px;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                max-width: 500px;
-              }
-              h1 {
-                font-size: 3rem;
-                margin-bottom: 1rem;
-                font-weight: 800;
-              }
-              p {
-                font-size: 1.2rem;
-                opacity: 0.9;
-                margin-bottom: 1rem;
-              }
-              .status {
-                background: rgba(34, 197, 94, 0.2);
-                padding: 1rem;
-                border-radius: 10px;
-                margin-top: 2rem;
-                border: 1px solid rgba(34, 197, 94, 0.3);
-              }
-              .pulse {
-                animation: pulse 2s infinite;
-              }
-              @keyframes pulse {
-                0% { opacity: 1; }
-                50% { opacity: 0.5; }
-                100% { opacity: 1; }
+              iframe {
+                width: 100vw;
+                height: 100vh;
+                border: none;
+                display: block;
               }
             </style>
           </head>
           <body>
-            <div class="container">
-              <h1>🌌 Nebula</h1>
-              <p>About Blank Mode Active</p>
-              <p class="pulse">Ready to browse securely...</p>
-              <div class="status">
-                ✅ Secure Proxy Ready • Click any link to browse
-              </div>
-            </div>
+            <iframe
+              src="${currentUrl}"
+              allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
+              allowfullscreen
+              sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
+            ></iframe>
           </body>
           </html>
         `);
