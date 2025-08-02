@@ -481,45 +481,22 @@ ${selectedMethod}
             </div>
           )}
 
-          {selectedTool === "urltools" && (
+          {selectedTool === "proxyfinder" && (
             <div className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Enter URL or text to process"
-                value={urlToolsInput}
-                onChange={(e) => setUrlToolsInput(e.target.value)}
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={() => processUrlTools("encode")}
-                  variant="outline"
+              <div>
+                <label className="text-sm font-medium mb-2 block">Region:</label>
+                <select
+                  value={proxyRegion}
+                  onChange={(e) => setProxyRegion(e.target.value)}
+                  className="w-full p-2 border rounded-md bg-background"
                 >
-                  URL Encode
-                </Button>
-                <Button
-                  onClick={() => processUrlTools("decode")}
-                  variant="outline"
-                >
-                  URL Decode
-                </Button>
-                <Button
-                  onClick={() => processUrlTools("base64encode")}
-                  variant="outline"
-                >
-                  Base64 Encode
-                </Button>
-                <Button
-                  onClick={() => processUrlTools("base64decode")}
-                  variant="outline"
-                >
-                  Base64 Decode
-                </Button>
+                  <option value="global">Global Proxies</option>
+                  <option value="us">US Proxies</option>
+                  <option value="eu">European Proxies</option>
+                </select>
               </div>
-              <Button
-                onClick={() => processUrlTools("analyze")}
-                className="w-full"
-              >
-                Analyze URL
+              <Button onClick={findProxyServers} className="w-full">
+                Find Working Proxies
               </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
