@@ -317,12 +317,14 @@ export default function Index() {
         finalUrl = url;
         setDisplayUrl(url);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
+        console.log("Proxying URL:", url);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         finalUrl = searchUrl;
         setDisplayUrl(`Google Search: ${query}`);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
+        console.log("Proxying search:", searchUrl);
       }
 
       // Add to recent history
@@ -330,6 +332,8 @@ export default function Index() {
         const updated = [finalUrl, ...prev.filter((url) => url !== finalUrl)];
         return updated.slice(0, 5); // Keep only 5 recent items
       });
+
+      setProxyUrl("");
     }
   };
 
