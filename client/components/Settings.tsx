@@ -15,6 +15,7 @@ interface SettingsProps {
     volume: number[];
     quality: string;
     aboutBlank: boolean;
+    antiGoGuardian: boolean;
   };
   setSettings: (settings: any) => void;
 }
