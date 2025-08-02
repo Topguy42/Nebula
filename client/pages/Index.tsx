@@ -906,18 +906,18 @@ export default function Index() {
                 </div>
               ) : activeTab === "tools" ? (
                 <div className="text-center space-y-3">
-                  <h2 className="text-3xl font-bold text-foreground">Professional Tools</h2>
+                  <h2 className="text-3xl font-bold text-foreground">Built-in Tools</h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Access advanced utilities and developer tools for enhanced productivity
+                    Useful utilities and extra features to enhance your browsing experience
                   </p>
                 </div>
               ) : (
                 <div className="text-center space-y-3">
                   <h2 className="text-3xl font-bold text-foreground">
-                    Settings & Configuration
+                    Settings & Options
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Customize your VortexPortal experience with advanced settings and preferences
+                    Customize your VortexPortal experience and adjust privacy settings
                   </p>
                 </div>
               )}
