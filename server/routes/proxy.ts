@@ -37,7 +37,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     // Fetch the content with better error handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout for speed
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
     try {
       console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
