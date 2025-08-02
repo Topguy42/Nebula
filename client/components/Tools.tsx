@@ -53,7 +53,7 @@ const toolsList = [
   },
   {
     name: "Referrer Control",
-    icon: ExternalLink,
+    icon: BookOpen,
     description: "Manipulate referrer headers to bypass restrictions",
     category: "Bypass",
   },
