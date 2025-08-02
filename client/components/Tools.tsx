@@ -465,16 +465,45 @@ Fragment: ${url.hash}
             </div>
           )}
 
-          {selectedTool === "contentdownloader" && (
+          {selectedTool === "urltools" && (
             <div className="space-y-4">
               <Input
-                type="url"
-                placeholder="Enter video URL for download info"
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
+                type="text"
+                placeholder="Enter URL or text to process"
+                value={urlToolsInput}
+                onChange={(e) => setUrlToolsInput(e.target.value)}
               />
-              <Button onClick={getVideoDownloadInfo} className="w-full">
-                Get Download Options
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onClick={() => processUrlTools("encode")}
+                  variant="outline"
+                >
+                  URL Encode
+                </Button>
+                <Button
+                  onClick={() => processUrlTools("decode")}
+                  variant="outline"
+                >
+                  URL Decode
+                </Button>
+                <Button
+                  onClick={() => processUrlTools("base64encode")}
+                  variant="outline"
+                >
+                  Base64 Encode
+                </Button>
+                <Button
+                  onClick={() => processUrlTools("base64decode")}
+                  variant="outline"
+                >
+                  Base64 Decode
+                </Button>
+              </div>
+              <Button
+                onClick={() => processUrlTools("analyze")}
+                className="w-full"
+              >
+                Analyze URL
               </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
