@@ -34,10 +34,10 @@ const toolsList = [
     category: "Network",
   },
   {
-    name: "URL Tools",
-    icon: Link2,
-    description: "Encode/decode URLs and manipulate web addresses",
-    category: "Utility",
+    name: "Proxy Finder",
+    icon: Zap,
+    description: "Find working proxy servers and bypass methods",
+    category: "Bypass",
   },
   {
     name: "Study Timer",
@@ -46,10 +46,10 @@ const toolsList = [
     category: "Productivity",
   },
   {
-    name: "Network Tester",
-    icon: Activity,
-    description: "Test connectivity and network performance",
-    category: "Network",
+    name: "Filter Bypass",
+    icon: Eye,
+    description: "Methods to bypass content filters and restrictions",
+    category: "Bypass",
   },
   {
     name: "Mirror Finder",
