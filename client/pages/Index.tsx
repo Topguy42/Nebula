@@ -465,7 +465,7 @@ export default function Index() {
     return (
       <div className="min-h-screen bg-background">
         {/* Navigation Bar */}
-        <div className="bg-card/50 backdrop-blur-sm border-b border-border/50 px-6 py-3 sticky top-0 z-50">
+        <div className="backdrop-blur-glass border-b border-border/50 px-6 py-3 sticky top-0 z-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
