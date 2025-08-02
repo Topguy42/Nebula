@@ -44,8 +44,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     // Fetch the content with better error handling
     const controller = new AbortController();
-    // Faster timeout for Google search, longer for other sites
-    const timeout = hostname.includes("google") ? 6000 : 10000;
+    // Longer timeout for Google in about:blank mode, normal timeouts for other cases
+    const timeout = (hostname.includes("google") && isFromAboutBlank) ? 15000 :
+                   hostname.includes("google") ? 8000 : 10000;
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
