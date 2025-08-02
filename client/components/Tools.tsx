@@ -383,28 +383,6 @@ ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 `);
   };
 
-  const startStudyTimer = () => {
-    if (timerRunning) {
-      setTimerRunning(false);
-      return;
-    }
-
-    setTimeLeft(studyTime * 60);
-    setTimerRunning(true);
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setTimerRunning(false);
-          setResult("🎉 Study session complete! Time for a break.");
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
   const getFilterBypassMethods = () => {
     const methods = {
       keyword: `🔍 Keyword Filter Bypass:
