@@ -364,35 +364,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
     } catch (fetchError) {
       clearTimeout(timeoutId);
 
-      // Special handling for Google in about:blank mode - no aggressive retries to avoid rate limiting
-      if (
-        (hostname.includes("google.com") || hostname.includes("google.")) &&
-        isFromAboutBlank
-      ) {
-        console.log(
-          `[PROXY] Google fetch failed in about:blank: ${fetchError instanceof Error ? fetchError.message : "Unknown error"}`,
-        );
 
-        // Show simple error without automatic retries
-        return res.status(200).send(`
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <title>Google Connection Error</title>
-            </head>
-            <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
-              <div style="background: white; border-radius: 8px; padding: 24px; max-width: 400px; margin: 100px auto;">
-                <div style="font-size: 32px; margin-bottom: 16px;">🌐</div>
-                <h3 style="margin: 0 0 12px 0;">Connection Error</h3>
-                <p style="color: #6b7280; margin: 0 0 16px 0;">Could not connect to Google</p>
-                <p style="color: #9ca3af; font-size: 14px; margin: 0 0 20px 0;">${fetchError instanceof Error ? fetchError.message : "Network error"}</p>
-                <button onclick="window.location.reload();" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 8px;">Try Again</button>
-                <button onclick="history.back();" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Go Back</button>
-              </div>
-            </body>
-          </html>
-        `);
-      }
 
       if (fetchError instanceof Error && fetchError.name === "AbortError") {
         return res.status(200).send(`
