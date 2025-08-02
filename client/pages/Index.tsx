@@ -848,59 +848,59 @@ export default function Index() {
             <div className="max-w-4xl mx-auto">
               {activeTab === "proxy" ? (
                 <form onSubmit={handleProxySubmit}>
-                  <div className="relative">
+                  <div className="relative group">
                     <Input
                       type="text"
-                      placeholder="Search with Google or enter address"
+                      placeholder="Enter website URL or search query..."
                       value={proxyUrl}
                       onChange={(e) => setProxyUrl(e.target.value)}
-                      className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl px-8 transition-all duration-300 hover:shadow-lg"
+                      className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
                     />
                     <Button
                       type="submit"
                       size="lg"
-                      className="absolute right-3 top-3 h-14 px-6"
+                      className="absolute right-2 top-2 h-12 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       <ExternalLink className="h-5 w-5" />
                     </Button>
                   </div>
                 </form>
               ) : activeTab === "games" ? (
-                <div className="relative">
-                  <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+                <div className="relative group">
+                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground/60 group-hover:text-muted-foreground transition-colors" />
                   <Input
                     type="text"
-                    placeholder="Search games..."
+                    placeholder="Search games by name or category..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl pl-16 pr-8 transition-all duration-300 hover:shadow-lg"
+                    className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
                   />
                 </div>
               ) : activeTab === "apps" ? (
-                <div className="relative">
-                  <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+                <div className="relative group">
+                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground/60 group-hover:text-muted-foreground transition-colors" />
                   <Input
                     type="text"
                     placeholder="Search web applications..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl pl-16 pr-8 transition-all duration-300 hover:shadow-lg"
+                    className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
                   />
                 </div>
               ) : activeTab === "tools" ? (
-                <div className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">Built-in Tools</h2>
-                  <p className="text-muted-foreground text-lg">
-                    Select a tool from below to get started
+                <div className="text-center space-y-3">
+                  <h2 className="text-3xl font-bold text-foreground">Professional Tools</h2>
+                  <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                    Access advanced utilities and developer tools for enhanced productivity
                   </p>
                 </div>
               ) : (
-                <div className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">
-                    Settings & Preferences
+                <div className="text-center space-y-3">
+                  <h2 className="text-3xl font-bold text-foreground">
+                    Settings & Configuration
                   </h2>
-                  <p className="text-muted-foreground text-lg">
-                    Customize your Nebula experience
+                  <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                    Customize your VortexPortal experience with advanced settings and preferences
                   </p>
                 </div>
               )}
