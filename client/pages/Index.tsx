@@ -903,7 +903,7 @@ export default function Index() {
                       <div
                         key={link.name}
                         onClick={() => handleQuickLink(link.url)}
-                        className="group cursor-pointer"
+                        className="group cursor-pointer w-24 sm:w-28"
                       >
                         <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-gradient-to-br from-background/80 via-emerald-50/30 to-teal-50/30 dark:from-background/60 dark:via-emerald-950/20 dark:to-teal-950/20 border border-emerald-200/30 dark:border-emerald-800/30 hover:border-emerald-400/50 dark:hover:border-emerald-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                           {/* Icon */}
