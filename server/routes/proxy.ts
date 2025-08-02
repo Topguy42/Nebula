@@ -312,6 +312,7 @@ function processHTML(content: string, targetUrl: URL): string {
   try {
     const hostname = targetUrl.hostname.toLowerCase();
     const isYouTube = hostname.includes("youtube.com") || hostname.includes("youtu.be");
+    const isGoogle = hostname.includes("google.com") || hostname.includes("google.");
 
     // Remove existing base tags to avoid conflicts
     content = content.replace(/<base[^>]*>/gi, "");
@@ -343,10 +344,17 @@ function processHTML(content: string, targetUrl: URL): string {
     );
     content = content.replace(/<meta[^>]*name[^>]*["\']?referrer[^>]*>/gi, "");
 
-    // YouTube-specific meta tag removal
+    // Site-specific meta tag removal
     if (isYouTube) {
       content = content.replace(/<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi, "");
       content = content.replace(/<meta[^>]*property[^>]*["\']?og:url[^>]*>/gi, "");
+    }
+
+    if (isGoogle) {
+      // Remove Google's viewport restrictions for better iframe display
+      content = content.replace(/<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi, "");
+      // Remove Google's specific frame options
+      content = content.replace(/<meta[^>]*http-equiv[^>]*["\']?X-UA-Compatible[^>]*>/gi, "");
     }
 
     // Add iframe-friendly styles with YouTube optimizations
