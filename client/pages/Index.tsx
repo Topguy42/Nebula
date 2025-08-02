@@ -969,7 +969,7 @@ export default function Index() {
                           {/* Icon */}
                           <div className="flex justify-center mb-4">
                             <div
-                              className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-gradient-to-br from-emerald-100/80 to-teal-100/60 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-lg border border-emerald-300/50 dark:border-emerald-700/50`}
+                              className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-gradient-to-br from-emerald-100/90 to-teal-100/80 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-lg border border-emerald-300/70 dark:border-emerald-700/50`}
                             >
                               <IconComponent />
                             </div>
