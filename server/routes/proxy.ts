@@ -270,7 +270,19 @@ function processHTML(content: string, targetUrl: URL): string {
 
           // Helper function to convert URL to proxy URL
           function toProxyUrl(url) {
-            if (!url || typeof url !== 'string' || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('javascript:') || url.startsWith('mailto:') || url.startsWith('tel:') || url.startsWith(PROXY_PREFIX)) {
+            if (!url || typeof url !== 'string') {
+              return url;
+            }
+
+            // Skip if already proxied or special schemes
+            if (url.startsWith(PROXY_PREFIX) ||
+                url.startsWith('data:') ||
+                url.startsWith('blob:') ||
+                url.startsWith('javascript:') ||
+                url.startsWith('mailto:') ||
+                url.startsWith('tel:') ||
+                url.startsWith('about:') ||
+                url.includes('localhost:8080')) {
               return url;
             }
 
@@ -285,6 +297,12 @@ function processHTML(content: string, targetUrl: URL): string {
               } else {
                 fullUrl = new URL(url, TARGET_ORIGIN).href;
               }
+
+              // Don't proxy our own proxy URLs
+              if (fullUrl.includes('/api/proxy')) {
+                return url;
+              }
+
               return PROXY_PREFIX + encodeURIComponent(fullUrl);
             } catch (e) {
               return url;
