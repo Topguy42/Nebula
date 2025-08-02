@@ -401,6 +401,17 @@ function processHTML(content: string, targetUrl: URL): string {
       `;
     }
 
+    if (isGoogle) {
+      proxyEnhancements += `
+        <link rel="dns-prefetch" href="//www.gstatic.com">
+        <link rel="dns-prefetch" href="//encrypted-tbn0.gstatic.com">
+        <link rel="dns-prefetch" href="//ssl.gstatic.com">
+        <link rel="dns-prefetch" href="//fonts.gstatic.com">
+        <link rel="preconnect" href="https://www.google.com">
+        <link rel="preconnect" href="https://www.gstatic.com">
+      `;
+    }
+
     // Insert enhancements before closing head tag
     if (content.includes("</head>")) {
       content = content.replace("</head>", proxyEnhancements + "</head>");
