@@ -345,6 +345,55 @@ export const handleProxy: RequestHandler = async (req, res) => {
   }
 };
 
+function processGoogleSearchFast(content: string, targetUrl: URL): string {
+  try {
+    // Minimal, fast processing for Google search results
+
+    // Remove frame blockers
+    content = content.replace(/<meta[^>]*http-equiv[^>]*["\']?x-frame-options[^>]*>/gi, "");
+    content = content.replace(/<meta[^>]*http-equiv[^>]*["\']?content-security-policy[^>]*>/gi, "");
+
+    // Set base tag for relative URLs
+    const baseTag = `<base href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + "/")}" target="_self">`;
+    if (content.includes("<head>")) {
+      content = content.replace("<head>", `<head>${baseTag}`);
+    }
+
+    // Minimal iframe optimizations
+    const fastStyles = `
+      <style>
+        body { margin: 0 !important; }
+        .fixed, [style*="position: fixed"] { position: relative !important; }
+        #gb { position: relative !important; }
+      </style>
+    `;
+
+    if (content.includes("</head>")) {
+      content = content.replace("</head>", fastStyles + "</head>");
+    }
+
+    // Fast URL rewriting for search results
+    content = content.replace(/href\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      if (!url || url.startsWith("/api/proxy") || url.startsWith("data:") || url.startsWith("javascript:")) {
+        return match;
+      }
+      try {
+        if (url.startsWith("/")) {
+          return `href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + url)}"`;
+        } else if (url.startsWith("http")) {
+          return `href="/api/proxy?url=${encodeURIComponent(url)}"`;
+        }
+      } catch (e) {}
+      return match;
+    });
+
+    return content;
+  } catch (error) {
+    console.error("Fast Google processing error:", error);
+    return content;
+  }
+}
+
 function processHTML(content: string, targetUrl: URL): string {
   try {
     const hostname = targetUrl.hostname.toLowerCase();
