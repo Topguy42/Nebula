@@ -5,7 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useTheme } from "@/hooks/use-theme";
-import { Settings as SettingsIcon, Shield, Zap, Volume2, Moon, Sun } from "lucide-react";
+import { Settings as SettingsIcon, Shield, Zap, Volume2, Moon, Sun, Search, RotateCcw } from "lucide-react";
 
 interface SettingsProps {
   settings: {
@@ -151,6 +151,25 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               />
             </div>
             <Separator />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Referrer Rotation</p>
+                  <p className="text-sm text-muted-foreground">
+                    Rotate referrer headers to bypass restrictions
+                  </p>
+                </div>
+                <Switch
+                  checked={localStorage.getItem('proxy-referrer-rotation') === 'true'}
+                  onCheckedChange={(checked) => {
+                    localStorage.setItem('proxy-referrer-rotation', checked.toString());
+                    // Force re-render
+                    setSettings((prev: any) => ({ ...prev }));
+                  }}
+                />
+              </div>
+            </div>
+            <Separator />
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -173,6 +192,50 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               <p className="text-sm text-muted-foreground text-center">
                 {settings.volume[0]}%
               </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="h-5 w-5" />
+              Search Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <p className="font-medium">Default Search Engine</p>
+              <p className="text-sm text-muted-foreground mb-3">
+                Choose your preferred search engine to avoid rate limiting
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { key: 'duckduckgo', name: 'DuckDuckGo', desc: 'Privacy-focused' },
+                  { key: 'google', name: 'Google', desc: 'May get rate limited' },
+                  { key: 'bing', name: 'Bing', desc: 'Microsoft search' },
+                  { key: 'startpage', name: 'Startpage', desc: 'Private Google results' },
+                ].map((engine) => {
+                  const isSelected = (localStorage.getItem('preferred-search-engine') || 'google') === engine.key;
+                  return (
+                    <Button
+                      key={engine.key}
+                      variant={isSelected ? "default" : "outline"}
+                      onClick={() => {
+                        localStorage.setItem('preferred-search-engine', engine.key);
+                        setSettings((prev: any) => ({ ...prev })); // Force re-render
+                      }}
+                      className="h-auto p-3 flex flex-col items-start text-left"
+                    >
+                      <span className="font-medium">{engine.name}</span>
+                      <span className="text-xs text-muted-foreground">{engine.desc}</span>
+                      {engine.key === 'google' && (
+                        <span className="text-xs text-orange-600 dark:text-orange-400 mt-1">⚠️ Rate limited</span>
+                      )}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -210,9 +273,46 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           </CardContent>
         </Card>
 
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <RotateCcw className="h-5 w-5" />
+              Reset Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Reset All Settings</p>
+                <p className="text-sm text-muted-foreground">
+                  Restore default search engine and clear rate limiting data
+                </p>
+              </div>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  localStorage.removeItem('preferred-search-engine');
+                  localStorage.removeItem('proxy-referrer-rotation');
+                  setSettings({
+                    notifications: true,
+                    autoplay: false,
+                    privacy: true,
+                    volume: [75],
+                    quality: "high",
+                    aboutBlank: false,
+                    antiGoGuardian: false,
+                  });
+                }}
+              >
+                Reset
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="text-center pt-6">
           <p className="text-sm text-muted-foreground">
-            Nebula v1.0.0 • Made with ❤️
+            Vortex v1.0.0 • Made with ❤️
           </p>
         </div>
       </div>
