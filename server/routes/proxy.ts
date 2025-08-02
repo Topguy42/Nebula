@@ -99,15 +99,11 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
 
-        // Add small delay for Google to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-
         // Use optimized Google parameters for faster loading
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
 
-          // Remove problematic parameters and add optimized ones
-          searchParams.delete("tbs"); // Remove this as it might trigger rate limiting
+          // Add optimized parameters
           searchParams.set("safe", "active");
           searchParams.set("lr", "lang_en");
           searchParams.set("hl", "en"); // Interface language
