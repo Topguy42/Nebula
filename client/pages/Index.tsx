@@ -661,6 +661,7 @@ export default function Index() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
+                <Globe className="h-4 w-4" />
                 PROXY
               </button>
               <button
@@ -671,6 +672,7 @@ export default function Index() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
+                <Gamepad2 className="h-4 w-4" />
                 GAMES
               </button>
               <button
@@ -681,6 +683,7 @@ export default function Index() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
+                <Grid3X3 className="h-4 w-4" />
                 APPS
               </button>
               <button
@@ -691,6 +694,7 @@ export default function Index() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
+                <Wrench className="h-4 w-4" />
                 TOOLS
               </button>
               <button
@@ -701,6 +705,7 @@ export default function Index() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
+                <Settings className="h-4 w-4" />
                 SETTINGS
               </button>
             </nav>
