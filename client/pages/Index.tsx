@@ -514,7 +514,8 @@ export default function Index() {
     }
 
     setDisplayUrl(url);
-    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
+    const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
+    setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
     setIsLoading(true); // Set loading after URL change
   };
 
