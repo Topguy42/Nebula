@@ -96,12 +96,29 @@ export default function Index() {
 
   const handleProxySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (proxyUrl) {
-      let url = proxyUrl;
-      if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        url = "https://" + url;
+    if (proxyUrl.trim()) {
+      const query = proxyUrl.trim();
+
+      // Check if it's a URL
+      const isUrl = (
+        query.startsWith("http://") ||
+        query.startsWith("https://") ||
+        query.startsWith("www.") ||
+        (query.includes(".") && !query.includes(" ") && query.split(".").length >= 2)
+      );
+
+      if (isUrl) {
+        // Handle as URL
+        let url = query;
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+          url = "https://" + url;
+        }
+        window.open(url, "_blank");
+      } else {
+        // Handle as search query - redirect to Google
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        window.open(searchUrl, "_blank");
       }
-      window.open(url, "_blank");
     }
   };
 
