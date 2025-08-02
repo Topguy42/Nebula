@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gamepad2, Star, Play, ExternalLink, Search } from "lucide-react";
+import { Gamepad2, Star, Play, ExternalLink, Search, ArrowLeft } from "lucide-react";
 
 const popularGames = [
   {
@@ -101,15 +101,15 @@ export default function Index() {
     if (proxyUrl.trim()) {
       const query = proxyUrl.trim();
       setIsLoading(true);
-
+      
       // Check if it's a URL
       const isUrl = (
-        query.startsWith("http://") ||
+        query.startsWith("http://") || 
         query.startsWith("https://") ||
         query.startsWith("www.") ||
         (query.includes(".") && !query.includes(" ") && query.split(".").length >= 2)
       );
-
+      
       if (isUrl) {
         // Handle as URL
         let url = query;
@@ -147,6 +147,61 @@ export default function Index() {
     game.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // If showing iframe content
+  if (currentUrl) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Navigation Bar */}
+        <div className="bg-card/50 backdrop-blur-sm border-b border-border/50 px-6 py-3 sticky top-0 z-50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleBackToHome}
+                className="gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+              <div className="flex items-center gap-2">
+                <NebulaLogo className="w-6 h-6" />
+                <span className="font-semibold">Nebula</span>
+              </div>
+            </div>
+            <div className="flex-1 max-w-2xl mx-4">
+              <div className="bg-background/50 rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate">
+                {currentUrl}
+              </div>
+            </div>
+            <div className="text-sm text-muted-foreground flex items-center gap-1">
+              🔒 Secure
+            </div>
+          </div>
+        </div>
+        
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-40">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading...</p>
+            </div>
+          </div>
+        )}
+        
+        {/* Iframe */}
+        <iframe
+          src={currentUrl}
+          className="w-full h-[calc(100vh-73px)] border-0"
+          onLoad={() => setIsLoading(false)}
+          title="Browsing content"
+        />
+      </div>
+    );
+  }
+
+  // Home view
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background decoration */}
@@ -212,9 +267,9 @@ export default function Index() {
                       onChange={(e) => setProxyUrl(e.target.value)}
                       className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl px-8"
                     />
-                    <Button
-                      type="submit"
-                      size="lg"
+                    <Button 
+                      type="submit" 
+                      size="lg" 
                       className="absolute right-3 top-3 h-14 px-6"
                     >
                       <ExternalLink className="h-5 w-5" />
