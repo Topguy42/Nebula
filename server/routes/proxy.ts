@@ -17,7 +17,9 @@ const referrerSources = [
 
 // Rate limiting for Google requests
 const googleRequestTimes = new Map<string, number>();
-const GOOGLE_RATE_LIMIT_MS = 2000; // 2 seconds between Google requests per IP
+const GOOGLE_RATE_LIMIT_MS = 3000; // 3 seconds between Google requests per IP
+const MAX_GOOGLE_RETRIES = 2;
+const requestCounts = new Map<string, { count: number; lastReset: number }>();
 
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
@@ -54,6 +56,84 @@ export const handleProxy: RequestHandler = async (req, res) => {
     }
 
     const hostname = targetUrl.hostname.toLowerCase();
+
+    // Rate limiting for Google
+    if (hostname.includes('google.com') || hostname.includes('google.')) {
+      const lastRequest = googleRequestTimes.get(clientIP) || 0;
+      const timeSinceLastRequest = Date.now() - lastRequest;
+
+      if (timeSinceLastRequest < GOOGLE_RATE_LIMIT_MS) {
+        const waitTime = Math.ceil((GOOGLE_RATE_LIMIT_MS - timeSinceLastRequest) / 1000);
+        return res.status(200).send(`
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title>Please Wait</title>
+            </head>
+            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; text-align: center; background: #f8fafc; margin: 0;">
+              <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="font-size: 48px; margin-bottom: 16px;">⏱️</div>
+                <h2 style="color: #1f2937; margin: 0 0 12px 0; font-size: 24px;">Rate Limited</h2>
+                <p style="color: #6b7280; margin: 0 0 24px 0; line-height: 1.5;">Please wait <strong>${waitTime} seconds</strong> before searching Google again to avoid being blocked.</p>
+                <div style="margin: 24px 0;">
+                  <button onclick="history.back()" style="background: #6b7280; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-right: 12px; font-size: 14px;">Go Back</button>
+                  <button onclick="setTimeout(() => window.location.reload(), ${waitTime * 1000})" style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;">Retry in ${waitTime}s</button>
+                </div>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                  <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; font-size: 14px;">🔗 Open in New Tab Instead</a>
+                </div>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+
+      // Track request count per IP
+      const hourKey = Math.floor(Date.now() / (1000 * 60 * 60)); // Reset every hour
+      const requestData = requestCounts.get(clientIP) || { count: 0, lastReset: hourKey };
+
+      if (requestData.lastReset !== hourKey) {
+        requestData.count = 0;
+        requestData.lastReset = hourKey;
+      }
+
+      requestData.count++;
+      requestCounts.set(clientIP, requestData);
+
+      // If too many requests in an hour, show cooldown
+      if (requestData.count > 20) {
+        return res.status(200).send(`
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title>Cooldown Period</title>
+            </head>
+            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; text-align: center; background: #f8fafc; margin: 0;">
+              <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="font-size: 48px; margin-bottom: 16px;">🛑</div>
+                <h2 style="color: #dc2626; margin: 0 0 12px 0; font-size: 24px;">Too Many Requests</h2>
+                <p style="color: #6b7280; margin: 0 0 24px 0; line-height: 1.5;">You've made too many Google searches. Please wait an hour or try other search engines.</p>
+                <div style="margin: 24px 0;">
+                  <button onclick="history.back()" style="background: #6b7280; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-right: 12px; font-size: 14px;">Go Back</button>
+                </div>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                  <p style="color: #6b7280; margin: 0 0 12px 0; font-size: 14px;">Try these alternatives:</p>
+                  <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                    <a href="/api/proxy?url=${encodeURIComponent('https://duckduckgo.com/?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #f59e0b; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">DuckDuckGo</a>
+                    <a href="/api/proxy?url=${encodeURIComponent('https://www.bing.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #3b82f6; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Bing</a>
+                    <a href="/api/proxy?url=${encodeURIComponent('https://www.startpage.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #10b981; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Startpage</a>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+
+      googleRequestTimes.set(clientIP, Date.now());
+    }
 
     // Fetch the content with better error handling
     const controller = new AbortController();
@@ -222,21 +302,62 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
-        // Special handling for rate limiting
+        // Enhanced handling for rate limiting
         if (response.status === 429) {
+          // For Google, add to our internal rate limiting
+          if (hostname.includes('google.com') || hostname.includes('google.')) {
+            googleRequestTimes.set(clientIP, Date.now() + (GOOGLE_RATE_LIMIT_MS * 2)); // Extend cooldown
+          }
+
+          const retryDelay = hostname.includes('google') ? 10 : 5; // Longer delay for Google
+
           return res.status(200).send(`
             <html>
-              <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-                <h2>🚦 Rate Limited</h2>
-                <p><strong>${targetUrl.hostname}</strong> is temporarily limiting requests</p>
-                <p>Please wait a moment and try again</p>
-                <button onclick="history.back()">Go Back</button>
-                <br><br>
-                <button onclick="setTimeout(() => window.location.reload(), 2000)">Retry in 2 seconds</button>
-                <br><br>
-                <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer">
-                  Open in New Tab Instead
-                </a>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title>Rate Limited</title>
+                <script>
+                  let countdown = ${retryDelay};
+                  function updateCountdown() {
+                    const button = document.getElementById('retryBtn');
+                    if (countdown > 0) {
+                      button.textContent = 'Retry in ' + countdown + ' seconds';
+                      button.disabled = true;
+                      countdown--;
+                      setTimeout(updateCountdown, 1000);
+                    } else {
+                      button.textContent = 'Retry Now';
+                      button.disabled = false;
+                      button.onclick = () => window.location.reload();
+                    }
+                  }
+                  window.onload = updateCountdown;
+                </script>
+              </head>
+              <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; text-align: center; background: #f8fafc; margin: 0;">
+                <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                  <div style="font-size: 48px; margin-bottom: 16px;">🚦</div>
+                  <h2 style="color: #dc2626; margin: 0 0 12px 0; font-size: 24px;">Rate Limited</h2>
+                  <p style="color: #6b7280; margin: 0 0 24px 0; line-height: 1.5;"><strong>${targetUrl.hostname}</strong> is temporarily limiting requests. This helps prevent your IP from being blocked.</p>
+                  <div style="margin: 24px 0;">
+                    <button onclick="history.back()" style="background: #6b7280; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-right: 12px; font-size: 14px;">Go Back</button>
+                    <button id="retryBtn" style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;">Retry in ${retryDelay} seconds</button>
+                  </div>
+                  <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; font-size: 14px;">🔗 Open in New Tab Instead</a>
+                  </div>
+                  ${hostname.includes('google') ? `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                      <p style="color: #6b7280; margin: 0 0 12px 0; font-size: 14px;">Try alternative search engines:</p>
+                      <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <a href="/api/proxy?url=${encodeURIComponent('https://duckduckgo.com/?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #f59e0b; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">DuckDuckGo</a>
+                        <a href="/api/proxy?url=${encodeURIComponent('https://www.bing.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #3b82f6; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Bing</a>
+                        <a href="/api/proxy?url=${encodeURIComponent('https://www.startpage.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #10b981; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Startpage</a>
+                      </div>
+                    </div>
+                  ` : ''}
+                </div>
               </body>
             </html>
           `);
