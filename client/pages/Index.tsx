@@ -741,7 +741,7 @@ export default function Index() {
             <div className="flex items-center gap-4">
               <VortexLogo className="w-10 h-10" />
               <div className="hidden sm:block">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
                   VortexPortal
                 </h1>
                 <p className="text-xs text-muted-foreground font-medium tracking-wide">
