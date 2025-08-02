@@ -152,29 +152,42 @@ export const handleProxy: RequestHandler = async (req, res) => {
         hostname.includes("google.") ||
         hostname === "google.com"
       ) {
-        headers["Origin"] = "https://www.google.com";
-        headers["Referer"] = "https://www.google.com/";
+        // Detect if this is likely from about:blank based on headers
+        const isFromAboutBlank = req.headers.referer === "https://www.google.com/" ||
+                                req.headers.origin === "https://www.google.com" ||
+                                !req.headers.referer;
+
+        if (isFromAboutBlank) {
+          // Special handling for about:blank to avoid rate limiting
+          headers["Origin"] = "https://www.google.com";
+          headers["Referer"] = "https://www.google.com/";
+          headers["Sec-Fetch-Site"] = "same-origin";
+          headers["Sec-Fetch-Mode"] = "navigate";
+          headers["Sec-Fetch-User"] = "?1";
+          headers["Sec-Fetch-Dest"] = "document";
+          headers["Cache-Control"] = "max-age=0";
+          headers["Upgrade-Insecure-Requests"] = "1";
+
+          // Remove headers that might indicate proxy usage
+          delete headers["X-Forwarded-For"];
+          delete headers["X-Real-IP"];
+          delete headers["Via"];
+        } else {
+          // Normal Google handling
+          headers["Origin"] = "https://www.google.com";
+          headers["Referer"] = dynamicReferrer || "https://www.google.com/";
+          headers["Sec-Fetch-Site"] = dynamicReferrer ? "cross-site" : "same-origin";
+          headers["Sec-Fetch-Mode"] = "navigate";
+          headers["Sec-Fetch-User"] = "?1";
+          headers["Sec-Fetch-Dest"] = "document";
+          headers["Cache-Control"] = "no-cache";
+        }
+
         headers["DNT"] = "1";
-        headers["Accept"] =
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-        headers["Accept-Language"] = "en-US,en;q=0.5";
+        headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
+        headers["Accept-Language"] = "en-US,en;q=0.9";
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
-
-        // Optimized headers for Google compatibility
-        headers["Sec-Fetch-Site"] = dynamicReferrer ? "cross-site" : "none";
-        headers["Sec-Fetch-Mode"] = "navigate";
-        headers["Sec-Fetch-User"] = "?1";
-        headers["Sec-Fetch-Dest"] = "document";
-        headers["Pragma"] = "no-cache";
-        headers["Cache-Control"] = "no-cache";
-
-        // Override referrer for about:blank environments
-        if (dynamicReferrer) {
-          headers["Referer"] = dynamicReferrer;
-        } else {
-          headers["Referer"] = "https://www.google.com/";
-        }
 
         // Use optimized Google parameters for proxy/about:blank environments
         if (targetUrl.pathname.includes("/search")) {
