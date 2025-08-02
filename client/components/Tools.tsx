@@ -448,7 +448,7 @@ ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 ${selectedMethod}
 
-���� General Bypass Techniques:
+🔧 General Bypass Techniques:
 • Change DNS servers (1.1.1.1, 8.8.8.8)
 • Use different browsers
 • Clear browser cache and cookies
@@ -490,7 +490,7 @@ ${selectedMethod}
 📍 Location & Network:
 • IP Address: ${ipData.ip || "Unable to detect"}
 • Location: ${ipData.city || "Unknown"}, ${ipData.region || "Unknown"}, ${ipData.country_name || "Unknown"}
-�� ISP/Organization: ${ipData.org || "Unknown"}
+• ISP/Organization: ${ipData.org || "Unknown"}
 • Network Type: ${ipData.network || "Unknown"}
 • Timezone: ${ipData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
 
@@ -1000,8 +1000,8 @@ When you browse through the proxy, your referrer will automatically rotate every
               )}
 
               <div className="text-xs text-muted-foreground text-center space-y-1">
-                <p>🔍 DuckDuckGo is recommended for privacy and proxy compatibility</p>
-                <p>⚠️ Google may have restrictions in some environments</p>
+                <p>🔍 Google is the default with enhanced proxy compatibility</p>
+                <p>💡 Alternative engines available if you experience restrictions</p>
               </div>
             </div>
           )}
