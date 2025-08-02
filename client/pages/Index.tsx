@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Gamepad2, Shield, Zap, Star, Play, ExternalLink, Search } from "lucide-react";
+import { Gamepad2, Star, Play, ExternalLink, Search } from "lucide-react";
 
 const popularGames = [
   {
@@ -82,6 +82,13 @@ const quickLinks = [
   { name: "TikTok", url: "https://tiktok.com", icon: "🎵" }
 ];
 
+// Custom N Logo Component
+const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
+  <div className={`${className} rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center font-bold text-white shadow-lg`}>
+    <span className="text-xl font-black">N</span>
+  </div>
+);
+
 export default function Index() {
   const [proxyUrl, setProxyUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,147 +119,116 @@ export default function Index() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 blur-3xl"></div>
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/10 to-primary/10 blur-3xl"></div>
+      </div>
+
       {/* Header */}
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-6">
+      <header className="relative z-50 py-6">
+        <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center border border-primary/20">
-                <Globe className="h-7 w-7 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-purple-400 to-blue-400 bg-clip-text text-transparent">
-                  Nebula
-                </h1>
-                <p className="text-sm text-muted-foreground font-medium">Web Proxy & Gaming Hub</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              {/* Tabs in header */}
-              <div className="flex bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-1">
-                <button
-                  onClick={() => setActiveTab("proxy")}
-                  className={`flex items-center gap-2 h-8 text-sm font-medium px-3 rounded-md transition-all ${
-                    activeTab === "proxy"
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-muted"
-                  }`}
-                >
-                  <Globe className="h-4 w-4" />
-                  Proxy
-                </button>
-                <button
-                  onClick={() => setActiveTab("games")}
-                  className={`flex items-center gap-2 h-8 text-sm font-medium px-3 rounded-md transition-all ${
-                    activeTab === "games"
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-muted"
-                  }`}
-                >
-                  <Gamepad2 className="h-4 w-4" />
-                  Games
-                </button>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Badge variant="secondary" className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
-                  <Shield className="h-3.5 w-3.5" />
-                  Secure
-                </Badge>
-                <Badge variant="secondary" className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
-                  <Zap className="h-3.5 w-3.5" />
-                  Fast
-                </Badge>
-              </div>
-            </div>
+            {/* Logo */}
+            <NebulaLogo className="w-12 h-12" />
+            
+            {/* Navigation */}
+            <nav className="flex items-center space-x-8 text-sm font-medium">
+              <button
+                onClick={() => setActiveTab("proxy")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "proxy" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                PROXY
+              </button>
+              <button
+                onClick={() => setActiveTab("games")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "games" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                GAMES
+              </button>
+              <span className="text-muted-foreground">APPS</span>
+              <span className="text-muted-foreground">TOOLS</span>
+              <span className="text-muted-foreground">SETTINGS</span>
+            </nav>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-            Browse Anywhere, Play Anything
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Access blocked websites and enjoy your favorite games with our secure, lightning-fast proxy service.
-          </p>
-        </div>
-
-        {/* Tab Content */}
-        <div className="max-w-5xl mx-auto">
-          {/* Proxy Tab */}
-          {activeTab === "proxy" && (
-            <div className="space-y-8">
-              {/* URL Input */}
-              <Card className="bg-card/40 backdrop-blur-sm border-border/50 shadow-xl">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-3 text-2xl">
-                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Globe className="h-6 w-6 text-primary" />
-                    </div>
-                    Secure Web Proxy
-                  </CardTitle>
-                  <CardDescription className="text-base">
-                    Enter any website URL to access it through our encrypted proxy network
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleProxySubmit} className="flex gap-3">
+      <main className="relative z-10 flex-1 flex items-center justify-center">
+        <div className="container mx-auto px-6 text-center">
+          {/* Hero Section */}
+          <div className="mb-16">
+            <h1 className="text-8xl md:text-9xl font-black tracking-tight mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+              NEBULA
+            </h1>
+            <p className="text-lg text-muted-foreground mb-12">
+              Browse freely, play endlessly
+            </p>
+            
+            {/* Main Search/Input */}
+            <div className="max-w-2xl mx-auto">
+              {activeTab === "proxy" ? (
+                <form onSubmit={handleProxySubmit}>
+                  <div className="relative">
                     <Input
                       type="text"
-                      placeholder="Enter website URL (e.g., youtube.com, reddit.com)"
+                      placeholder="Search with Google or enter address"
                       value={proxyUrl}
                       onChange={(e) => setProxyUrl(e.target.value)}
-                      className="flex-1 h-12 text-base bg-background/80 border-border/50 focus:border-primary"
+                      className="h-14 text-lg bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-xl px-6"
                     />
-                    <Button type="submit" size="lg" className="px-8 h-12 gap-2">
-                      <ExternalLink className="h-5 w-5" />
-                      Browse
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-
-              {/* Quick Links */}
-              <div>
-                <h3 className="text-2xl font-semibold mb-6 text-center">Quick Access</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-                  {quickLinks.map((link) => (
-                    <Button
-                      key={link.name}
-                      variant="outline"
-                      onClick={() => handleQuickLink(link.url)}
-                      className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105"
+                    <Button 
+                      type="submit" 
+                      size="sm" 
+                      className="absolute right-2 top-2 h-10 px-4"
                     >
-                      <span className="text-2xl">{link.icon}</span>
-                      <span className="text-sm font-medium">{link.name}</span>
+                      <ExternalLink className="h-4 w-4" />
                     </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Games Tab */}
-          {activeTab === "games" && (
-            <div className="space-y-8">
-              {/* Search Bar */}
-              <div className="flex items-center justify-center">
-                <div className="relative w-full max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  </div>
+                </form>
+              ) : (
+                <div className="relative">
+                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Search games..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 h-12 text-base bg-background/80 border-border/50 focus:border-primary"
+                    className="h-14 text-lg bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-xl pl-14 pr-6"
                   />
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
 
-              {/* Games Grid */}
+          {/* Tab Content */}
+          {activeTab === "proxy" && (
+            <div className="max-w-4xl mx-auto">
+              <h3 className="text-2xl font-semibold mb-8">Quick Access</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                {quickLinks.map((link) => (
+                  <Button
+                    key={link.name}
+                    variant="outline"
+                    onClick={() => handleQuickLink(link.url)}
+                    className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl"
+                  >
+                    <span className="text-2xl">{link.icon}</span>
+                    <span className="text-xs font-medium">{link.name}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "games" && (
+            <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredGames.map((game) => (
                   <Card key={game.name} className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl">
@@ -302,29 +278,16 @@ export default function Index() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 bg-background/80 backdrop-blur-sm mt-20">
-        <div className="container mx-auto px-6 py-8">
+      <footer className="relative z-10 py-8 mt-20">
+        <div className="container mx-auto px-6">
           <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Globe className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold text-primary">Nebula</span>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <NebulaLogo className="w-6 h-6" />
+              <span className="text-lg font-bold text-primary">Nebula</span>
             </div>
-            <p className="text-muted-foreground mb-4">
-              Secure web proxy and gaming platform. Browse freely, play safely.
+            <p className="text-sm text-muted-foreground">
+              Privacy First • No Logs • Lightning Fast
             </p>
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Shield className="h-4 w-4" />
-                Privacy First
-              </span>
-              <span>•</span>
-              <span>No Logs</span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Zap className="h-4 w-4" />
-                Lightning Fast
-              </span>
-            </div>
           </div>
         </div>
       </footer>
