@@ -16,7 +16,7 @@ import {
   BookOpen,
   Timer,
   Eye,
-  Search,
+  ExternalLink,
   Shield,
 } from "lucide-react";
 
