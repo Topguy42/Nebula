@@ -1131,19 +1131,19 @@ export default function Index() {
             <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span>Enterprise-Grade Security</span>
+                <span>Secure & Private</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" style={{ animationDelay: "0.5s" }}></div>
-                <span>Zero-Log Policy</span>
+                <span>No Activity Logs</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" style={{ animationDelay: "1s" }}></div>
-                <span>Lightning Fast Performance</span>
+                <span>Super Fast Speeds</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" style={{ animationDelay: "1.5s" }}></div>
-                <span>Global Network</span>
+                <span>Always Available</span>
               </div>
             </div>
 
