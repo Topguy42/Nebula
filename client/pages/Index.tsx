@@ -555,14 +555,6 @@ export default function Index() {
   const handleGamePlay = (gameUrl: string) => {
     setProxyError(null);
 
-    // Check if about blank is enabled AND we're not already inside the about:blank iframe
-    if (settings.aboutBlank && window.parent === window) {
-      if (aboutBlankWindow && !aboutBlankWindow.closed) {
-        aboutBlankWindow.focus();
-      }
-      return;
-    }
-
     setDisplayUrl(gameUrl);
     const referrerRotation =
       localStorage.getItem("proxy-referrer-rotation") === "true";
