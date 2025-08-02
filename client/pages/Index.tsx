@@ -117,10 +117,12 @@ export default function Index() {
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
           url = "https://" + url;
         }
+        setDisplayUrl(url);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        setDisplayUrl(`Google Search: ${query}`);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
       }
     }
