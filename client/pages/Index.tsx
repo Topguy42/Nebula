@@ -584,9 +584,26 @@ export default function Index() {
                 {displayUrl}
               </div>
             </div>
-            <div className="text-sm text-muted-foreground flex items-center gap-1">
-              🔒 Secure
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Extract the actual URL from the proxy URL
+                const iframe = document.querySelector('iframe');
+                if (iframe && iframe.src) {
+                  const urlParams = new URLSearchParams(iframe.src.split('?')[1]);
+                  const actualUrl = urlParams.get('url');
+                  if (actualUrl) {
+                    window.open(actualUrl, '_blank');
+                  }
+                }
+              }}
+              className="gap-2"
+              title="Open in new tab for dev tools"
+            >
+              <Code className="h-4 w-4" />
+              Dev Tools
+            </Button>
           </div>
         </div>
 
