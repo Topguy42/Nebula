@@ -233,11 +233,15 @@ export default function Index() {
     aboutBlank: false
   });
 
+  // Store reference to about:blank window
+  const [aboutBlankWindow, setAboutBlankWindow] = useState<Window | null>(null);
+
   // Effect to trigger about:blank immediately when setting is enabled
   useEffect(() => {
     if (settings.aboutBlank) {
       const newWindow = window.open("about:blank", "_blank");
       if (newWindow) {
+        setAboutBlankWindow(newWindow);
         newWindow.document.write(`
           <!DOCTYPE html>
           <html>
@@ -245,70 +249,67 @@ export default function Index() {
             <title>About Blank - Nebula Proxy</title>
             <style>
               body {
-                font-family: system-ui, -apple-system, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
                 margin: 0;
                 padding: 0;
-                min-height: 100vh;
+                font-family: system-ui, -apple-system, sans-serif;
+              }
+              .navbar {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+              }
+              .navbar h1 {
+                margin: 0;
+                font-size: 1.5rem;
+                font-weight: bold;
+              }
+              .navbar .status {
+                background: rgba(34, 197, 94, 0.3);
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                border: 1px solid rgba(34, 197, 94, 0.5);
+              }
+              iframe {
+                width: 100%;
+                height: calc(100vh - 60px);
+                border: none;
+                margin-top: 60px;
+              }
+              .loading {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                text-align: center;
-              }
-              .container {
-                background: rgba(255, 255, 255, 0.1);
-                padding: 3rem;
-                border-radius: 20px;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                max-width: 500px;
-              }
-              h1 {
-                font-size: 3rem;
-                margin-bottom: 1rem;
-                font-weight: 800;
-              }
-              p {
+                height: calc(100vh - 60px);
+                margin-top: 60px;
+                background: #f5f5f5;
                 font-size: 1.2rem;
-                opacity: 0.9;
-                margin-bottom: 1rem;
-              }
-              .status {
-                background: rgba(34, 197, 94, 0.2);
-                padding: 1rem;
-                border-radius: 10px;
-                margin-top: 2rem;
-                border: 1px solid rgba(34, 197, 94, 0.3);
-              }
-              .note {
-                background: rgba(59, 130, 246, 0.2);
-                padding: 1rem;
-                border-radius: 10px;
-                margin-top: 1rem;
-                border: 1px solid rgba(59, 130, 246, 0.3);
-                font-size: 1rem;
+                color: #666;
               }
             </style>
           </head>
           <body>
-            <div class="container">
-              <h1>🌌 Nebula</h1>
-              <p>About Blank Mode Activated</p>
-              <p>The proxy has been switched to about:blank mode for maximum privacy.</p>
-              <div class="status">
-                ✅ Privacy Mode Active • All Requests Blocked
-              </div>
-              <div class="note">
-                💡 You can disable this mode in the Settings tab to resume normal browsing.
-              </div>
+            <div class="navbar">
+              <h1>🌌 Nebula - About Blank Mode</h1>
+              <div class="status">✅ Privacy Protected</div>
             </div>
+            <div class="loading" id="loading">Ready to load content...</div>
           </body>
           </html>
         `);
         newWindow.document.close();
       }
+    } else {
+      setAboutBlankWindow(null);
     }
   }, [settings.aboutBlank]);
 
