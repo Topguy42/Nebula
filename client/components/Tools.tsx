@@ -274,35 +274,48 @@ ${selectedMethod}
 `);
   };
 
-  const findMirrors = () => {
-    if (!searchQuery) return;
-    
-    setResult(`🔍 Finding alternatives for: "${searchQuery}"
+  const generateReferrerLinks = () => {
+    if (!targetUrl) return;
 
-🪞 Mirror Site Methods:
-• Add 'mirror' to search: "${searchQuery} mirror site"
-• Try different TLDs: .org, .net, .info, .me
-• Use proxy sites (be careful!)
-• Check if site has official mirrors
+    const cleanUrl = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`;
 
-🔗 Alternative access methods:
-• Google Cache: cache:${searchQuery}
-• Archive.org: web.archive.org
-• Google Translate proxy
-• Bing translator proxy
+    setResult(`🔗 Referrer Manipulation for: ${cleanUrl}
 
-📚 Educational alternatives:
-• Wikipedia for general info
-• Khan Academy for learning
-• MIT OpenCourseWare 
-• Coursera/edX for courses
-• Library databases
+📡 No Referrer Methods:
+• Direct typing in address bar
+• Bookmark access
+• New tab/window opening
+• HTTPS → HTTP transition
 
-🛡️ Safety tips:
-• Verify official mirror sites
-• Avoid suspicious redirects
-• Use school-approved resources first
-• Check with teachers for alternatives`);
+🌐 Trusted Referrer Sources:
+• Google Search: https://www.google.com/search?q=${encodeURIComponent(cleanUrl)}
+• Bing Search: https://www.bing.com/search?q=${encodeURIComponent(cleanUrl)}
+• DuckDuckGo: https://duckduckgo.com/?q=${encodeURIComponent(cleanUrl)}
+• Yahoo Search: https://search.yahoo.com/search?p=${encodeURIComponent(cleanUrl)}
+
+🔧 Browser Methods:
+• Right-click link → "Open in new tab"
+• Copy link and paste in new tab
+• Use incognito/private mode
+• Clear browser cache/cookies
+
+📱 Alternative Access:
+• Mobile browser (different referrer patterns)
+• Different browser entirely
+• Browser extensions that modify headers
+• Developer tools to modify requests
+
+💡 Referrer Bypassing Tips:
+• Some sites only check for specific referrers
+• Empty referrer often works better than wrong one
+• Social media platforms often whitelist each other
+• Educational sites (.edu) often have relaxed policies
+
+🔍 Test Methods:
+• Try accessing from different starting points
+• Use search engines as launching pad
+• Access through social media links
+• Try educational site redirects`);
   };
 
   const formatTime = (seconds: number) => {
