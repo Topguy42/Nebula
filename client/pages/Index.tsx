@@ -515,12 +515,12 @@ export default function Index() {
           },
         };
 
-        // Get saved search engine preference, default to DuckDuckGo to avoid rate limiting
+        // Get saved search engine preference, default to Google
         const savedEngine =
-          localStorage.getItem("preferred-search-engine") || "duckduckgo";
+          localStorage.getItem("preferred-search-engine") || "google";
         const selectedEngine =
           searchEngines[savedEngine as keyof typeof searchEngines] ||
-          searchEngines.duckduckgo;
+          searchEngines.google;
 
         finalUrl = selectedEngine.url;
         setDisplayUrl(selectedEngine.display);
@@ -900,12 +900,7 @@ export default function Index() {
                         <ExternalLink className="h-5 w-5" />
                       </Button>
                     </div>
-                    {(localStorage.getItem("preferred-search-engine") || "duckduckgo") === "google" && (
-                      <div className="flex items-center justify-center gap-2 text-sm text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 px-4 py-2 rounded-lg border border-orange-200 dark:border-orange-800">
-                        <span>⚠️</span>
-                        <span>Google searches may be rate limited. Consider switching to DuckDuckGo in Settings.</span>
-                      </div>
-                    )}
+
                   </div>
                 </form>
               ) : activeTab === "games" ? (
