@@ -3,26 +3,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Settings as SettingsIcon, Shield, Zap, Volume2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useTheme } from "@/hooks/use-theme";
+import { Settings as SettingsIcon, Shield, Zap, Volume2, Moon, Sun } from "lucide-react";
 
 interface SettingsProps {
   settings: {
-    darkMode: boolean;
     notifications: boolean;
     autoplay: boolean;
     privacy: boolean;
     volume: number[];
     quality: string;
     aboutBlank: boolean;
+    antiGoGuardian: boolean;
   };
   setSettings: (settings: any) => void;
 }
 
 export default function Settings({ settings, setSettings }: SettingsProps) {
+  const { theme, setTheme } = useTheme();
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="space-y-6">
-        <Card className="bg-card/40 backdrop-blur-sm border-border/50">
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <SettingsIcon className="h-5 w-5" />
@@ -32,17 +36,31 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">Dark Mode</p>
+                <p className="font-medium">Theme</p>
                 <p className="text-sm text-muted-foreground">
-                  Toggle dark/light theme
+                  Choose your preferred theme
                 </p>
               </div>
-              <Switch
-                checked={settings.darkMode}
-                onCheckedChange={(checked) =>
-                  setSettings((prev: any) => ({ ...prev, darkMode: checked }))
-                }
-              />
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={theme === "light" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTheme("light")}
+                  className="gap-2"
+                >
+                  <Sun className="h-4 w-4" />
+                  Light
+                </Button>
+                <Button
+                  variant={theme === "dark" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTheme("dark")}
+                  className="gap-2"
+                >
+                  <Moon className="h-4 w-4" />
+                  Dark
+                </Button>
+              </div>
             </div>
             <Separator />
             <div className="flex items-center justify-between">
@@ -80,7 +98,7 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-sm border-border/50">
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
@@ -118,6 +136,21 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               />
             </div>
             <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Anti-GoGuardian</p>
+                <p className="text-sm text-muted-foreground">
+                  Prevent monitoring software from closing tabs
+                </p>
+              </div>
+              <Switch
+                checked={settings.antiGoGuardian}
+                onCheckedChange={(checked) =>
+                  setSettings((prev: any) => ({ ...prev, antiGoGuardian: checked }))
+                }
+              />
+            </div>
+            <Separator />
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -144,7 +177,7 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-sm border-border/50">
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5" />

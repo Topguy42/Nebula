@@ -33,17 +33,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
       `);
     }
 
-    // Add small delay for certain sites to avoid rate limiting
     const hostname = targetUrl.hostname.toLowerCase();
-    if (hostname.includes("speedtest") || hostname.includes("fast.com")) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 1000 + Math.random() * 2000),
-      );
-    }
 
     // Fetch the content with better error handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    // Faster timeout for Google search, longer for other sites
+    const timeout = hostname.includes("google") ? 6000 : 10000;
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
       console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
@@ -52,11 +48,15 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       ];
 
-      const randomUA =
-        userAgents[Math.floor(Math.random() * userAgents.length)];
+      // Use different UA selection for Google to avoid patterns
+      const randomUA = hostname.includes("google")
+        ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
+        : userAgents[Math.floor(Math.random() * userAgents.length)];
 
       const headers: Record<string, string> = {
         "User-Agent": randomUA,
@@ -64,7 +64,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
           "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Language": "en-US,en;q=0.9",
         "Accept-Encoding": "gzip, deflate, br",
-        "Cache-Control": "max-age=0",
+        "Cache-Control": "no-cache",
         "Upgrade-Insecure-Requests": "1",
         "Sec-Fetch-Dest": "document",
         "Sec-Fetch-Mode": "navigate",
@@ -75,6 +75,55 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Sec-Ch-Ua-Mobile": "?0",
         "Sec-Ch-Ua-Platform": '"Windows"',
       };
+
+      // YouTube-specific headers and handling
+      if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
+        headers["Origin"] = "https://www.youtube.com";
+        headers["Referer"] = "https://www.youtube.com/";
+        headers["X-YouTube-Client-Name"] = "1";
+        headers["X-YouTube-Client-Version"] = "2.20231214.04.00";
+        headers["X-Requested-With"] = "XMLHttpRequest";
+        headers["DNT"] = "1";
+
+        // Use mobile YouTube for better compatibility
+        if (
+          targetUrl.hostname === "www.youtube.com" ||
+          targetUrl.hostname === "youtube.com"
+        ) {
+          targetUrl.hostname = "m.youtube.com";
+        }
+      }
+
+      // Google-specific optimizations for faster search
+      if (
+        hostname.includes("google.com") ||
+        hostname.includes("google.") ||
+        hostname === "google.com"
+      ) {
+        headers["Origin"] = "https://www.google.com";
+        headers["Referer"] = "https://www.google.com/";
+        headers["DNT"] = "1";
+        headers["Accept"] =
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
+        headers["Accept-Language"] = "en-US,en;q=0.5";
+        headers["Connection"] = "keep-alive";
+        headers["Upgrade-Insecure-Requests"] = "1";
+
+        // Use optimized Google parameters for faster loading
+        if (targetUrl.pathname.includes("/search")) {
+          const searchParams = new URLSearchParams(targetUrl.search);
+
+          // Add speed-optimized parameters
+          searchParams.set("safe", "active");
+          searchParams.set("lr", "lang_en");
+          searchParams.set("hl", "en");
+          searchParams.set("num", "20"); // More results per page
+          searchParams.set("start", "0"); // Ensure first page
+          searchParams.set("udm", "14"); // Use lighter search interface
+
+          targetUrl.search = searchParams.toString();
+        }
+      }
 
       // Add referrer for subsequent requests
       const urlPath = targetUrl.pathname;
@@ -105,6 +154,26 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
+        // Special handling for rate limiting
+        if (response.status === 429) {
+          return res.status(200).send(`
+            <html>
+              <body style="font-family: sans-serif; padding: 40px; text-align: center;">
+                <h2>🚦 Rate Limited</h2>
+                <p><strong>${targetUrl.hostname}</strong> is temporarily limiting requests</p>
+                <p>Please wait a moment and try again</p>
+                <button onclick="history.back()">Go Back</button>
+                <br><br>
+                <button onclick="setTimeout(() => window.location.reload(), 2000)">Retry in 2 seconds</button>
+                <br><br>
+                <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer">
+                  Open in New Tab Instead
+                </a>
+              </body>
+            </html>
+          `);
+        }
+
         return res.status(200).send(`
           <html>
             <body style="font-family: sans-serif; padding: 40px; text-align: center;">
@@ -128,20 +197,61 @@ export const handleProxy: RequestHandler = async (req, res) => {
       if (contentType.includes("text/html")) {
         let content = await response.text();
 
-        // Enhanced HTML processing
-        content = processHTML(content, targetUrl);
+        // Fast-track Google search results with minimal processing
+        if (
+          hostname.includes("google") &&
+          targetUrl.pathname.includes("/search")
+        ) {
+          content = processGoogleSearchFast(content, targetUrl);
+        } else {
+          // Enhanced HTML processing for other sites
+          content = processHTML(content, targetUrl);
+        }
 
         // Set security headers
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.setHeader("X-Frame-Options", "SAMEORIGIN");
-        res.setHeader(
-          "Content-Security-Policy",
-          "frame-ancestors *; default-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';",
-        );
+        // Site-specific CSP optimizations
+        if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
+          res.setHeader(
+            "Content-Security-Policy",
+            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; media-src *; img-src *; connect-src *; object-src *; child-src *;",
+          );
+        } else if (
+          hostname.includes("google.com") ||
+          hostname.includes("google.")
+        ) {
+          res.setHeader(
+            "Content-Security-Policy",
+            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *;",
+          );
+        } else {
+          res.setHeader(
+            "Content-Security-Policy",
+            "frame-ancestors *; default-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';",
+          );
+        }
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Headers", "*");
         res.setHeader("Access-Control-Allow-Methods", "*");
         res.setHeader("Access-Control-Allow-Credentials", "true");
+
+        // Better caching for static content
+        if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
+          res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        } else if (
+          hostname.includes("google") &&
+          targetUrl.pathname.includes("/search")
+        ) {
+          res.setHeader("Cache-Control", "private, max-age=60"); // 1 minute for search results
+        } else if (
+          hostname.includes("google.com") ||
+          hostname.includes("google.")
+        ) {
+          res.setHeader("Cache-Control", "private, max-age=180"); // 3 minutes for other Google pages
+        } else {
+          res.setHeader("Cache-Control", "public, max-age=300"); // 5 minutes
+        }
 
         return res.send(content);
       } else if (contentType.includes("text/css")) {
@@ -257,8 +367,74 @@ export const handleProxy: RequestHandler = async (req, res) => {
   }
 };
 
+function processGoogleSearchFast(content: string, targetUrl: URL): string {
+  try {
+    // Minimal, fast processing for Google search results
+
+    // Remove frame blockers
+    content = content.replace(
+      /<meta[^>]*http-equiv[^>]*["\']?x-frame-options[^>]*>/gi,
+      "",
+    );
+    content = content.replace(
+      /<meta[^>]*http-equiv[^>]*["\']?content-security-policy[^>]*>/gi,
+      "",
+    );
+
+    // Set base tag for relative URLs
+    const baseTag = `<base href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + "/")}" target="_self">`;
+    if (content.includes("<head>")) {
+      content = content.replace("<head>", `<head>${baseTag}`);
+    }
+
+    // Minimal iframe optimizations
+    const fastStyles = `
+      <style>
+        body { margin: 0 !important; }
+        .fixed, [style*="position: fixed"] { position: relative !important; }
+        #gb { position: relative !important; }
+      </style>
+    `;
+
+    if (content.includes("</head>")) {
+      content = content.replace("</head>", fastStyles + "</head>");
+    }
+
+    // Fast URL rewriting for search results
+    content = content.replace(/href\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      if (
+        !url ||
+        url.startsWith("/api/proxy") ||
+        url.startsWith("data:") ||
+        url.startsWith("javascript:")
+      ) {
+        return match;
+      }
+      try {
+        if (url.startsWith("/")) {
+          return `href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + url)}"`;
+        } else if (url.startsWith("http")) {
+          return `href="/api/proxy?url=${encodeURIComponent(url)}"`;
+        }
+      } catch (e) {}
+      return match;
+    });
+
+    return content;
+  } catch (error) {
+    console.error("Fast Google processing error:", error);
+    return content;
+  }
+}
+
 function processHTML(content: string, targetUrl: URL): string {
   try {
+    const hostname = targetUrl.hostname.toLowerCase();
+    const isYouTube =
+      hostname.includes("youtube.com") || hostname.includes("youtu.be");
+    const isGoogle =
+      hostname.includes("google.com") || hostname.includes("google.");
+
     // Remove existing base tags to avoid conflicts
     content = content.replace(/<base[^>]*>/gi, "");
 
@@ -289,16 +465,81 @@ function processHTML(content: string, targetUrl: URL): string {
     );
     content = content.replace(/<meta[^>]*name[^>]*["\']?referrer[^>]*>/gi, "");
 
-    // Add simple iframe-friendly styles only
-    const proxyEnhancements = `
+    // Site-specific meta tag removal
+    if (isYouTube) {
+      content = content.replace(
+        /<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi,
+        "",
+      );
+      content = content.replace(
+        /<meta[^>]*property[^>]*["\']?og:url[^>]*>/gi,
+        "",
+      );
+    }
+
+    if (isGoogle) {
+      // Remove Google's viewport restrictions for better iframe display
+      content = content.replace(
+        /<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi,
+        "",
+      );
+      // Remove Google's specific frame options
+      content = content.replace(
+        /<meta[^>]*http-equiv[^>]*["\']?X-UA-Compatible[^>]*>/gi,
+        "",
+      );
+    }
+
+    // Add iframe-friendly styles with site-specific optimizations
+    let proxyEnhancements = `
       <style>
         /* Iframe-friendly styles */
         * { box-sizing: border-box !important; }
         body { margin: 0 !important; overflow-x: auto !important; min-height: 100vh !important; }
         .fixed, [style*="position: fixed"], [style*="position:fixed"] { position: absolute !important; }
-        a, button, [onclick], [role="button"] { pointer-events: auto !important; }
+        a, button, [onclick], [role="button"] { pointer-events: auto !important; }`;
+
+    if (isYouTube) {
+      proxyEnhancements += `
+        /* YouTube-specific fixes */
+        #masthead, .ytd-masthead { position: relative !important; top: 0 !important; }
+        .ytd-app { padding-top: 0 !important; }
+        ytd-popup-container { z-index: 9999 !important; }`;
+    }
+
+    if (isGoogle) {
+      proxyEnhancements += `
+        /* Google Search optimizations for iframe compatibility */
+        #searchform { position: relative !important; }
+        #gb { position: relative !important; }
+        .g { margin-bottom: 15px !important; }`;
+    }
+
+    proxyEnhancements += `
       </style>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
     `;
+
+    // Add DNS prefetch and preconnect for performance
+    if (isYouTube) {
+      proxyEnhancements += `
+        <link rel="dns-prefetch" href="//i.ytimg.com">
+        <link rel="dns-prefetch" href="//s.ytimg.com">
+        <link rel="dns-prefetch" href="//googleads.g.doubleclick.net">
+        <link rel="preconnect" href="https://www.youtube.com">
+      `;
+    }
+
+    if (isGoogle) {
+      proxyEnhancements += `
+        <link rel="dns-prefetch" href="//www.gstatic.com">
+        <link rel="dns-prefetch" href="//encrypted-tbn0.gstatic.com">
+        <link rel="dns-prefetch" href="//ssl.gstatic.com">
+        <link rel="dns-prefetch" href="//fonts.gstatic.com">
+        <link rel="preconnect" href="https://www.google.com">
+        <link rel="preconnect" href="https://www.gstatic.com">
+      `;
+    }
 
     // Insert enhancements before closing head tag
     if (content.includes("</head>")) {

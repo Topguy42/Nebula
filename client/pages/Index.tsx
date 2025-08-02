@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Tools from "@/components/Tools";
 import Settings from "@/components/Settings";
 import {
@@ -297,17 +298,88 @@ export default function Index() {
 
   // Settings state
   const [settings, setSettings] = useState({
-    darkMode: true,
     notifications: true,
     autoplay: false,
     privacy: true,
     volume: [75],
     quality: "high",
     aboutBlank: false,
+    antiGoGuardian: false,
   });
 
   // Store reference to about:blank window
   const [aboutBlankWindow, setAboutBlankWindow] = useState<Window | null>(null);
+
+  // Anti-GoGuardian functionality
+  useEffect(() => {
+    if (settings.antiGoGuardian) {
+      const preventClose = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue =
+          "Are you sure you want to leave? Your session will be lost.";
+        return "Are you sure you want to leave? Your session will be lost.";
+      };
+
+      const preventVisibilityChange = () => {
+        // Keep the page "active" to prevent monitoring software from detecting inactivity
+        if (document.hidden) {
+          document.dispatchEvent(new Event("visibilitychange"));
+        }
+      };
+
+      const preventFocus = (e: Event) => {
+        // Prevent focus loss detection
+        e.preventDefault();
+        window.focus();
+      };
+
+      const preventTabClose = (e: KeyboardEvent) => {
+        // Prevent Ctrl+W, Ctrl+F4, Alt+F4
+        if (
+          (e.ctrlKey && e.key === "w") ||
+          (e.ctrlKey && e.key === "F4") ||
+          (e.altKey && e.key === "F4")
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      };
+
+      // Add event listeners
+      window.addEventListener("beforeunload", preventClose);
+      document.addEventListener("visibilitychange", preventVisibilityChange);
+      window.addEventListener("blur", preventFocus);
+      window.addEventListener("keydown", preventTabClose, true);
+
+      // Prevent right-click context menu
+      const preventContextMenu = (e: MouseEvent) => {
+        e.preventDefault();
+        return false;
+      };
+      document.addEventListener("contextmenu", preventContextMenu);
+
+      // Override window.close
+      const originalClose = window.close;
+      window.close = () => {
+        console.log("Tab close attempt blocked by anti-GoGuardian");
+        return false;
+      };
+
+      // Cleanup function
+      return () => {
+        window.removeEventListener("beforeunload", preventClose);
+        document.removeEventListener(
+          "visibilitychange",
+          preventVisibilityChange,
+        );
+        window.removeEventListener("blur", preventFocus);
+        window.removeEventListener("keydown", preventTabClose, true);
+        document.removeEventListener("contextmenu", preventContextMenu);
+        window.close = originalClose;
+      };
+    }
+  }, [settings.antiGoGuardian]);
 
   // Effect to trigger about:blank immediately when setting is enabled
   useEffect(() => {
@@ -358,7 +430,6 @@ export default function Index() {
     e.preventDefault();
     if (proxyUrl.trim()) {
       const query = proxyUrl.trim();
-      setIsLoading(true);
       setProxyError(null);
 
       // Check if about blank is enabled
@@ -367,7 +438,6 @@ export default function Index() {
           // Focus the about:blank window that contains the full Nebula app
           aboutBlankWindow.focus();
         }
-        setIsLoading(false);
         setProxyUrl("");
         return;
       }
@@ -391,28 +461,27 @@ export default function Index() {
         finalUrl = url;
         setDisplayUrl(url);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
-        console.log("Proxying URL:", url);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         finalUrl = searchUrl;
         setDisplayUrl(`Google Search: ${query}`);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
-        console.log("Proxying search:", searchUrl);
       }
 
-      // Add to recent history
+      // Add to recent history immediately
       setRecentHistory((prev) => {
         const updated = [finalUrl, ...prev.filter((url) => url !== finalUrl)];
         return updated.slice(0, 5); // Keep only 5 recent items
       });
 
       setProxyUrl("");
+      // Set loading after setting URL to start loading immediately
+      setIsLoading(true);
     }
   };
 
   const handleGamePlay = (gameUrl: string) => {
-    setIsLoading(true);
     setProxyError(null);
 
     // Check if about blank is enabled
@@ -420,17 +489,16 @@ export default function Index() {
       if (aboutBlankWindow && !aboutBlankWindow.closed) {
         aboutBlankWindow.focus();
       }
-      setIsLoading(false);
       return;
     }
 
     setDisplayUrl(gameUrl);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}`);
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
+    setIsLoading(true); // Set loading after URL change
   };
 
   const handleQuickLink = (url: string) => {
-    setIsLoading(true);
     setProxyError(null);
 
     // Check if about blank is enabled
@@ -438,12 +506,12 @@ export default function Index() {
       if (aboutBlankWindow && !aboutBlankWindow.closed) {
         aboutBlankWindow.focus();
       }
-      setIsLoading(false);
       return;
     }
 
     setDisplayUrl(url);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
+    setIsLoading(true); // Set loading after URL change
   };
 
   const handleBackToHome = () => {
@@ -465,7 +533,7 @@ export default function Index() {
     return (
       <div className="min-h-screen bg-background">
         {/* Navigation Bar */}
-        <div className="bg-card/50 backdrop-blur-sm border-b border-border/50 px-6 py-3 sticky top-0 z-50">
+        <div className="backdrop-blur-glass border-b border-border/50 px-6 py-3 sticky top-0 z-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
@@ -483,7 +551,7 @@ export default function Index() {
               </div>
             </div>
             <div className="flex-1 max-w-2xl mx-4">
-              <div className="bg-background/50 rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate">
+              <div className="backdrop-blur-glass rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate">
                 {displayUrl}
               </div>
             </div>
@@ -536,8 +604,9 @@ export default function Index() {
               console.error("Iframe failed to load:", e);
             }}
             title="Browsing content"
-            sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
-            allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation allow-downloads"
+            allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking; clipboard-read; clipboard-write"
+            loading="eager"
           />
         )}
       </div>
@@ -549,8 +618,37 @@ export default function Index() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 blur-3xl"></div>
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/10 to-primary/10 blur-3xl"></div>
+        {/* Animated gradient orbs */}
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20 blur-3xl animate-pulse"></div>
+        <div
+          className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/20 to-primary/20 blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400/10 to-violet-600/10 blur-2xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+
+        {/* Floating particles */}
+        <div
+          className="absolute top-20 left-10 w-2 h-2 bg-primary/30 rounded-full animate-bounce"
+          style={{ animationDelay: "0.5s" }}
+        ></div>
+        <div
+          className="absolute top-40 right-20 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce"
+          style={{ animationDelay: "1.5s" }}
+        ></div>
+        <div
+          className="absolute bottom-40 left-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-bounce"
+          style={{ animationDelay: "2.5s" }}
+        ></div>
+        <div
+          className="absolute top-1/3 right-1/3 w-1 h-1 bg-cyan-400/40 rounded-full animate-bounce"
+          style={{ animationDelay: "3s" }}
+        ></div>
       </div>
 
       {/* Header */}
@@ -622,7 +720,7 @@ export default function Index() {
         <div className="container mx-auto px-6 text-center">
           {/* Hero Section */}
           <div className="mb-16">
-            <h1 className="text-8xl md:text-9xl font-black tracking-tight mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            <h1 className="text-8xl md:text-9xl font-black tracking-tight mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent animate-pulse">
               NEBULA
             </h1>
             <p className="text-lg text-muted-foreground mb-12">
@@ -639,7 +737,7 @@ export default function Index() {
                       placeholder="Search with Google or enter address"
                       value={proxyUrl}
                       onChange={(e) => setProxyUrl(e.target.value)}
-                      className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl px-8"
+                      className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl px-8 transition-all duration-300 hover:shadow-lg"
                     />
                     <Button
                       type="submit"
@@ -658,7 +756,7 @@ export default function Index() {
                     placeholder="Search games..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
+                    className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl pl-16 pr-8 transition-all duration-300 hover:shadow-lg"
                   />
                 </div>
               ) : activeTab === "apps" ? (
@@ -669,7 +767,7 @@ export default function Index() {
                     placeholder="Search web applications..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
+                    className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl pl-16 pr-8 transition-all duration-300 hover:shadow-lg"
                   />
                 </div>
               ) : activeTab === "tools" ? (
@@ -705,7 +803,7 @@ export default function Index() {
                         key={link.name}
                         variant="outline"
                         onClick={() => handleQuickLink(link.url)}
-                        className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl group"
+                        className="h-20 flex-col gap-3 backdrop-blur-glass hover:backdrop-blur-glass border-border/50 hover:border-primary/50 transition-all duration-300 hover:scale-105 rounded-xl group hover:shadow-xl"
                       >
                         <div
                           className={`${link.color} group-hover:scale-110 transition-transform duration-200`}
@@ -775,7 +873,7 @@ export default function Index() {
                 {filteredGames.map((game) => (
                   <Card
                     key={game.name}
-                    className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl"
+                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl"
                   >
                     <CardHeader className="pb-4">
                       <div className="flex items-start justify-between">
@@ -848,7 +946,7 @@ export default function Index() {
                     return (
                       <Card
                         key={app.name}
-                        className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer"
+                        className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer"
                         onClick={() => handleQuickLink(app.url)}
                       >
                         <CardHeader className="pb-4">
