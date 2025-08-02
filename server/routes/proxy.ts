@@ -161,17 +161,25 @@ export const handleProxy: RequestHandler = async (req, res) => {
           headers["Referer"] = "https://www.google.com/";
         }
 
-        // Use optimized Google parameters for faster loading
+        // Use optimized Google parameters for proxy/about:blank environments
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
 
-          // Add speed-optimized parameters
+          // Add parameters to bypass restrictions and improve compatibility
           searchParams.set("safe", "active");
           searchParams.set("lr", "lang_en");
           searchParams.set("hl", "en");
           searchParams.set("num", "20"); // More results per page
           searchParams.set("start", "0"); // Ensure first page
           searchParams.set("udm", "14"); // Use lighter search interface
+          searchParams.set("client", "firefox-b-d"); // Simulate Firefox browser
+          searchParams.set("source", "hp"); // Homepage source
+          searchParams.set("ei", Date.now().toString()); // Random event ID
+          searchParams.set("iflsig", "ALs-wAMAAAAAZr"); // Fake signature
+
+          // Remove potentially problematic parameters
+          searchParams.delete("ved");
+          searchParams.delete("uact");
 
           targetUrl.search = searchParams.toString();
         }
