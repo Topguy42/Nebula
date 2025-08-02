@@ -96,7 +96,7 @@ export default function Tools({}: ToolsProps) {
   const [cloakerFavicon, setCloakerFavicon] = useState("");
   const [originalTitle, setOriginalTitle] = useState("");
   const [originalFavicon, setOriginalFavicon] = useState("");
-  const [selectedSearchEngine, setSelectedSearchEngine] = useState("duckduckgo");
+  const [selectedSearchEngine, setSelectedSearchEngine] = useState("google");
 
   // Initialize referrer rotation from localStorage
   useEffect(() => {
@@ -448,7 +448,7 @@ ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 ${selectedMethod}
 
-🔧 General Bypass Techniques:
+���� General Bypass Techniques:
 • Change DNS servers (1.1.1.1, 8.8.8.8)
 • Use different browsers
 • Clear browser cache and cookies
@@ -490,7 +490,7 @@ ${selectedMethod}
 📍 Location & Network:
 • IP Address: ${ipData.ip || "Unable to detect"}
 • Location: ${ipData.city || "Unknown"}, ${ipData.region || "Unknown"}, ${ipData.country_name || "Unknown"}
-• ISP/Organization: ${ipData.org || "Unknown"}
+�� ISP/Organization: ${ipData.org || "Unknown"}
 • Network Type: ${ipData.network || "Unknown"}
 • Timezone: ${ipData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
 
