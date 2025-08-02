@@ -295,7 +295,6 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(false);
   const [proxyError, setProxyError] = useState<string | null>(null);
 
-
   // Settings state
   const [settings, setSettings] = useState({
     notifications: true,
@@ -470,8 +469,6 @@ export default function Index() {
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
       }
 
-
-
       setProxyUrl("");
       // Set loading after setting URL to start loading immediately
       setIsLoading(true);
@@ -556,7 +553,7 @@ export default function Index() {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    const iframe = document.querySelector('iframe');
+                    const iframe = document.querySelector("iframe");
                     if (iframe) {
                       iframe.src = iframe.src;
                     }
@@ -866,8 +863,6 @@ export default function Index() {
                   })}
                 </div>
               </div>
-
-
             </div>
           )}
 
