@@ -309,6 +309,7 @@ export default function Index() {
 
   // Store reference to about:blank window
   const [aboutBlankWindow, setAboutBlankWindow] = useState<Window | null>(null);
+  const [devToolsOpen, setDevToolsOpen] = useState(false);
 
   // Anti-GoGuardian functionality
   useEffect(() => {
