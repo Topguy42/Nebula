@@ -225,8 +225,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
         // Better caching for static content
         if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
           res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        } else if (hostname.includes("google") && targetUrl.pathname.includes("/search")) {
+          res.setHeader("Cache-Control", "private, max-age=60"); // 1 minute for search results
         } else if (hostname.includes("google.com") || hostname.includes("google.")) {
-          res.setHeader("Cache-Control", "private, max-age=120"); // 2 minutes for Google
+          res.setHeader("Cache-Control", "private, max-age=180"); // 3 minutes for other Google pages
         } else {
           res.setHeader("Cache-Control", "public, max-age=300"); // 5 minutes
         }
