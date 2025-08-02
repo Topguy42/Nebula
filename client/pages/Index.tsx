@@ -401,7 +401,7 @@ export default function Index() {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>VortexPortal - Web Access</title>
+            <title>Vortex - Web Access</title>
             <style>
               body {
                 margin: 0;
@@ -583,7 +583,7 @@ export default function Index() {
               <div className="flex items-center gap-3">
                 <VortexLogo className="w-7 h-7" />
                 <span className="font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  VortexPortal
+                  Vortex
                 </span>
               </div>
             </div>
@@ -726,7 +726,7 @@ export default function Index() {
               <VortexLogo className="w-10 h-10" />
               <div className="hidden sm:block">
                 <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                  VortexPortal
+                  Vortex
                 </h1>
                 <p className="text-xs text-muted-foreground font-medium tracking-wide">
                   Fast Web Access
@@ -807,7 +807,7 @@ export default function Index() {
           {/* Hero Section */}
           <div className="mb-16">
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent leading-none mb-12">
-              VortexPortal
+              Vortex
             </h1>
 
             {/* Main Search/Input */}
@@ -869,8 +869,7 @@ export default function Index() {
                     Settings & Options
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Customize your VortexPortal experience and adjust privacy
-                    settings
+                    Customize your Vortex experience and adjust privacy settings
                   </p>
                 </div>
               )}
