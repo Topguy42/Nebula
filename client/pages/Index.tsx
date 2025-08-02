@@ -666,7 +666,7 @@ export default function Index() {
 
   // Home view
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Ultra-modern gradient orbs */}
