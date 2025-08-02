@@ -315,14 +315,15 @@ export default function Index() {
     if (settings.antiGoGuardian) {
       const preventClose = (e: BeforeUnloadEvent) => {
         e.preventDefault();
-        e.returnValue = "Are you sure you want to leave? Your session will be lost.";
+        e.returnValue =
+          "Are you sure you want to leave? Your session will be lost.";
         return "Are you sure you want to leave? Your session will be lost.";
       };
 
       const preventVisibilityChange = () => {
         // Keep the page "active" to prevent monitoring software from detecting inactivity
         if (document.hidden) {
-          document.dispatchEvent(new Event('visibilitychange'));
+          document.dispatchEvent(new Event("visibilitychange"));
         }
       };
 
@@ -335,9 +336,9 @@ export default function Index() {
       const preventTabClose = (e: KeyboardEvent) => {
         // Prevent Ctrl+W, Ctrl+F4, Alt+F4
         if (
-          (e.ctrlKey && e.key === 'w') ||
-          (e.ctrlKey && e.key === 'F4') ||
-          (e.altKey && e.key === 'F4')
+          (e.ctrlKey && e.key === "w") ||
+          (e.ctrlKey && e.key === "F4") ||
+          (e.altKey && e.key === "F4")
         ) {
           e.preventDefault();
           e.stopPropagation();
@@ -346,32 +347,35 @@ export default function Index() {
       };
 
       // Add event listeners
-      window.addEventListener('beforeunload', preventClose);
-      document.addEventListener('visibilitychange', preventVisibilityChange);
-      window.addEventListener('blur', preventFocus);
-      window.addEventListener('keydown', preventTabClose, true);
+      window.addEventListener("beforeunload", preventClose);
+      document.addEventListener("visibilitychange", preventVisibilityChange);
+      window.addEventListener("blur", preventFocus);
+      window.addEventListener("keydown", preventTabClose, true);
 
       // Prevent right-click context menu
       const preventContextMenu = (e: MouseEvent) => {
         e.preventDefault();
         return false;
       };
-      document.addEventListener('contextmenu', preventContextMenu);
+      document.addEventListener("contextmenu", preventContextMenu);
 
       // Override window.close
       const originalClose = window.close;
       window.close = () => {
-        console.log('Tab close attempt blocked by anti-GoGuardian');
+        console.log("Tab close attempt blocked by anti-GoGuardian");
         return false;
       };
 
       // Cleanup function
       return () => {
-        window.removeEventListener('beforeunload', preventClose);
-        document.removeEventListener('visibilitychange', preventVisibilityChange);
-        window.removeEventListener('blur', preventFocus);
-        window.removeEventListener('keydown', preventTabClose, true);
-        document.removeEventListener('contextmenu', preventContextMenu);
+        window.removeEventListener("beforeunload", preventClose);
+        document.removeEventListener(
+          "visibilitychange",
+          preventVisibilityChange,
+        );
+        window.removeEventListener("blur", preventFocus);
+        window.removeEventListener("keydown", preventTabClose, true);
+        document.removeEventListener("contextmenu", preventContextMenu);
         window.close = originalClose;
       };
     }
@@ -616,17 +620,35 @@ export default function Index() {
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated gradient orbs */}
         <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20 blur-3xl animate-pulse"></div>
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/20 to-primary/20 blur-3xl animate-pulse" style={{animationDelay: "1s"}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400/10 to-violet-600/10 blur-2xl animate-pulse" style={{animationDelay: "2s"}}></div>
+        <div
+          className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/20 to-primary/20 blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400/10 to-violet-600/10 blur-2xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
 
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
 
         {/* Floating particles */}
-        <div className="absolute top-20 left-10 w-2 h-2 bg-primary/30 rounded-full animate-bounce" style={{animationDelay: "0.5s"}}></div>
-        <div className="absolute top-40 right-20 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce" style={{animationDelay: "1.5s"}}></div>
-        <div className="absolute bottom-40 left-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-bounce" style={{animationDelay: "2.5s"}}></div>
-        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-cyan-400/40 rounded-full animate-bounce" style={{animationDelay: "3s"}}></div>
+        <div
+          className="absolute top-20 left-10 w-2 h-2 bg-primary/30 rounded-full animate-bounce"
+          style={{ animationDelay: "0.5s" }}
+        ></div>
+        <div
+          className="absolute top-40 right-20 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce"
+          style={{ animationDelay: "1.5s" }}
+        ></div>
+        <div
+          className="absolute bottom-40 left-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-bounce"
+          style={{ animationDelay: "2.5s" }}
+        ></div>
+        <div
+          className="absolute top-1/3 right-1/3 w-1 h-1 bg-cyan-400/40 rounded-full animate-bounce"
+          style={{ animationDelay: "3s" }}
+        ></div>
       </div>
 
       {/* Header */}

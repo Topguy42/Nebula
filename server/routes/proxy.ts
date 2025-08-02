@@ -86,17 +86,25 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["DNT"] = "1";
 
         // Use mobile YouTube for better compatibility
-        if (targetUrl.hostname === "www.youtube.com" || targetUrl.hostname === "youtube.com") {
+        if (
+          targetUrl.hostname === "www.youtube.com" ||
+          targetUrl.hostname === "youtube.com"
+        ) {
           targetUrl.hostname = "m.youtube.com";
         }
       }
 
       // Google-specific optimizations for faster search
-      if (hostname.includes("google.com") || hostname.includes("google.") || hostname === "google.com") {
+      if (
+        hostname.includes("google.com") ||
+        hostname.includes("google.") ||
+        hostname === "google.com"
+      ) {
         headers["Origin"] = "https://www.google.com";
         headers["Referer"] = "https://www.google.com/";
         headers["DNT"] = "1";
-        headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
+        headers["Accept"] =
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
         headers["Accept-Language"] = "en-US,en;q=0.5";
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
@@ -190,7 +198,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
         let content = await response.text();
 
         // Fast-track Google search results with minimal processing
-        if (hostname.includes("google") && targetUrl.pathname.includes("/search")) {
+        if (
+          hostname.includes("google") &&
+          targetUrl.pathname.includes("/search")
+        ) {
           content = processGoogleSearchFast(content, targetUrl);
         } else {
           // Enhanced HTML processing for other sites
@@ -206,7 +217,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
             "Content-Security-Policy",
             "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; media-src *; img-src *; connect-src *; object-src *; child-src *;",
           );
-        } else if (hostname.includes("google.com") || hostname.includes("google.")) {
+        } else if (
+          hostname.includes("google.com") ||
+          hostname.includes("google.")
+        ) {
           res.setHeader(
             "Content-Security-Policy",
             "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *;",
@@ -225,9 +239,15 @@ export const handleProxy: RequestHandler = async (req, res) => {
         // Better caching for static content
         if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
           res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        } else if (hostname.includes("google") && targetUrl.pathname.includes("/search")) {
+        } else if (
+          hostname.includes("google") &&
+          targetUrl.pathname.includes("/search")
+        ) {
           res.setHeader("Cache-Control", "private, max-age=60"); // 1 minute for search results
-        } else if (hostname.includes("google.com") || hostname.includes("google.")) {
+        } else if (
+          hostname.includes("google.com") ||
+          hostname.includes("google.")
+        ) {
           res.setHeader("Cache-Control", "private, max-age=180"); // 3 minutes for other Google pages
         } else {
           res.setHeader("Cache-Control", "public, max-age=300"); // 5 minutes
@@ -352,8 +372,14 @@ function processGoogleSearchFast(content: string, targetUrl: URL): string {
     // Minimal, fast processing for Google search results
 
     // Remove frame blockers
-    content = content.replace(/<meta[^>]*http-equiv[^>]*["\']?x-frame-options[^>]*>/gi, "");
-    content = content.replace(/<meta[^>]*http-equiv[^>]*["\']?content-security-policy[^>]*>/gi, "");
+    content = content.replace(
+      /<meta[^>]*http-equiv[^>]*["\']?x-frame-options[^>]*>/gi,
+      "",
+    );
+    content = content.replace(
+      /<meta[^>]*http-equiv[^>]*["\']?content-security-policy[^>]*>/gi,
+      "",
+    );
 
     // Set base tag for relative URLs
     const baseTag = `<base href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + "/")}" target="_self">`;
@@ -376,7 +402,12 @@ function processGoogleSearchFast(content: string, targetUrl: URL): string {
 
     // Fast URL rewriting for search results
     content = content.replace(/href\s*=\s*["']([^"']+)["']/gi, (match, url) => {
-      if (!url || url.startsWith("/api/proxy") || url.startsWith("data:") || url.startsWith("javascript:")) {
+      if (
+        !url ||
+        url.startsWith("/api/proxy") ||
+        url.startsWith("data:") ||
+        url.startsWith("javascript:")
+      ) {
         return match;
       }
       try {
@@ -399,8 +430,10 @@ function processGoogleSearchFast(content: string, targetUrl: URL): string {
 function processHTML(content: string, targetUrl: URL): string {
   try {
     const hostname = targetUrl.hostname.toLowerCase();
-    const isYouTube = hostname.includes("youtube.com") || hostname.includes("youtu.be");
-    const isGoogle = hostname.includes("google.com") || hostname.includes("google.");
+    const isYouTube =
+      hostname.includes("youtube.com") || hostname.includes("youtu.be");
+    const isGoogle =
+      hostname.includes("google.com") || hostname.includes("google.");
 
     // Remove existing base tags to avoid conflicts
     content = content.replace(/<base[^>]*>/gi, "");
@@ -434,15 +467,27 @@ function processHTML(content: string, targetUrl: URL): string {
 
     // Site-specific meta tag removal
     if (isYouTube) {
-      content = content.replace(/<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi, "");
-      content = content.replace(/<meta[^>]*property[^>]*["\']?og:url[^>]*>/gi, "");
+      content = content.replace(
+        /<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi,
+        "",
+      );
+      content = content.replace(
+        /<meta[^>]*property[^>]*["\']?og:url[^>]*>/gi,
+        "",
+      );
     }
 
     if (isGoogle) {
       // Remove Google's viewport restrictions for better iframe display
-      content = content.replace(/<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi, "");
+      content = content.replace(
+        /<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi,
+        "",
+      );
       // Remove Google's specific frame options
-      content = content.replace(/<meta[^>]*http-equiv[^>]*["\']?X-UA-Compatible[^>]*>/gi, "");
+      content = content.replace(
+        /<meta[^>]*http-equiv[^>]*["\']?X-UA-Compatible[^>]*>/gi,
+        "",
+      );
     }
 
     // Add iframe-friendly styles with site-specific optimizations
