@@ -726,7 +726,7 @@ export default function Index() {
               <VortexLogo className="w-10 h-10" />
               <div className="hidden sm:block">
                 <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                  VortexPortal
+                  Vortex
                 </h1>
                 <p className="text-xs text-muted-foreground font-medium tracking-wide">
                   Fast Web Access
