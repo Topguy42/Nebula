@@ -592,8 +592,14 @@ export default function Index() {
               </div>
             </div>
             <div className="flex-1 max-w-2xl mx-4">
-              <div className="backdrop-blur-glass rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate">
-                {displayUrl}
+              <div className="backdrop-blur-glass rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate flex items-center gap-2">
+                <span className="flex-1 truncate">{displayUrl}</span>
+                {localStorage.getItem('proxy-referrer-rotation') === 'true' && (
+                  <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-100/80 dark:bg-emerald-900/30 px-2 py-1 rounded-full shrink-0">
+                    <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-pulse"></div>
+                    Referrer Rotating
+                  </div>
+                )}
               </div>
             </div>
             <Button
