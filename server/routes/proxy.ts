@@ -118,18 +118,19 @@ export const handleProxy: RequestHandler = async (req, res) => {
         ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
         : userAgents[Math.floor(Math.random() * userAgents.length)];
 
-      // More conservative dynamic referrer rotation for Google
+      // Optimized dynamic referrer rotation
       let dynamicReferrer = "";
       if (referrer_rotation === "true") {
         if (hostname.includes("google")) {
-          // For Google, use more conservative rotation (every 60 seconds)
-          const rotationIndex = Math.floor(Date.now() / 60000) % 3; // Only use first 3 referrers
-          const conservativeReferrers = [
+          // For Google, use effective referrers
+          const rotationIndex = Math.floor(Date.now() / 15000) % 4; // Every 15 seconds
+          const effectiveReferrers = [
             "https://www.google.com/",
+            "https://duckduckgo.com/",
             "https://en.wikipedia.org/",
-            "https://www.youtube.com/"
+            "https://www.bing.com/"
           ];
-          dynamicReferrer = conservativeReferrers[rotationIndex];
+          dynamicReferrer = effectiveReferrers[rotationIndex];
         } else {
           // For other sites, use normal rotation
           const rotationIndex = Math.floor(Date.now() / 5000) % referrerSources.length;
