@@ -515,9 +515,9 @@ export default function Index() {
           },
         };
 
-        // Get saved search engine preference, default to Google
+        // Get saved search engine preference, default to DuckDuckGo to avoid rate limiting
         const savedEngine =
-          localStorage.getItem("preferred-search-engine") || "google";
+          localStorage.getItem("preferred-search-engine") || "duckduckgo";
         const selectedEngine =
           searchEngines[savedEngine as keyof typeof searchEngines] ||
           searchEngines.google;
