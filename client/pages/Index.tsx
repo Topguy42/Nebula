@@ -288,13 +288,7 @@ export default function Index() {
   const [displayUrl, setDisplayUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [proxyError, setProxyError] = useState<string | null>(null);
-  const [recentHistory, setRecentHistory] = useState<string[]>([]);
-  const [favorites, setFavorites] = useState<string[]>([
-    "https://google.com",
-    "https://github.com",
-    "https://youtube.com",
-    "https://wikipedia.org",
-  ]);
+
 
   // Settings state
   const [settings, setSettings] = useState({
@@ -469,11 +463,7 @@ export default function Index() {
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
       }
 
-      // Add to recent history immediately
-      setRecentHistory((prev) => {
-        const updated = [finalUrl, ...prev.filter((url) => url !== finalUrl)];
-        return updated.slice(0, 5); // Keep only 5 recent items
-      });
+
 
       setProxyUrl("");
       // Set loading after setting URL to start loading immediately
@@ -817,53 +807,7 @@ export default function Index() {
                 </div>
               </div>
 
-              {recentHistory.length > 0 && (
-                <div>
-                  <h3 className="text-xl font-semibold mb-6">Recent History</h3>
-                  <div className="grid gap-3">
-                    {recentHistory.map((url, index) => (
-                      <Button
-                        key={url}
-                        variant="outline"
-                        onClick={() => handleQuickLink(url)}
-                        className="justify-start h-auto p-4 bg-card/20 hover:bg-card/40 border-border/30"
-                      >
-                        <div className="flex items-center gap-3 w-full">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
-                            {index + 1}
-                          </div>
-                          <span className="truncate flex-1 text-left">
-                            {url}
-                          </span>
-                        </div>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              <div>
-                <h3 className="text-xl font-semibold mb-6">Favorites</h3>
-                <div className="grid gap-3">
-                  {favorites.map((url) => (
-                    <Button
-                      key={url}
-                      variant="outline"
-                      onClick={() => handleQuickLink(url)}
-                      className="justify-start h-auto p-4 bg-card/20 hover:bg-card/40 border-border/30"
-                    >
-                      <div className="flex items-center gap-3 w-full">
-                        <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
-                          ⭐
-                        </div>
-                        <span className="truncate flex-1 text-left">
-                          {url.replace(/^https?:\/\//, "")}
-                        </span>
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </div>
             </div>
           )}
 
