@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Tools from "@/components/Tools";
 import Settings from "@/components/Settings";
 import {
@@ -297,7 +298,6 @@ export default function Index() {
 
   // Settings state
   const [settings, setSettings] = useState({
-    darkMode: true,
     notifications: true,
     autoplay: false,
     privacy: true,
@@ -549,8 +549,19 @@ export default function Index() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 blur-3xl"></div>
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/10 to-primary/10 blur-3xl"></div>
+        {/* Animated gradient orbs */}
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20 blur-3xl animate-pulse"></div>
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/20 to-primary/20 blur-3xl animate-pulse" style={{animationDelay: "1s"}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400/10 to-violet-600/10 blur-2xl animate-pulse" style={{animationDelay: "2s"}}></div>
+
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+
+        {/* Floating particles */}
+        <div className="absolute top-20 left-10 w-2 h-2 bg-primary/30 rounded-full animate-bounce" style={{animationDelay: "0.5s"}}></div>
+        <div className="absolute top-40 right-20 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce" style={{animationDelay: "1.5s"}}></div>
+        <div className="absolute bottom-40 left-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-bounce" style={{animationDelay: "2.5s"}}></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-cyan-400/40 rounded-full animate-bounce" style={{animationDelay: "3s"}}></div>
       </div>
 
       {/* Header */}
@@ -559,6 +570,11 @@ export default function Index() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <NebulaLogo className="w-12 h-12" />
+
+            {/* Theme Toggle */}
+            <div className="md:absolute md:right-6">
+              <ThemeToggle />
+            </div>
 
             {/* Navigation */}
             <nav className="flex items-center space-x-8 text-sm font-medium">
@@ -622,7 +638,7 @@ export default function Index() {
         <div className="container mx-auto px-6 text-center">
           {/* Hero Section */}
           <div className="mb-16">
-            <h1 className="text-8xl md:text-9xl font-black tracking-tight mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            <h1 className="text-8xl md:text-9xl font-black tracking-tight mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent animate-pulse">
               NEBULA
             </h1>
             <p className="text-lg text-muted-foreground mb-12">
