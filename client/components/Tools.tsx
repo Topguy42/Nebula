@@ -82,7 +82,6 @@ export default function Tools({}: ToolsProps) {
   const [targetUrl, setTargetUrl] = useState("");
   const [result, setResult] = useState("");
   const [selectedTool, setSelectedTool] = useState("sitechecker");
-  const [timeLeft, setTimeLeft] = useState(studyTime * 60);
   const [referrerRotation, setReferrerRotation] = useState(false);
   const [cloakerTitle, setCloakerTitle] = useState("");
   const [cloakerFavicon, setCloakerFavicon] = useState("");
