@@ -9,7 +9,6 @@ import { Settings as SettingsIcon, Shield, Zap, Volume2, Moon, Sun } from "lucid
 
 interface SettingsProps {
   settings: {
-    darkMode: boolean;
     notifications: boolean;
     autoplay: boolean;
     privacy: boolean;
