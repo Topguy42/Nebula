@@ -172,7 +172,7 @@ export default function Index() {
             </p>
             
             {/* Main Search/Input */}
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               {activeTab === "proxy" ? (
                 <form onSubmit={handleProxySubmit}>
                   <div className="relative">
@@ -181,26 +181,26 @@ export default function Index() {
                       placeholder="Search with Google or enter address"
                       value={proxyUrl}
                       onChange={(e) => setProxyUrl(e.target.value)}
-                      className="h-14 text-lg bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-xl px-6"
+                      className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl px-8"
                     />
-                    <Button 
-                      type="submit" 
-                      size="sm" 
-                      className="absolute right-2 top-2 h-10 px-4"
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="absolute right-3 top-3 h-14 px-6"
                     >
-                      <ExternalLink className="h-4 w-4" />
+                      <ExternalLink className="h-5 w-5" />
                     </Button>
                   </div>
                 </form>
               ) : (
                 <div className="relative">
-                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Search games..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-14 text-lg bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-xl pl-14 pr-6"
+                    className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
                   />
                 </div>
               )}
