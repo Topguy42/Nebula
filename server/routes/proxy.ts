@@ -244,8 +244,8 @@ function processHTML(content: string, targetUrl: URL): string {
     // Remove existing base tags to avoid conflicts
     content = content.replace(/<base[^>]*>/gi, '');
 
-    // Set base tag to the original domain to make browser think it's on the real site
-    const baseTag = `<base href="${targetUrl.origin}/" target="_self">`;
+    // Set base tag to proxy the original domain
+    const baseTag = `<base href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + '/')}" target="_self">`;
 
     // Insert base tag after <head>
     if (content.includes("<head>")) {
