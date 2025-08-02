@@ -78,8 +78,6 @@ export default function Tools({}: ToolsProps) {
   const [websiteInput, setWebsiteInput] = useState("");
   const [dnsServer, setDnsServer] = useState("8.8.8.8");
   const [proxyRegion, setProxyRegion] = useState("global");
-  const [studyTime, setStudyTime] = useState(25);
-  const [timerRunning, setTimerRunning] = useState(false);
   const [filterType, setFilterType] = useState("keyword");
   const [targetUrl, setTargetUrl] = useState("");
   const [result, setResult] = useState("");
