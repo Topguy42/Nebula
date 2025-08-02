@@ -410,7 +410,6 @@ export default function Index() {
   };
 
   const handleGamePlay = (gameUrl: string) => {
-    setIsLoading(true);
     setProxyError(null);
 
     // Check if about blank is enabled
@@ -418,17 +417,16 @@ export default function Index() {
       if (aboutBlankWindow && !aboutBlankWindow.closed) {
         aboutBlankWindow.focus();
       }
-      setIsLoading(false);
       return;
     }
 
     setDisplayUrl(gameUrl);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}`);
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
+    setIsLoading(true); // Set loading after URL change
   };
 
   const handleQuickLink = (url: string) => {
-    setIsLoading(true);
     setProxyError(null);
 
     // Check if about blank is enabled
@@ -436,12 +434,12 @@ export default function Index() {
       if (aboutBlankWindow && !aboutBlankWindow.closed) {
         aboutBlankWindow.focus();
       }
-      setIsLoading(false);
       return;
     }
 
     setDisplayUrl(url);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
+    setIsLoading(true); // Set loading after URL change
   };
 
   const handleBackToHome = () => {
