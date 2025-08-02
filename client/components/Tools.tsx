@@ -76,10 +76,10 @@ interface ToolsProps {}
 export default function Tools({}: ToolsProps) {
   const [websiteInput, setWebsiteInput] = useState("");
   const [dnsServer, setDnsServer] = useState("8.8.8.8");
-  const [videoUrl, setVideoUrl] = useState("");
+  const [urlToolsInput, setUrlToolsInput] = useState("");
   const [studyTime, setStudyTime] = useState(25);
   const [timerRunning, setTimerRunning] = useState(false);
-  const [textBrowserUrl, setTextBrowserUrl] = useState("");
+  const [networkTestUrl, setNetworkTestUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [studyNotes, setStudyNotes] = useState("");
   const [result, setResult] = useState("");
@@ -289,7 +289,7 @@ iOS: WiFi Settings > Configure DNS
 🔧 Browser Features:
 • Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
 • JavaScript Enabled: Yes (obviously)
-��� Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
+• Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
 • Online Status: ${navigator.onLine ? 'Online' : 'Offline'}
 • Do Not Track: ${navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled'}
 
