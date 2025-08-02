@@ -214,6 +214,7 @@ export default function Index() {
   const [currentUrl, setCurrentUrl] = useState("");
   const [displayUrl, setDisplayUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [proxyError, setProxyError] = useState<string | null>(null);
   const [recentHistory, setRecentHistory] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<string[]>([
     "https://google.com",
