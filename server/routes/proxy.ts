@@ -145,6 +145,26 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
+        // Special handling for rate limiting
+        if (response.status === 429) {
+          return res.status(200).send(`
+            <html>
+              <body style="font-family: sans-serif; padding: 40px; text-align: center;">
+                <h2>🚦 Rate Limited</h2>
+                <p><strong>${targetUrl.hostname}</strong> is temporarily limiting requests</p>
+                <p>Please wait a moment and try again</p>
+                <button onclick="history.back()">Go Back</button>
+                <br><br>
+                <button onclick="setTimeout(() => window.location.reload(), 2000)">Retry in 2 seconds</button>
+                <br><br>
+                <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer">
+                  Open in New Tab Instead
+                </a>
+              </body>
+            </html>
+          `);
+        }
+
         return res.status(200).send(`
           <html>
             <body style="font-family: sans-serif; padding: 40px; text-align: center;">
