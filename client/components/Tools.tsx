@@ -18,6 +18,7 @@ import {
   Eye,
   ExternalLink,
   Shield,
+  Search,
 } from "lucide-react";
 
 const toolsList = [
@@ -470,7 +471,7 @@ ${selectedMethod}
 • Color Depth: ${window.screen.colorDepth}-bit
 • Pixel Ratio: ${window.devicePixelRatio}
 
-🔧 Browser Features:
+�� Browser Features:
 • Cookies Enabled: ${navigator.cookieEnabled ? "Yes" : "No"}
 • JavaScript Enabled: Yes
 • Local Storage: ${typeof Storage !== "undefined" ? "Available" : "Not Available"}
