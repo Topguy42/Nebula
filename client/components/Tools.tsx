@@ -85,6 +85,9 @@ export default function Tools({}: ToolsProps) {
   const [result, setResult] = useState("");
   const [selectedTool, setSelectedTool] = useState("sitechecker");
   const [timeLeft, setTimeLeft] = useState(studyTime * 60);
+  const [referrerRotation, setReferrerRotation] = useState(false);
+  const [currentReferrer, setCurrentReferrer] = useState("none");
+  const [rotationInterval, setRotationInterval] = useState(5);
 
   // Clear result when switching tools
   useEffect(() => {
