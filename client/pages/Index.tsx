@@ -9,6 +9,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Gamepad2,
   Star,
@@ -16,6 +20,28 @@ import {
   ExternalLink,
   Search,
   ArrowLeft,
+  Calculator,
+  Hash,
+  FileText,
+  QrCode,
+  Palette,
+  Clock,
+  Settings,
+  Volume2,
+  Moon,
+  Shield,
+  Zap,
+  Download,
+  Mail,
+  MessageSquare,
+  Calendar,
+  Music,
+  Camera,
+  Map,
+  BookOpen,
+  Code,
+  Globe,
+  Youtube,
 } from "lucide-react";
 
 const popularGames = [
@@ -95,6 +121,132 @@ const quickLinks = [
   { name: "TikTok", url: "https://tiktok.com", icon: "🎵" },
 ];
 
+const webApps = [
+  {
+    name: "Google Docs",
+    url: "https://docs.google.com",
+    icon: FileText,
+    description: "Create and edit documents online",
+    category: "Productivity"
+  },
+  {
+    name: "Gmail",
+    url: "https://gmail.com",
+    icon: Mail,
+    description: "Email and communication",
+    category: "Communication"
+  },
+  {
+    name: "Google Drive",
+    url: "https://drive.google.com",
+    icon: Download,
+    description: "Cloud storage and file sharing",
+    category: "Storage"
+  },
+  {
+    name: "WhatsApp Web",
+    url: "https://web.whatsapp.com",
+    icon: MessageSquare,
+    description: "Messaging app for web",
+    category: "Communication"
+  },
+  {
+    name: "Google Calendar",
+    url: "https://calendar.google.com",
+    icon: Calendar,
+    description: "Schedule and manage events",
+    category: "Productivity"
+  },
+  {
+    name: "Spotify Web",
+    url: "https://open.spotify.com",
+    icon: Music,
+    description: "Music streaming service",
+    category: "Entertainment"
+  },
+  {
+    name: "Photopea",
+    url: "https://photopea.com",
+    icon: Camera,
+    description: "Online photo editor",
+    category: "Design"
+  },
+  {
+    name: "Google Maps",
+    url: "https://maps.google.com",
+    icon: Map,
+    description: "Navigation and location services",
+    category: "Navigation"
+  },
+  {
+    name: "Notion",
+    url: "https://notion.so",
+    icon: BookOpen,
+    description: "Notes and project management",
+    category: "Productivity"
+  },
+  {
+    name: "CodePen",
+    url: "https://codepen.io",
+    icon: Code,
+    description: "Online code editor and playground",
+    category: "Development"
+  },
+  {
+    name: "Translate",
+    url: "https://translate.google.com",
+    icon: Globe,
+    description: "Language translation service",
+    category: "Utility"
+  },
+  {
+    name: "YouTube Studio",
+    url: "https://studio.youtube.com",
+    icon: Youtube,
+    description: "Video creation and management",
+    category: "Content"
+  },
+];
+
+const toolsList = [
+  {
+    name: "Calculator",
+    icon: Calculator,
+    description: "Basic arithmetic operations",
+    category: "Math"
+  },
+  {
+    name: "Hash Generator",
+    icon: Hash,
+    description: "Generate MD5, SHA1, SHA256 hashes",
+    category: "Security"
+  },
+  {
+    name: "Text Encoder/Decoder",
+    icon: FileText,
+    description: "Base64, URL encoding/decoding",
+    category: "Text"
+  },
+  {
+    name: "QR Code Generator",
+    icon: QrCode,
+    description: "Generate QR codes for text or URLs",
+    category: "Utility"
+  },
+  {
+    name: "Color Picker",
+    icon: Palette,
+    description: "Pick and convert colors between formats",
+    category: "Design"
+  },
+  {
+    name: "Timestamp Converter",
+    icon: Clock,
+    description: "Convert between timestamps and dates",
+    category: "Time"
+  },
+];
+
 // Custom N Logo Component
 const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
   <div
@@ -107,10 +259,30 @@ const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
 export default function Index() {
   const [proxyUrl, setProxyUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"proxy" | "games">("proxy");
+  const [activeTab, setActiveTab] = useState<"proxy" | "games" | "apps" | "tools" | "settings">("proxy");
   const [currentUrl, setCurrentUrl] = useState("");
   const [displayUrl, setDisplayUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Tools state
+  const [calculatorInput, setCalculatorInput] = useState("");
+  const [calculatorResult, setCalculatorResult] = useState("");
+  const [hashInput, setHashInput] = useState("");
+  const [textEncodeInput, setTextEncodeInput] = useState("");
+  const [qrCodeInput, setQrCodeInput] = useState("");
+  const [colorValue, setColorValue] = useState("#3b82f6");
+  const [timestampInput, setTimestampInput] = useState("");
+  const [selectedTool, setSelectedTool] = useState("calculator");
+
+  // Settings state
+  const [settings, setSettings] = useState({
+    darkMode: true,
+    notifications: true,
+    autoplay: false,
+    privacy: true,
+    volume: [75],
+    quality: "high"
+  });
 
   const handleProxySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,9 +439,36 @@ export default function Index() {
               >
                 GAMES
               </button>
-              <span className="text-muted-foreground">APPS</span>
-              <span className="text-muted-foreground">TOOLS</span>
-              <span className="text-muted-foreground">SETTINGS</span>
+              <button
+                onClick={() => setActiveTab("apps")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "apps"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                APPS
+              </button>
+              <button
+                onClick={() => setActiveTab("tools")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "tools"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                TOOLS
+              </button>
+              <button
+                onClick={() => setActiveTab("settings")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "settings"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                SETTINGS
+              </button>
             </nav>
           </div>
         </div>
