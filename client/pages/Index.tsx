@@ -520,7 +520,7 @@ export default function Index() {
           localStorage.getItem("preferred-search-engine") || "duckduckgo";
         const selectedEngine =
           searchEngines[savedEngine as keyof typeof searchEngines] ||
-          searchEngines.google;
+          searchEngines.duckduckgo;
 
         finalUrl = selectedEngine.url;
         setDisplayUrl(selectedEngine.display);
