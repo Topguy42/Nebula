@@ -64,6 +64,12 @@ const toolsList = [
     category: "Privacy",
   },
   {
+    name: "Search Engine",
+    icon: Search,
+    description: "Choose your default search engine",
+    category: "Settings",
+  },
+  {
     name: "Privacy Check",
     icon: Eye,
     description: "Check your connection privacy and security",
