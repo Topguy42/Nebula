@@ -213,6 +213,13 @@ export default function Index() {
   const [currentUrl, setCurrentUrl] = useState("");
   const [displayUrl, setDisplayUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [recentHistory, setRecentHistory] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([
+    "https://google.com",
+    "https://github.com",
+    "https://youtube.com",
+    "https://wikipedia.org"
+  ]);
 
   // Settings state
   const [settings, setSettings] = useState({
