@@ -291,6 +291,15 @@ export default function Index() {
 
   const handleQuickLink = (url: string) => {
     setIsLoading(true);
+
+    // Check if about blank is enabled
+    if (settings.aboutBlank) {
+      setDisplayUrl("about:blank");
+      setCurrentUrl("about:blank");
+      setIsLoading(false);
+      return;
+    }
+
     setDisplayUrl(url);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
   };
