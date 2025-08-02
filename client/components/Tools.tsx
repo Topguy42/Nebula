@@ -86,6 +86,11 @@ export default function Tools({}: ToolsProps) {
   const [selectedTool, setSelectedTool] = useState("sitechecker");
   const [timeLeft, setTimeLeft] = useState(studyTime * 60);
 
+  // Clear result when switching tools
+  useEffect(() => {
+    setResult("");
+  }, [selectedTool]);
+
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
     
@@ -228,7 +233,7 @@ iOS: WiFi Settings > Configure DNS
 🪞 Mirror Site Methods:
 • Add 'mirror' to search: "${searchQuery} mirror site"
 • Try different TLDs: .org, .net, .info, .me
-• Use proxy sites (be careful!)
+��� Use proxy sites (be careful!)
 • Check if site has official mirrors
 
 🔗 Alternative access methods:
