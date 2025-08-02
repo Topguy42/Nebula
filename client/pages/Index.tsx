@@ -883,21 +883,29 @@ export default function Index() {
             <div className="max-w-4xl mx-auto">
               {activeTab === "proxy" ? (
                 <form onSubmit={handleProxySubmit}>
-                  <div className="relative group">
-                    <Input
-                      type="text"
-                      placeholder="Enter website URL or search query..."
-                      value={proxyUrl}
-                      onChange={(e) => setProxyUrl(e.target.value)}
-                      className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
-                    />
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="absolute right-2 top-2 h-12 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
-                    >
-                      <ExternalLink className="h-5 w-5" />
-                    </Button>
+                  <div className="space-y-3">
+                    <div className="relative group">
+                      <Input
+                        type="text"
+                        placeholder="Enter website URL or search query..."
+                        value={proxyUrl}
+                        onChange={(e) => setProxyUrl(e.target.value)}
+                        className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                      />
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="absolute right-2 top-2 h-12 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
+                      >
+                        <ExternalLink className="h-5 w-5" />
+                      </Button>
+                    </div>
+                    {(localStorage.getItem("preferred-search-engine") || "duckduckgo") === "google" && (
+                      <div className="flex items-center justify-center gap-2 text-sm text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 px-4 py-2 rounded-lg border border-orange-200 dark:border-orange-800">
+                        <span>⚠️</span>
+                        <span>Google searches may be rate limited. Consider switching to DuckDuckGo in Settings.</span>
+                      </div>
+                    )}
                   </div>
                 </form>
               ) : activeTab === "games" ? (
