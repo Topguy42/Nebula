@@ -276,6 +276,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
 function processHTML(content: string, targetUrl: URL): string {
   try {
+    const hostname = targetUrl.hostname.toLowerCase();
+    const isYouTube = hostname.includes("youtube.com") || hostname.includes("youtu.be");
+
     // Remove existing base tags to avoid conflicts
     content = content.replace(/<base[^>]*>/gi, "");
 
@@ -306,15 +309,32 @@ function processHTML(content: string, targetUrl: URL): string {
     );
     content = content.replace(/<meta[^>]*name[^>]*["\']?referrer[^>]*>/gi, "");
 
-    // Add simple iframe-friendly styles only
-    const proxyEnhancements = `
+    // YouTube-specific meta tag removal
+    if (isYouTube) {
+      content = content.replace(/<meta[^>]*name[^>]*["\']?viewport[^>]*>/gi, "");
+      content = content.replace(/<meta[^>]*property[^>]*["\']?og:url[^>]*>/gi, "");
+    }
+
+    // Add iframe-friendly styles with YouTube optimizations
+    let proxyEnhancements = `
       <style>
         /* Iframe-friendly styles */
         * { box-sizing: border-box !important; }
         body { margin: 0 !important; overflow-x: auto !important; min-height: 100vh !important; }
         .fixed, [style*="position: fixed"], [style*="position:fixed"] { position: absolute !important; }
-        a, button, [onclick], [role="button"] { pointer-events: auto !important; }
+        a, button, [onclick], [role="button"] { pointer-events: auto !important; }`;
+
+    if (isYouTube) {
+      proxyEnhancements += `
+        /* YouTube-specific fixes */
+        #masthead, .ytd-masthead { position: relative !important; top: 0 !important; }
+        .ytd-app { padding-top: 0 !important; }
+        ytd-popup-container { z-index: 9999 !important; }`;
+    }
+
+    proxyEnhancements += `
       </style>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
     `;
 
     // Insert enhancements before closing head tag
