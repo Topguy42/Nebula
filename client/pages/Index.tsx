@@ -258,15 +258,13 @@ const webApps = [
 
 // VortexPortal Logo Component
 const VortexLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
-  <div className={`${className} relative flex items-center justify-center group`}>
+  <div
+    className={`${className} relative flex items-center justify-center group`}
+  >
     <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 opacity-90 blur-sm group-hover:blur-none transition-all duration-300" />
     <div className="relative z-10 w-full h-full rounded-xl bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 flex items-center justify-center shadow-2xl border border-white/30">
       <svg className="w-3/5 h-3/5 text-white" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M12 2L2 22H22L12 2Z"
-          fill="currentColor"
-          fillOpacity="0.4"
-        />
+        <path d="M12 2L2 22H22L12 2Z" fill="currentColor" fillOpacity="0.4" />
         <circle
           cx="12"
           cy="12"
@@ -584,7 +582,9 @@ export default function Index() {
               </div>
               <div className="flex items-center gap-3">
                 <VortexLogo className="w-7 h-7" />
-                <span className="font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">VortexPortal</span>
+                <span className="font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  VortexPortal
+                </span>
               </div>
             </div>
             <div className="flex-1 max-w-2xl mx-4">
@@ -671,9 +671,7 @@ export default function Index() {
       <div className="absolute inset-0 overflow-hidden">
         {/* Ultra-modern gradient orbs */}
         <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-cyan-500/25 blur-3xl animate-float"></div>
-        <div
-          className="absolute -top-40 -right-40 w-[400px] h-[400px] rounded-full bg-gradient-to-l from-cyan-500/30 via-teal-500/20 to-emerald-500/25 blur-3xl animate-float-delayed"
-        ></div>
+        <div className="absolute -top-40 -right-40 w-[400px] h-[400px] rounded-full bg-gradient-to-l from-cyan-500/30 via-teal-500/20 to-emerald-500/25 blur-3xl animate-float-delayed"></div>
         <div
           className="absolute top-1/3 left-1/4 w-[350px] h-[350px] rounded-full bg-gradient-to-br from-teal-400/15 via-emerald-400/20 to-cyan-400/15 blur-2xl animate-float"
           style={{ animationDelay: "3s" }}
@@ -857,9 +855,12 @@ export default function Index() {
                 </div>
               ) : activeTab === "tools" ? (
                 <div className="text-center space-y-3">
-                  <h2 className="text-3xl font-bold text-foreground">Built-in Tools</h2>
+                  <h2 className="text-3xl font-bold text-foreground">
+                    Built-in Tools
+                  </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Useful utilities and extra features to enhance your browsing experience
+                    Useful utilities and extra features to enhance your browsing
+                    experience
                   </p>
                 </div>
               ) : (
@@ -868,7 +869,8 @@ export default function Index() {
                     Settings & Options
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Customize your VortexPortal experience and adjust privacy settings
+                    Customize your VortexPortal experience and adjust privacy
+                    settings
                   </p>
                 </div>
               )}
@@ -881,7 +883,9 @@ export default function Index() {
               <div>
                 <div className="text-center mb-12">
                   <h3 className="text-3xl font-bold mb-3">Quick Access</h3>
-                  <p className="text-muted-foreground">Jump to your favorite websites instantly</p>
+                  <p className="text-muted-foreground">
+                    Jump to your favorite websites instantly
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
                   {quickLinks.map((link) => {
@@ -895,7 +899,9 @@ export default function Index() {
                         <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-gradient-to-br from-background/80 via-emerald-50/30 to-teal-50/30 dark:from-background/60 dark:via-emerald-950/20 dark:to-teal-950/20 border border-emerald-200/30 dark:border-emerald-800/30 hover:border-emerald-400/50 dark:hover:border-emerald-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                           {/* Icon */}
                           <div className="flex justify-center mb-4">
-                            <div className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-gradient-to-br from-emerald-100/80 to-teal-100/60 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-lg border border-emerald-300/50 dark:border-emerald-700/50`}>
+                            <div
+                              className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-gradient-to-br from-emerald-100/80 to-teal-100/60 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-lg border border-emerald-300/50 dark:border-emerald-700/50`}
+                            >
                               <IconComponent />
                             </div>
                           </div>
@@ -927,7 +933,9 @@ export default function Index() {
                     <CardHeader className="pb-4 space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="space-y-2">
-                          <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">{game.name}</CardTitle>
+                          <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
+                            {game.name}
+                          </CardTitle>
                           <CardDescription className="text-base text-muted-foreground leading-relaxed">
                             {game.description}
                           </CardDescription>
@@ -949,7 +957,9 @@ export default function Index() {
                               {game.rating}
                             </span>
                           </div>
-                          <span className="text-xs text-muted-foreground">rating</span>
+                          <span className="text-xs text-muted-foreground">
+                            rating
+                          </span>
                         </div>
                         <Button
                           size="sm"
@@ -1066,8 +1076,6 @@ export default function Index() {
           )}
         </div>
       </main>
-
-
     </div>
   );
 }
