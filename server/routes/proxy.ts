@@ -193,7 +193,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       return res.status(200).send(`
         <html>
           <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-            <h2>��� Connection Error</h2>
+            <h2>🌐 Connection Error</h2>
             <p>Could not connect to <strong>${targetUrl.hostname}</strong></p>
             <p><small>${fetchError instanceof Error ? fetchError.message : "Unknown error"}</small></p>
             <button onclick="history.back()">Go Back</button>
@@ -251,7 +251,7 @@ function processHTML(content: string, targetUrl: URL): string {
     );
     content = content.replace(/<meta[^>]*name[^>]*["\']?referrer[^>]*>/gi, "");
 
-    // Add comprehensive proxy interception
+    // Add simplified proxy interception
     const proxyEnhancements = `
       <style>
         /* Iframe-friendly styles */
@@ -270,7 +270,7 @@ function processHTML(content: string, targetUrl: URL): string {
 
           // Helper function to convert URL to proxy URL
           function toProxyUrl(url) {
-            if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('javascript:') || url.startsWith('mailto:') || url.startsWith('tel:')) {
+            if (!url || typeof url !== 'string' || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('javascript:') || url.startsWith('mailto:') || url.startsWith('tel:') || url.startsWith(PROXY_PREFIX)) {
               return url;
             }
 
@@ -280,6 +280,8 @@ function processHTML(content: string, targetUrl: URL): string {
                 fullUrl = '${targetUrl.protocol}' + url;
               } else if (url.startsWith('http://') || url.startsWith('https://')) {
                 fullUrl = url;
+              } else if (url.startsWith('/')) {
+                fullUrl = TARGET_ORIGIN + url;
               } else {
                 fullUrl = new URL(url, TARGET_ORIGIN).href;
               }
@@ -290,46 +292,54 @@ function processHTML(content: string, targetUrl: URL): string {
           }
 
           // Override fetch
-          const originalFetch = window.fetch;
-          window.fetch = function(input, init) {
-            const url = typeof input === 'string' ? input : input.url;
-            const proxyUrl = toProxyUrl(url);
+          if (window.fetch) {
+            const originalFetch = window.fetch;
+            window.fetch = function(input, init) {
+              try {
+                const url = typeof input === 'string' ? input : input.url;
+                const proxyUrl = toProxyUrl(url);
 
-            if (typeof input === 'string') {
-              return originalFetch.call(this, proxyUrl, init);
-            } else {
-              const newRequest = new Request(proxyUrl, input);
-              return originalFetch.call(this, newRequest, init);
-            }
-          };
+                if (typeof input === 'string') {
+                  return originalFetch.call(this, proxyUrl, init);
+                } else {
+                  const newRequest = new Request(proxyUrl, input);
+                  return originalFetch.call(this, newRequest, init);
+                }
+              } catch (e) {
+                return originalFetch.call(this, input, init);
+              }
+            };
+          }
 
           // Override XMLHttpRequest
-          const OriginalXHR = window.XMLHttpRequest;
-          window.XMLHttpRequest = function() {
-            const xhr = new OriginalXHR();
-            const originalOpen = xhr.open;
+          if (window.XMLHttpRequest) {
+            const OriginalXHR = window.XMLHttpRequest;
+            window.XMLHttpRequest = function() {
+              const xhr = new OriginalXHR();
+              const originalOpen = xhr.open;
 
-            xhr.open = function(method, url, async, user, password) {
-              const proxyUrl = toProxyUrl(url);
-              return originalOpen.call(this, method, proxyUrl, async, user, password);
+              xhr.open = function(method, url, async, user, password) {
+                try {
+                  const proxyUrl = toProxyUrl(url);
+                  return originalOpen.call(this, method, proxyUrl, async, user, password);
+                } catch (e) {
+                  return originalOpen.call(this, method, url, async, user, password);
+                }
+              };
+
+              return xhr;
             };
 
-            return xhr;
-          };
-
-          // Copy properties to maintain compatibility
-          for (let prop in OriginalXHR) {
-            if (OriginalXHR.hasOwnProperty(prop)) {
-              window.XMLHttpRequest[prop] = OriginalXHR[prop];
-            }
+            // Copy properties to maintain compatibility
+            Object.setPrototypeOf(window.XMLHttpRequest, OriginalXHR);
+            window.XMLHttpRequest.prototype = OriginalXHR.prototype;
           }
-          window.XMLHttpRequest.prototype = OriginalXHR.prototype;
 
-          // Override location to hide proxy
+          // Override location to hide proxy (simplified)
           try {
+            const originalLocation = window.location;
             Object.defineProperty(window, 'location', {
               value: {
-                ...window.location,
                 hostname: TARGET_HOST,
                 host: '${targetUrl.host}',
                 origin: TARGET_ORIGIN,
@@ -337,7 +347,7 @@ function processHTML(content: string, targetUrl: URL): string {
                 href: '${targetUrl.href}',
                 pathname: '${targetUrl.pathname}',
                 search: '${targetUrl.search}',
-                hash: '${targetUrl.hash}',
+                hash: originalLocation.hash,
                 port: '${targetUrl.port}',
                 toString: () => '${targetUrl.href}',
                 assign: (url) => { window.parent.location = toProxyUrl(url); },
@@ -348,125 +358,11 @@ function processHTML(content: string, targetUrl: URL): string {
             });
           } catch(e) {}
 
-          // Override document.domain
-          try {
-            Object.defineProperty(document, 'domain', {
-              value: TARGET_HOST,
-              writable: false
-            });
-          } catch(e) {}
-
           // Hide iframe context
           try {
             Object.defineProperty(window, 'parent', { value: window, writable: false });
             Object.defineProperty(window, 'top', { value: window, writable: false });
           } catch(e) {}
-
-          // Intercept dynamic element creation
-          const originalCreateElement = document.createElement;
-          document.createElement = function(tagName) {
-            const element = originalCreateElement.call(this, tagName);
-
-            if (tagName.toLowerCase() === 'script') {
-              const originalSetAttribute = element.setAttribute;
-              element.setAttribute = function(name, value) {
-                if (name.toLowerCase() === 'src') {
-                  value = toProxyUrl(value);
-                }
-                return originalSetAttribute.call(this, name, value);
-              };
-
-              Object.defineProperty(element, 'src', {
-                set: function(value) {
-                  this.setAttribute('src', toProxyUrl(value));
-                },
-                get: function() {
-                  return this.getAttribute('src');
-                }
-              });
-            }
-
-            if (tagName.toLowerCase() === 'img') {
-              const originalSetAttribute = element.setAttribute;
-              element.setAttribute = function(name, value) {
-                if (name.toLowerCase() === 'src' || name.toLowerCase() === 'srcset') {
-                  if (name.toLowerCase() === 'srcset') {
-                    value = value.replace(/([^\\s,]+)/g, (url) => {
-                      return url.match(/^\\d+[wx]$/) ? url : toProxyUrl(url);
-                    });
-                  } else {
-                    value = toProxyUrl(value);
-                  }
-                }
-                return originalSetAttribute.call(this, name, value);
-              };
-            }
-
-            if (tagName.toLowerCase() === 'a') {
-              const originalSetAttribute = element.setAttribute;
-              element.setAttribute = function(name, value) {
-                if (name.toLowerCase() === 'href') {
-                  value = toProxyUrl(value);
-                }
-                return originalSetAttribute.call(this, name, value);
-              };
-            }
-
-            return element;
-          };
-
-          // Intercept existing elements when DOM loads
-          function interceptExistingElements() {
-            // Intercept all existing links
-            document.querySelectorAll('a[href]').forEach(link => {
-              const href = link.getAttribute('href');
-              if (href && !href.startsWith(PROXY_PREFIX)) {
-                link.setAttribute('href', toProxyUrl(href));
-              }
-            });
-
-            // Intercept all existing images
-            document.querySelectorAll('img[src]').forEach(img => {
-              const src = img.getAttribute('src');
-              if (src && !src.startsWith(PROXY_PREFIX)) {
-                img.setAttribute('src', toProxyUrl(src));
-              }
-            });
-
-            // Intercept all existing scripts
-            document.querySelectorAll('script[src]').forEach(script => {
-              const src = script.getAttribute('src');
-              if (src && !src.startsWith(PROXY_PREFIX)) {
-                script.setAttribute('src', toProxyUrl(src));
-              }
-            });
-
-            // Intercept forms
-            document.querySelectorAll('form[action]').forEach(form => {
-              const action = form.getAttribute('action');
-              if (action && !action.startsWith(PROXY_PREFIX)) {
-                form.setAttribute('action', toProxyUrl(action));
-              }
-            });
-          }
-
-          // Run interception when DOM is ready
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', interceptExistingElements);
-          } else {
-            interceptExistingElements();
-          }
-
-          // Also run on any dynamic content changes
-          const observer = new MutationObserver(() => {
-            interceptExistingElements();
-          });
-          observer.observe(document.body || document.documentElement, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['src', 'href', 'action']
-          });
 
         })();
       </script>
