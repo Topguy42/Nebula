@@ -218,33 +218,48 @@ Fragment: ${url.hash}
     }, 1000);
   };
 
-  const getTextBrowserInfo = () => {
-    setResult(`📖 Text-Only Browsing Tips:
+  const testNetworkConnectivity = async () => {
+    const testUrl = networkTestUrl || "google.com";
+    setResult("🔍 Testing network connectivity...");
 
-🌐 Text-based alternatives:
-• Add '/text' to some URLs
-• Use Lynx browser if available  
-• Google Cache (text version)
-• Archive.org snapshots
-• RSS feeds for news sites
+    const tests = [
+      { name: "Google DNS", url: "https://8.8.8.8" },
+      { name: "Cloudflare DNS", url: "https://1.1.1.1" },
+      { name: "Target Site (HTTP)", url: `http://${testUrl}` },
+      { name: "Target Site (HTTPS)", url: `https://${testUrl}` },
+    ];
 
-📱 Mobile versions (often lighter):
-• m.wikipedia.org
-• m.reddit.com  
-• mobile.twitter.com
-• m.youtube.com
+    let results = "🌐 Network Connectivity Test Results:\n\n";
 
-🔧 Browser settings:
-• Disable images in browser
-• Turn off JavaScript
-• Use reader mode
-• Block CSS loading
+    for (const test of tests) {
+      try {
+        const startTime = Date.now();
+        const response = await fetch(test.url, {
+          method: 'HEAD',
+          mode: 'no-cors',
+          cache: 'no-cache'
+        });
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
 
-📚 Study-friendly sites:
-• Simple Wikipedia: simple.wikipedia.org
-• Text-only news: text.npr.org
-• Academic databases (often text-heavy)
-• Government education sites (.edu/.gov)`);
+        results += `✅ ${test.name}: Connected (${responseTime}ms)\n`;
+      } catch (error) {
+        results += `❌ ${test.name}: Failed to connect\n`;
+      }
+    }
+
+    results += `\n📊 Additional Info:
+• Navigator Online: ${navigator.onLine ? 'Yes' : 'No'}
+• Connection Type: ${(navigator as any).connection?.effectiveType || 'Unknown'}
+• Downlink Speed: ${(navigator as any).connection?.downlink || 'Unknown'} Mbps
+• RTT: ${(navigator as any).connection?.rtt || 'Unknown'}ms
+
+💡 Tips:
+• If HTTPS fails but HTTP works, try both versions
+• DNS failures might indicate filtering
+• Try different DNS servers if connections fail`;
+
+    setResult(results);
   };
 
   const findMirrors = () => {
