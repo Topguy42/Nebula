@@ -347,7 +347,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
-        // For Google errors in about:blank, try to get content anyway or auto-retry
+        // For Google errors in about:blank, try to get content anyway but don't auto-retry
         if (
           (hostname.includes("google.com") || hostname.includes("google.")) &&
           isFromAboutBlank
@@ -380,24 +380,20 @@ export const handleProxy: RequestHandler = async (req, res) => {
             }
           }
 
-          // If we can't get content, auto-retry with a slight delay
+          // Show error without auto-retry to avoid rate limiting
           return res.status(200).send(`
             <html>
               <head>
                 <meta charset="utf-8">
-                <title>Loading Google...</title>
-                <script>
-                  setTimeout(() => window.location.reload(), 1500);
-                </script>
+                <title>Google Error</title>
               </head>
               <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
-                <div style="background: white; border-radius: 8px; padding: 20px; max-width: 300px; margin: 100px auto;">
-                  <div style="font-size: 24px; margin-bottom: 12px;">🔄</div>
-                  <h3 style="margin: 0 0 8px 0;">Connecting to Google...</h3>
-                  <div style="width: 100%; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
-                    <div style="width: 0%; height: 100%; background: #10b981; animation: progress 1.5s linear forwards;"></div>
-                  </div>
-                  <style>@keyframes progress { to { width: 100%; } }</style>
+                <div style="background: white; border-radius: 8px; padding: 24px; max-width: 400px; margin: 100px auto;">
+                  <div style="font-size: 32px; margin-bottom: 16px;">⚠️</div>
+                  <h3 style="margin: 0 0 12px 0;">Google Request Failed</h3>
+                  <p style="color: #6b7280; margin: 0 0 16px 0;">Status: ${response.status} ${response.statusText}</p>
+                  <button onclick="window.location.reload();" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-right: 8px;">Retry</button>
+                  <button onclick="history.back();" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Go Back</button>
                 </div>
               </body>
             </html>
