@@ -26,7 +26,7 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="space-y-6">
-        <Card className="bg-card/40 backdrop-blur-sm border-border/50">
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <SettingsIcon className="h-5 w-5" />
@@ -98,7 +98,7 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-sm border-border/50">
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
@@ -162,7 +162,7 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/40 backdrop-blur-sm border-border/50">
+        <Card className="backdrop-blur-glass border-border/50 hover:shadow-lg transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5" />
