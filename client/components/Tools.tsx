@@ -820,7 +820,7 @@ ${referrerLinks}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <Button
                   onClick={startReferrerRotation}
                   variant={referrerRotation ? "destructive" : "default"}
@@ -829,8 +829,12 @@ ${referrerLinks}
                   {referrerRotation ? "Stop Rotation" : "Start Auto-Rotation"}
                 </Button>
 
+                <Button onClick={testReferrerRequests} variant="outline" className="w-full">
+                  Test Referrers
+                </Button>
+
                 <Button onClick={generateReferrerLinks} variant="outline" className="w-full">
-                  Generate Manual Links
+                  Manual Links
                 </Button>
               </div>
 
