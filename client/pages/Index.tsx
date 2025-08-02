@@ -201,7 +201,12 @@ export default function Index() {
           src={currentUrl}
           className="w-full h-[calc(100vh-73px)] border-0"
           onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            console.log('Iframe failed to load');
+          }}
           title="Browsing content"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox"
         />
       </div>
     );
