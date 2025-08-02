@@ -687,9 +687,49 @@ ${referrerLinks}
                 value={targetUrl}
                 onChange={(e) => setTargetUrl(e.target.value)}
               />
-              <Button onClick={generateReferrerLinks} className="w-full">
-                Generate Referrer Bypass Methods
-              </Button>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Rotation Interval (seconds):
+                  </label>
+                  <input
+                    type="range"
+                    min="2"
+                    max="30"
+                    value={rotationInterval}
+                    onChange={(e) => setRotationInterval(parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <p className="text-center text-xs text-muted-foreground">
+                    {rotationInterval}s
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Current Referrer:
+                  </label>
+                  <div className="p-2 bg-muted rounded text-sm font-mono">
+                    {referrerSources.find(r => r.value === currentReferrer)?.name || "None"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onClick={startReferrerRotation}
+                  variant={referrerRotation ? "destructive" : "default"}
+                  className="w-full"
+                >
+                  {referrerRotation ? "Stop Rotation" : "Start Auto-Rotation"}
+                </Button>
+
+                <Button onClick={generateReferrerLinks} variant="outline" className="w-full">
+                  Generate Manual Links
+                </Button>
+              </div>
+
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
                   <pre className="text-sm whitespace-pre-wrap">{result}</pre>
