@@ -271,7 +271,7 @@ ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 ${selectedMethod}
 
-���� General Bypass Techniques:
+🔧 General Bypass Techniques:
 • Change DNS servers (1.1.1.1, 8.8.8.8)
 • Use different browsers
 • Clear browser cache and cookies
@@ -313,7 +313,7 @@ ${selectedMethod}
 📍 Location & Network:
 • IP Address: ${ipData.ip || "Unable to detect"}
 • Location: ${ipData.city || "Unknown"}, ${ipData.region || "Unknown"}, ${ipData.country_name || "Unknown"}
-�� ISP/Organization: ${ipData.org || "Unknown"}
+• ISP/Organization: ${ipData.org || "Unknown"}
 • Network Type: ${ipData.network || "Unknown"}
 • Timezone: ${ipData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
 
@@ -590,9 +590,9 @@ ${selectedMethod}
 
                   {referrerRotation && (
                     <div className="text-sm">
-                      <span className="font-medium">Current: </span>
-                      <span className="font-mono text-xs bg-background px-2 py-1 rounded">
-                        {referrerSources.find(r => r.value === currentReferrer)?.name || "Rotating..."}
+                      <span className="font-medium">Mode: </span>
+                      <span className="font-mono text-xs bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded">
+                        Auto-Rotating
                       </span>
                     </div>
                   )}
