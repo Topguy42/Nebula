@@ -229,7 +229,8 @@ export default function Index() {
     autoplay: false,
     privacy: true,
     volume: [75],
-    quality: "high"
+    quality: "high",
+    aboutBlank: false
   });
 
   const handleProxySubmit = (e: React.FormEvent) => {
