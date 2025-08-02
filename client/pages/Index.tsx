@@ -750,7 +750,7 @@ export default function Index() {
                   VortexPortal
                 </h1>
                 <p className="text-xs text-muted-foreground font-medium tracking-wide">
-                  Professional Web Proxy
+                  Fast Web Access
                 </p>
               </div>
             </div>
