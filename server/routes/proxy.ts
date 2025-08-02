@@ -1,24 +1,5 @@
 import { RequestHandler } from "express";
 
-const referrerSources = [
-  "https://www.google.com/search?q=",
-  "https://www.bing.com/search?q=",
-  "https://duckduckgo.com/?q=",
-  "https://search.yahoo.com/search?p=",
-  "https://www.facebook.com/",
-  "https://twitter.com/",
-  "https://www.reddit.com/",
-  "https://en.wikipedia.org/",
-  "https://www.youtube.com/",
-  "https://github.com/",
-  "https://stackoverflow.com/",
-  "",
-];
-
-// Rate limiting for Google requests
-const googleRequestTimes = new Map<string, number>();
-const GOOGLE_RATE_LIMIT_MS = 2000; // 2 seconds between Google requests per IP
-
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
     const { url, referrer_rotation } = req.query;
@@ -55,10 +36,21 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     const hostname = targetUrl.hostname.toLowerCase();
 
+    // Detect if this is likely from about:blank based on headers (used throughout the function)
+    const isFromAboutBlank =
+      req.headers.referer === "https://www.google.com/" ||
+      req.headers.origin === "https://www.google.com" ||
+      !req.headers.referer;
+
     // Fetch the content with better error handling
     const controller = new AbortController();
-    // Faster timeout for Google search, longer for other sites
-    const timeout = hostname.includes("google") ? 6000 : 10000;
+    // Longer timeout for Google in about:blank mode, normal timeouts for other cases
+    const timeout =
+      hostname.includes("google") && isFromAboutBlank
+        ? 15000
+        : hostname.includes("google")
+          ? 8000
+          : 10000;
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
@@ -73,28 +65,25 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       ];
 
-      // Use different UA selection for Google to avoid patterns
+      // Optimized UA selection for Google
       const randomUA = hostname.includes("google")
         ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
         : userAgents[Math.floor(Math.random() * userAgents.length)];
 
-      // Dynamic referrer rotation
+      // Simple referrer rotation
       let dynamicReferrer = "";
       if (referrer_rotation === "true") {
-        // Rotate referrer based on current time to constantly change it
-        const rotationIndex =
-          Math.floor(Date.now() / 5000) % referrerSources.length; // Changes every 5 seconds
-        dynamicReferrer = referrerSources[rotationIndex];
-        if (dynamicReferrer && !dynamicReferrer.includes("search?")) {
-          // For non-search referrers, use as-is
-        } else if (dynamicReferrer) {
-          // For search engines, add the target domain as search query
-          const domain = new URL(targetUrl.toString()).hostname;
-          dynamicReferrer = dynamicReferrer + encodeURIComponent(domain);
-        }
-        console.log(
-          `[PROXY] Using rotating referrer: ${dynamicReferrer || "none"}`,
-        );
+        const referrers = [
+          "https://www.google.com/",
+          "https://duckduckgo.com/",
+          "https://en.wikipedia.org/",
+          "https://www.bing.com/",
+          "https://www.youtube.com/",
+          "https://github.com/",
+        ];
+        const rotationIndex = Math.floor(Date.now() / 10000) % referrers.length;
+        dynamicReferrer = referrers[rotationIndex];
+        console.log(`[PROXY] Using rotating referrer: ${dynamicReferrer}`);
       }
 
       const headers: Record<string, string> = {
@@ -144,52 +133,138 @@ export const handleProxy: RequestHandler = async (req, res) => {
         hostname.includes("google.") ||
         hostname === "google.com"
       ) {
-        headers["Origin"] = "https://www.google.com";
-        headers["Referer"] = "https://www.google.com/";
+        if (isFromAboutBlank) {
+          // Special handling for about:blank - make it look exactly like a normal Google request
+          headers["Origin"] = "https://www.google.com";
+          headers["Referer"] = "https://www.google.com/";
+          headers["Sec-Fetch-Site"] = "same-origin";
+          headers["Sec-Fetch-Mode"] = "navigate";
+          headers["Sec-Fetch-User"] = "?1";
+          headers["Sec-Fetch-Dest"] = "document";
+          headers["Cache-Control"] = "max-age=0";
+          headers["Upgrade-Insecure-Requests"] = "1";
+          headers["Accept"] =
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8";
+          headers["Accept-Language"] = "en-US,en;q=0.9";
+          headers["Accept-Encoding"] = "gzip, deflate, br";
+
+          // Use a very standard, non-suspicious User-Agent for about:blank
+          headers["User-Agent"] =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+
+          // Remove ALL headers that might indicate proxy usage
+          delete headers["X-Forwarded-For"];
+          delete headers["X-Real-IP"];
+          delete headers["Via"];
+          delete headers["X-Forwarded-Proto"];
+          delete headers["X-Forwarded-Host"];
+        } else {
+          // Normal Google handling
+          headers["Origin"] = "https://www.google.com";
+          headers["Referer"] = dynamicReferrer || "https://www.google.com/";
+          headers["Sec-Fetch-Site"] = dynamicReferrer
+            ? "cross-site"
+            : "same-origin";
+          headers["Sec-Fetch-Mode"] = "navigate";
+          headers["Sec-Fetch-User"] = "?1";
+          headers["Sec-Fetch-Dest"] = "document";
+          headers["Cache-Control"] = "no-cache";
+        }
+
         headers["DNT"] = "1";
         headers["Accept"] =
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-        headers["Accept-Language"] = "en-US,en;q=0.5";
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
+        headers["Accept-Language"] = "en-US,en;q=0.9";
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
-
-        // Additional headers to bypass about:blank restrictions
-        headers["Sec-Fetch-Site"] = "same-origin";
-        headers["Sec-Fetch-Mode"] = "navigate";
-        headers["Sec-Fetch-User"] = "?1";
-        headers["Sec-Fetch-Dest"] = "document";
-        headers["X-Requested-With"] = "";
-        headers["X-Forwarded-For"] = "8.8.8.8";
-        headers["X-Real-IP"] = "8.8.8.8";
-
-        // Override referrer for about:blank environments
-        if (dynamicReferrer) {
-          headers["Referer"] = dynamicReferrer;
-        } else {
-          headers["Referer"] = "https://www.google.com/";
-        }
 
         // Use optimized Google parameters for proxy/about:blank environments
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
 
-          // Add parameters to bypass restrictions and improve compatibility
-          searchParams.set("safe", "active");
-          searchParams.set("lr", "lang_en");
-          searchParams.set("hl", "en");
-          searchParams.set("num", "20"); // More results per page
-          searchParams.set("start", "0"); // Ensure first page
-          searchParams.set("udm", "14"); // Use lighter search interface
-          searchParams.set("client", "firefox-b-d"); // Simulate Firefox browser
-          searchParams.set("source", "hp"); // Homepage source
-          searchParams.set("ei", Date.now().toString()); // Random event ID
-          searchParams.set("iflsig", "ALs-wAMAAAAAZr"); // Fake signature
+          // Check if we have a search query
+          const query = searchParams.get("q");
+          if (!query) {
+            // If no query, redirect to homepage to avoid empty search
+            targetUrl.pathname = "/";
+            targetUrl.search = "";
+          } else {
+            if (isFromAboutBlank) {
+              // Ultra-conservative parameters for about:blank - mimic direct Google access
+              searchParams.set("safe", "active");
+              searchParams.set("hl", "en");
+              searchParams.set("gl", "us");
+              searchParams.set("lr", "lang_en");
+              searchParams.set("num", "10");
+              searchParams.set("start", searchParams.get("start") || "0");
 
-          // Remove potentially problematic parameters
-          searchParams.delete("ved");
-          searchParams.delete("uact");
+              // Use the most reliable client for about:blank environments
+              searchParams.set("client", "firefox-b-d");
+              searchParams.set("source", "hp");
+              searchParams.set("channel", "fs");
 
-          targetUrl.search = searchParams.toString();
+              // Standard encoding
+              searchParams.set("ie", "UTF-8");
+              searchParams.set("oe", "UTF-8");
+
+              // Remove ALL tracking and analytics parameters
+              const allTrackingParams = [
+                "ved",
+                "uact",
+                "gs_lcp",
+                "sclient",
+                "sourceid",
+                "ei",
+                "iflsig",
+                "oq",
+                "aqs",
+                "gs_l",
+                "pbx",
+                "biw",
+                "bih",
+                "dpr",
+                "bav",
+                "cad",
+                "psj",
+                "gs_sm",
+                "gs_upl",
+                "gs_hp",
+                "pf",
+                "complete",
+                "gws_rd",
+                "cr",
+                "dcr",
+                "pws",
+                "nfpr",
+                "sa",
+                "gbv",
+                "gfe_rd",
+              ];
+              allTrackingParams.forEach((param) => searchParams.delete(param));
+            } else {
+              // Normal search parameters
+              searchParams.set("safe", "active");
+              searchParams.set("lr", "lang_en");
+              searchParams.set("hl", "en");
+              searchParams.set("num", "10");
+              searchParams.set("start", "0");
+              searchParams.set("client", "firefox-b-d");
+              searchParams.set("source", "hp");
+
+              const paramsToRemove = [
+                "ved",
+                "uact",
+                "gs_lcp",
+                "sclient",
+                "sourceid",
+                "ei",
+                "iflsig",
+              ];
+              paramsToRemove.forEach((param) => searchParams.delete(param));
+            }
+
+            targetUrl.search = searchParams.toString();
+          }
         }
       }
 
@@ -222,33 +297,70 @@ export const handleProxy: RequestHandler = async (req, res) => {
       );
 
       if (!response.ok) {
-        // Special handling for rate limiting
-        if (response.status === 429) {
+        // For Google errors in about:blank, try to get content anyway or auto-retry
+        if (
+          (hostname.includes("google.com") || hostname.includes("google.")) &&
+          isFromAboutBlank
+        ) {
+          // Try to get the content even if status is not ok - sometimes Google returns content with error status
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.includes("text/html")) {
+            try {
+              const content = await response.text();
+              if (content && content.length > 1000) {
+                // If we got substantial content, process and return it
+                const processedContent = processGoogleSearchFast(
+                  content,
+                  targetUrl,
+                );
+                res.setHeader("Content-Type", "text/html; charset=utf-8");
+                res.setHeader("X-Frame-Options", "SAMEORIGIN");
+                res.setHeader(
+                  "Content-Security-Policy",
+                  "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *; frame-src *; child-src *; object-src *; media-src *;",
+                );
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader("Cache-Control", "private, max-age=60");
+                return res.send(processedContent);
+              }
+            } catch (e) {
+              console.log(
+                "[PROXY] Could not process Google content despite error status",
+              );
+            }
+          }
+
+          // If we can't get content, auto-retry with a slight delay
           return res.status(200).send(`
             <html>
-              <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-                <h2>🚦 Rate Limited</h2>
-                <p><strong>${targetUrl.hostname}</strong> is temporarily limiting requests</p>
-                <p>Please wait a moment and try again</p>
-                <button onclick="history.back()">Go Back</button>
-                <br><br>
-                <button onclick="setTimeout(() => window.location.reload(), 2000)">Retry in 2 seconds</button>
-                <br><br>
-                <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer">
-                  Open in New Tab Instead
-                </a>
+              <head>
+                <meta charset="utf-8">
+                <title>Loading Google...</title>
+                <script>
+                  setTimeout(() => window.location.reload(), 1500);
+                </script>
+              </head>
+              <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
+                <div style="background: white; border-radius: 8px; padding: 20px; max-width: 300px; margin: 100px auto;">
+                  <div style="font-size: 24px; margin-bottom: 12px;">🔄</div>
+                  <h3 style="margin: 0 0 8px 0;">Connecting to Google...</h3>
+                  <div style="width: 100%; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                    <div style="width: 0%; height: 100%; background: #10b981; animation: progress 1.5s linear forwards;"></div>
+                  </div>
+                  <style>@keyframes progress { to { width: 100%; } }</style>
+                </div>
               </body>
             </html>
           `);
         }
 
+        // For other sites or non-about:blank, show minimal error
         return res.status(200).send(`
           <html>
             <body style="font-family: sans-serif; padding: 40px; text-align: center;">
               <h2>⚠️ Website Error</h2>
               <p>Failed to load: <strong>${targetUrl.hostname}</strong></p>
               <p>Status: ${response.status} ${response.statusText}</p>
-              <p><small>Some websites may block proxy access</small></p>
               <button onclick="history.back()">Go Back</button>
               <br><br>
               <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer">
@@ -396,6 +508,84 @@ export const handleProxy: RequestHandler = async (req, res) => {
       }
     } catch (fetchError) {
       clearTimeout(timeoutId);
+
+      // Special handling for Google in about:blank mode - try different approaches
+      if (
+        (hostname.includes("google.com") || hostname.includes("google.")) &&
+        isFromAboutBlank
+      ) {
+        console.log(
+          `[PROXY] Google fetch failed in about:blank, trying fallback approach: ${fetchError instanceof Error ? fetchError.message : "Unknown error"}`,
+        );
+
+        // Try with even simpler headers
+        try {
+          const fallbackHeaders: Record<string, string> = {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            Accept:
+              "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate",
+            Connection: "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+          };
+
+          const fallbackResponse = await fetch(targetUrl.toString(), {
+            headers: fallbackHeaders,
+            redirect: "follow",
+          });
+
+          if (fallbackResponse.ok) {
+            const content = await fallbackResponse.text();
+            const processedContent = processGoogleSearchFast(
+              content,
+              targetUrl,
+            );
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
+            res.setHeader("X-Frame-Options", "SAMEORIGIN");
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            return res.send(processedContent);
+          }
+        } catch (fallbackError) {
+          console.log(
+            `[PROXY] Fallback also failed: ${fallbackError instanceof Error ? fallbackError.message : "Unknown error"}`,
+          );
+        }
+
+        // If both attempts fail, auto-retry with a loading screen
+        return res.status(200).send(`
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title>Connecting to Google...</title>
+              <script>
+                let retryCount = parseInt(localStorage.getItem('googleRetryCount') || '0');
+                if (retryCount < 3) {
+                  localStorage.setItem('googleRetryCount', (retryCount + 1).toString());
+                  setTimeout(() => window.location.reload(), 2000 + (retryCount * 1000));
+                } else {
+                  localStorage.removeItem('googleRetryCount');
+                  document.getElementById('retryBtn').style.display = 'block';
+                  document.getElementById('loadingMsg').textContent = 'Connection failed. Please try manually.';
+                }
+              </script>
+            </head>
+            <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
+              <div style="background: white; border-radius: 8px; padding: 24px; max-width: 400px; margin: 100px auto;">
+                <div style="font-size: 32px; margin-bottom: 16px;">🔄</div>
+                <h3 style="margin: 0 0 12px 0;">Connecting to Google...</h3>
+                <p id="loadingMsg" style="color: #6b7280; margin: 0 0 16px 0;">Attempting connection...</p>
+                <div style="width: 100%; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                  <div style="width: 0%; height: 100%; background: #10b981; animation: progress 2s linear forwards;"></div>
+                </div>
+                <button id="retryBtn" onclick="localStorage.removeItem('googleRetryCount'); window.location.reload();" style="display: none; margin-top: 16px; background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Try Again</button>
+                <style>@keyframes progress { to { width: 100%; } }</style>
+              </div>
+            </body>
+          </html>
+        `);
+      }
 
       if (fetchError instanceof Error && fetchError.name === "AbortError") {
         return res.status(200).send(`

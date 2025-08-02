@@ -395,22 +395,24 @@ export default function Index() {
       if (newWindow) {
         setAboutBlankWindow(newWindow);
 
-        // Load the actual Nebula app in the about:blank window
+        // Load the actual Vortex app in the about:blank window with enhanced stealth
         const currentUrl = window.location.href;
         newWindow.document.write(`
           <!DOCTYPE html>
           <html>
           <head>
-            <title>about:blank</title>
+            <title>Google</title>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta name="referrer" content="no-referrer">
+            <meta name="referrer" content="same-origin">
+            <link rel="icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAABAAAAAAAAAA">
             <style>
               body {
                 margin: 0;
                 padding: 0;
                 overflow: hidden;
                 background: white;
+                font-family: arial, sans-serif;
               }
               iframe {
                 width: 100vw;
@@ -420,12 +422,35 @@ export default function Index() {
               }
             </style>
             <script>
-              // Override document.referrer to help with restrictions
+              // Enhanced environment spoofing for about:blank
               Object.defineProperty(document, 'referrer', {
                 value: 'https://www.google.com/',
                 writable: false,
                 configurable: false
               });
+
+              // Override location properties to appear normal
+              Object.defineProperty(window, 'location', {
+                value: {
+                  ...window.location,
+                  href: 'https://www.google.com/',
+                  protocol: 'https:',
+                  host: 'www.google.com',
+                  hostname: 'www.google.com',
+                  origin: 'https://www.google.com'
+                },
+                writable: false
+              });
+
+              // Override navigator properties
+              Object.defineProperty(navigator, 'webdriver', {
+                value: undefined,
+                configurable: true
+              });
+
+              // Add Google-specific globals that sites might check for
+              window.google = window.google || {};
+              window.gapi = window.gapi || {};
             </script>
           </head>
           <body>
@@ -433,7 +458,7 @@ export default function Index() {
               src="${currentUrl}"
               allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
               allowfullscreen
-              referrerpolicy="no-referrer-when-downgrade"
+              referrerpolicy="same-origin"
               sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation allow-downloads"
             ></iframe>
           </body>
@@ -452,15 +477,19 @@ export default function Index() {
       const query = proxyUrl.trim();
       setProxyError(null);
 
-      // Check if about blank is enabled
-      if (settings.aboutBlank) {
+      // Check if about blank is enabled AND we're not already inside the about:blank iframe
+      if (settings.aboutBlank && window.parent === window) {
+        // We're in the main window, not inside the about:blank iframe
         if (aboutBlankWindow && !aboutBlankWindow.closed) {
-          // Focus the about:blank window that contains the full Nebula app
+          // Focus the about:blank window that contains the full Vortex app
           aboutBlankWindow.focus();
         }
         setProxyUrl("");
         return;
       }
+
+      // If we reach here, either about:blank is disabled OR we're inside the about:blank iframe
+      // In both cases, we should process the proxy request normally
 
       // Check if it's a URL
       const isUrl =
@@ -540,8 +569,8 @@ export default function Index() {
   const handleGamePlay = (gameUrl: string) => {
     setProxyError(null);
 
-    // Check if about blank is enabled
-    if (settings.aboutBlank) {
+    // Check if about blank is enabled AND we're not already inside the about:blank iframe
+    if (settings.aboutBlank && window.parent === window) {
       if (aboutBlankWindow && !aboutBlankWindow.closed) {
         aboutBlankWindow.focus();
       }
@@ -561,8 +590,8 @@ export default function Index() {
   const handleQuickLink = (url: string) => {
     setProxyError(null);
 
-    // Check if about blank is enabled
-    if (settings.aboutBlank) {
+    // Check if about blank is enabled AND we're not already inside the about:blank iframe
+    if (settings.aboutBlank && window.parent === window) {
       if (aboutBlankWindow && !aboutBlankWindow.closed) {
         aboutBlankWindow.focus();
       }
@@ -883,21 +912,23 @@ export default function Index() {
             <div className="max-w-4xl mx-auto">
               {activeTab === "proxy" ? (
                 <form onSubmit={handleProxySubmit}>
-                  <div className="relative group">
-                    <Input
-                      type="text"
-                      placeholder="Enter website URL or search query..."
-                      value={proxyUrl}
-                      onChange={(e) => setProxyUrl(e.target.value)}
-                      className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
-                    />
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="absolute right-2 top-2 h-12 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
-                    >
-                      <ExternalLink className="h-5 w-5" />
-                    </Button>
+                  <div className="space-y-3">
+                    <div className="relative group">
+                      <Input
+                        type="text"
+                        placeholder="Enter website URL or search query..."
+                        value={proxyUrl}
+                        onChange={(e) => setProxyUrl(e.target.value)}
+                        className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                      />
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="absolute right-2 top-2 h-12 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
+                      >
+                        <ExternalLink className="h-5 w-5" />
+                      </Button>
+                    </div>
                   </div>
                 </form>
               ) : activeTab === "games" ? (
