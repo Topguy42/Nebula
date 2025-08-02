@@ -130,17 +130,20 @@ export default function Index() {
 
   const handleGamePlay = (gameUrl: string) => {
     setIsLoading(true);
+    setDisplayUrl(gameUrl);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}`);
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
   };
 
   const handleQuickLink = (url: string) => {
     setIsLoading(true);
+    setDisplayUrl(url);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
   };
 
   const handleBackToHome = () => {
     setCurrentUrl("");
+    setDisplayUrl("");
     setProxyUrl("");
     setIsLoading(false);
   };
