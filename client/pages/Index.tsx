@@ -9,10 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
+import Tools from "@/components/Tools";
+import Settings from "@/components/Settings";
 import {
   Gamepad2,
   Star,
@@ -20,17 +18,6 @@ import {
   ExternalLink,
   Search,
   ArrowLeft,
-  Calculator,
-  Hash,
-  FileText,
-  QrCode,
-  Palette,
-  Clock,
-  Settings,
-  Volume2,
-  Moon,
-  Shield,
-  Zap,
   Download,
   Mail,
   MessageSquare,
