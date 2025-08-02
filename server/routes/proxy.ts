@@ -214,13 +214,60 @@ function processHTML(content: string, targetUrl: URL): string {
       content = content.replace("</HEAD>", proxyStyles + "</HEAD>");
     }
 
-    // Modify links to go through proxy
-    content = content.replace(/href\s*=\s*["']([^"']+)["']/gi, (match, url) => {
-      if (url.startsWith("http") || url.startsWith("//")) {
-        const fullUrl = url.startsWith("//") ? "https:" + url : url;
-        return `href="/api/proxy?url=${encodeURIComponent(fullUrl)}" target="_self"`;
+    // Helper function to rewrite URLs
+    const rewriteUrl = (url: string, baseUrl: URL): string => {
+      if (!url || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('javascript:') || url.startsWith('mailto:') || url.startsWith('tel:')) {
+        return url;
       }
-      return match;
+
+      try {
+        let fullUrl: string;
+        if (url.startsWith('//')) {
+          fullUrl = baseUrl.protocol + url;
+        } else if (url.startsWith('http://') || url.startsWith('https://')) {
+          fullUrl = url;
+        } else {
+          // Relative URL - resolve against base
+          fullUrl = new URL(url, baseUrl.href).href;
+        }
+        return `/api/proxy?url=${encodeURIComponent(fullUrl)}`;
+      } catch (e) {
+        // If URL parsing fails, return original
+        return url;
+      }
+    };
+
+    // Rewrite href attributes (links)
+    content = content.replace(/href\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      const rewritten = rewriteUrl(url, targetUrl);
+      return `href="${rewritten}" target="_self"`;
+    });
+
+    // Rewrite src attributes (images, scripts, iframes, etc.)
+    content = content.replace(/src\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      const rewritten = rewriteUrl(url, targetUrl);
+      return `src="${rewritten}"`;
+    });
+
+    // Rewrite action attributes (forms)
+    content = content.replace(/action\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      const rewritten = rewriteUrl(url, targetUrl);
+      return `action="${rewritten}"`;
+    });
+
+    // Rewrite CSS url() references
+    content = content.replace(/url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi, (match, url) => {
+      const rewritten = rewriteUrl(url, targetUrl);
+      return `url("${rewritten}")`;
+    });
+
+    // Rewrite srcset attributes (responsive images)
+    content = content.replace(/srcset\s*=\s*["']([^"']+)["']/gi, (match, srcset) => {
+      const rewrittenSrcset = srcset.replace(/([^\s,]+)/g, (url) => {
+        if (url.match(/^\d+[wx]$/)) return url; // Skip size descriptors
+        return rewriteUrl(url, targetUrl);
+      });
+      return `srcset="${rewrittenSrcset}"`;
     });
 
     return content;
