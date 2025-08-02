@@ -196,7 +196,10 @@ export default function DevToolsPanel({
             <div className="flex-1 p-4">
               <ScrollArea className="h-full">
                 {domTree ? (
-                  <DomNode node={domTree} onSelectElement={setSelectedElement} />
+                  <DomNode
+                    node={domTree}
+                    onSelectElement={setSelectedElement}
+                  />
                 ) : (
                   <div className="text-muted-foreground text-center py-8">
                     <FileText className="h-8 w-8 mx-auto mb-2" />
