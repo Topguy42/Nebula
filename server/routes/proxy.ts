@@ -200,20 +200,34 @@ export const handleProxy: RequestHandler = async (req, res) => {
             targetUrl.pathname = '/';
             targetUrl.search = '';
           } else {
-            // Add parameters to reduce rate limiting risk
-            searchParams.set("safe", "active");
-            searchParams.set("lr", "lang_en");
-            searchParams.set("hl", "en");
-            searchParams.set("num", "10"); // Reduced from 20 to be less aggressive
-            searchParams.set("start", "0");
+            if (isFromAboutBlank) {
+              // Special parameters for about:blank to avoid rate limiting
+              searchParams.set("safe", "active");
+              searchParams.set("hl", "en");
+              searchParams.set("lr", "lang_en");
+              searchParams.set("num", "10");
+              searchParams.set("start", searchParams.get("start") || "0");
+              searchParams.set("client", "safari"); // Safari works better from about:blank
+              searchParams.set("source", "hp");
+              searchParams.set("ie", "UTF-8");
+              searchParams.set("oe", "UTF-8");
 
-            // Use reliable client identifier that works well
-            searchParams.set("client", "firefox-b-d");
-            searchParams.set("source", "hp");
+              // Remove all tracking parameters that might trigger detection
+              const trackingParams = ["ved", "uact", "gs_lcp", "sclient", "sourceid", "ei", "iflsig", "oq", "aqs", "gs_l", "gs_lcp", "pbx"];
+              trackingParams.forEach(param => searchParams.delete(param));
+            } else {
+              // Normal search parameters
+              searchParams.set("safe", "active");
+              searchParams.set("lr", "lang_en");
+              searchParams.set("hl", "en");
+              searchParams.set("num", "10");
+              searchParams.set("start", "0");
+              searchParams.set("client", "firefox-b-d");
+              searchParams.set("source", "hp");
 
-            // Remove tracking and potentially problematic parameters
-            const paramsToRemove = ["ved", "uact", "gs_lcp", "sclient", "sourceid", "ei", "iflsig"];
-            paramsToRemove.forEach(param => searchParams.delete(param));
+              const paramsToRemove = ["ved", "uact", "gs_lcp", "sclient", "sourceid", "ei", "iflsig"];
+              paramsToRemove.forEach(param => searchParams.delete(param));
+            }
 
             targetUrl.search = searchParams.toString();
           }
