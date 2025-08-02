@@ -65,31 +65,20 @@ export const handleProxy: RequestHandler = async (req, res) => {
         ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
         : userAgents[Math.floor(Math.random() * userAgents.length)];
 
-      // Optimized dynamic referrer rotation
+      // Simple referrer rotation
       let dynamicReferrer = "";
       if (referrer_rotation === "true") {
-        if (hostname.includes("google")) {
-          // For Google, use effective referrers
-          const rotationIndex = Math.floor(Date.now() / 15000) % 4; // Every 15 seconds
-          const effectiveReferrers = [
-            "https://www.google.com/",
-            "https://duckduckgo.com/",
-            "https://en.wikipedia.org/",
-            "https://www.bing.com/"
-          ];
-          dynamicReferrer = effectiveReferrers[rotationIndex];
-        } else {
-          // For other sites, use normal rotation
-          const rotationIndex = Math.floor(Date.now() / 5000) % referrerSources.length;
-          dynamicReferrer = referrerSources[rotationIndex];
-          if (dynamicReferrer && dynamicReferrer.includes("search?")) {
-            const domain = new URL(targetUrl.toString()).hostname;
-            dynamicReferrer = dynamicReferrer + encodeURIComponent(domain);
-          }
-        }
-        console.log(
-          `[PROXY] Using rotating referrer: ${dynamicReferrer || "none"}`,
-        );
+        const referrers = [
+          "https://www.google.com/",
+          "https://duckduckgo.com/",
+          "https://en.wikipedia.org/",
+          "https://www.bing.com/",
+          "https://www.youtube.com/",
+          "https://github.com/"
+        ];
+        const rotationIndex = Math.floor(Date.now() / 10000) % referrers.length;
+        dynamicReferrer = referrers[rotationIndex];
+        console.log(`[PROXY] Using rotating referrer: ${dynamicReferrer}`);
       }
 
       const headers: Record<string, string> = {
