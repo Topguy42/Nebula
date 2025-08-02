@@ -316,11 +316,92 @@ export default function Index() {
   // Function to load content in about:blank window
   const loadInAboutBlank = (url: string, title = "Website") => {
     if (aboutBlankWindow && !aboutBlankWindow.closed) {
-      const loadingEl = aboutBlankWindow.document.getElementById('loading');
-      if (loadingEl) {
-        loadingEl.innerHTML = `Loading ${title}...`;
-        loadingEl.innerHTML = `<iframe src="/api/proxy?url=${encodeURIComponent(url)}" style="width: 100%; height: 100%; border: none;"></iframe>`;
-      }
+      // Clear and replace the entire document with the proxied content
+      aboutBlankWindow.document.open();
+      aboutBlankWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${title} - Nebula Proxy</title>
+          <style>
+            body {
+              margin: 0;
+              padding: 0;
+              font-family: system-ui, -apple-system, sans-serif;
+              overflow: hidden;
+            }
+            .navbar {
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 0.75rem 1rem;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              z-index: 9999;
+              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+              font-size: 0.9rem;
+              height: 45px;
+              box-sizing: border-box;
+            }
+            .navbar h1 {
+              margin: 0;
+              font-size: 1.2rem;
+              font-weight: bold;
+            }
+            .navbar .status {
+              background: rgba(34, 197, 94, 0.3);
+              padding: 0.4rem 0.8rem;
+              border-radius: 15px;
+              font-size: 0.8rem;
+              border: 1px solid rgba(34, 197, 94, 0.5);
+            }
+            iframe {
+              position: absolute;
+              top: 45px;
+              left: 0;
+              width: 100%;
+              height: calc(100vh - 45px);
+              border: none;
+              background: white;
+            }
+            .loading {
+              position: absolute;
+              top: 45px;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #f5f5f5;
+              font-size: 1.1rem;
+              color: #666;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="navbar">
+            <h1>🌌 ${title}</h1>
+            <div class="status">✅ Secure Proxy</div>
+          </div>
+          <div class="loading" id="loading">Loading ${title}...</div>
+          <iframe
+            id="content"
+            src="/api/proxy?url=${encodeURIComponent(url)}"
+            style="display: none;"
+            onload="document.getElementById('loading').style.display='none'; this.style.display='block';"
+            allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
+            allowfullscreen
+            sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
+          ></iframe>
+        </body>
+        </html>
+      `);
+      aboutBlankWindow.document.close();
     }
   };
 
