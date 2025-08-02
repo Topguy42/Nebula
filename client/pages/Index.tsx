@@ -1053,8 +1053,8 @@ export default function Index() {
                         <CardHeader className="pb-4 space-y-4">
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-4">
-                              <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors">
-                                <IconComponent className="h-6 w-6 text-primary" />
+                              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 group-hover:bg-emerald-500/20 transition-colors">
+                                <IconComponent className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                               </div>
                               <div className="space-y-2">
                                 <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
