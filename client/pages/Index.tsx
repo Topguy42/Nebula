@@ -589,49 +589,58 @@ export default function Index() {
               size="sm"
               onClick={() => {
                 const iframe = document.querySelector('iframe');
-                if (iframe) {
-                  // Focus the iframe
-                  iframe.focus();
-                  iframe.scrollIntoView({ behavior: 'smooth' });
-
-                  // Log iframe info to console
-                  console.log('🔍 Dev Tools Activated');
-                  console.log('📄 Current URL:', displayUrl);
-                  console.log('🖼️ Iframe Element:', iframe);
-                  console.log('🔗 Proxy URL:', iframe.src);
-
-                  // Extract and log the actual URL
+                if (iframe && iframe.src) {
                   try {
+                    // Extract the actual URL from the proxy URL
                     const urlParams = new URLSearchParams(iframe.src.split('?')[1]);
                     const actualUrl = urlParams.get('url');
-                    console.log('🌐 Actual URL:', actualUrl);
-                  } catch (e) {
-                    console.log('❌ Could not parse URL');
-                  }
 
-                  // Try to access iframe content (will work if same-origin)
-                  try {
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-                    if (iframeDoc) {
-                      console.log('📄 Iframe Document:', iframeDoc);
-                      console.log('🏷️ Page Title:', iframeDoc.title);
-                      // Highlight the iframe for inspection
-                      iframe.style.outline = '3px solid #ff6b6b';
+                    if (actualUrl) {
+                      // Open the actual URL in a new tab where dev tools can be used
+                      const newWindow = window.open(actualUrl, '_blank', 'noopener,noreferrer');
+
+                      // Show a helpful notification
+                      const notification = document.createElement('div');
+                      notification.innerHTML = `
+                        <div style="font-weight: 600; margin-bottom: 4px;">Dev Tools Opened</div>
+                        <div style="font-size: 13px;">Right-click and select "Inspect Element" or press F12 to inspect the page</div>
+                      `;
+                      notification.style.cssText = `
+                        position: fixed;
+                        top: 80px;
+                        right: 20px;
+                        background: hsl(var(--card));
+                        border: 1px solid hsl(var(--border));
+                        padding: 12px 16px;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        z-index: 1000;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        max-width: 300px;
+                        color: hsl(var(--foreground));
+                      `;
+                      document.body.appendChild(notification);
+
+                      // Remove notification after 4 seconds
                       setTimeout(() => {
-                        iframe.style.outline = '';
-                      }, 2000);
+                        if (notification.parentNode) {
+                          notification.parentNode.removeChild(notification);
+                        }
+                      }, 4000);
+
+                      if (newWindow) {
+                        newWindow.focus();
+                      }
+                    } else {
+                      console.error('Could not extract URL from iframe');
                     }
                   } catch (e) {
-                    console.log('🔒 Cross-origin iframe - limited access');
+                    console.error('Error opening dev tools:', e);
                   }
-
-                  // Trigger debugger to open dev tools
-                  console.log('🛠️ Opening debugger...');
-                  debugger;
                 }
               }}
               className="gap-2"
-              title="Inspect iframe content - opens browser dev tools"
+              title="Open page in new tab for inspection"
             >
               <Code className="h-4 w-4" />
               Dev Tools
