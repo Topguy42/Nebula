@@ -201,15 +201,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
 
-        // Conservative headers to avoid detection
-        headers["Sec-Fetch-Site"] = "none"; // More conservative
+        // Optimized headers for Google compatibility
+        headers["Sec-Fetch-Site"] = dynamicReferrer ? "cross-site" : "none";
         headers["Sec-Fetch-Mode"] = "navigate";
         headers["Sec-Fetch-User"] = "?1";
         headers["Sec-Fetch-Dest"] = "document";
-        // Remove potentially suspicious headers
-        delete headers["X-Requested-With"];
-        delete headers["X-Forwarded-For"];
-        delete headers["X-Real-IP"];
+        headers["Pragma"] = "no-cache";
+        headers["Cache-Control"] = "no-cache";
 
         // Override referrer for about:blank environments
         if (dynamicReferrer) {
