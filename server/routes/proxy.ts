@@ -15,6 +15,10 @@ const referrerSources = [
   ""
 ];
 
+// Rate limiting for Google requests
+const googleRequestTimes = new Map<string, number>();
+const GOOGLE_RATE_LIMIT_MS = 2000; // 2 seconds between Google requests per IP
+
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
     const { url, referrer_rotation } = req.query;
