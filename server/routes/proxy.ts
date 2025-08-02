@@ -160,6 +160,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
         res.setHeader("Access-Control-Allow-Methods", "*");
         res.setHeader("Access-Control-Allow-Credentials", "true");
 
+        // Better caching for static content
+        if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
+          res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        } else {
+          res.setHeader("Cache-Control", "public, max-age=300"); // 5 minutes
+        }
+
         return res.send(content);
       } else if (contentType.includes("text/css")) {
         // Handle CSS files - rewrite url() references
