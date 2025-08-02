@@ -235,20 +235,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
             searchParams.set("num", "10"); // Reduced from 20 to be less aggressive
             searchParams.set("start", "0");
 
-            // Use more conservative client identifier
-            searchParams.set("client", "safari"); // Safari is less likely to be blocked than Firefox
+            // Use reliable client identifier that works well
+            searchParams.set("client", "firefox-b-d");
             searchParams.set("source", "hp");
 
-            // Add randomization to avoid patterns
-            const randomSeed = Math.floor(Math.random() * 1000);
-            searchParams.set("gs_lcp", randomSeed.toString());
-
             // Remove tracking and potentially problematic parameters
-            searchParams.delete("ved");
-            searchParams.delete("uact");
-            searchParams.delete("ei");
-            searchParams.delete("iflsig");
-            searchParams.delete("udm"); // Remove this as it might trigger detection
+            const paramsToRemove = ["ved", "uact", "gs_lcp", "sclient", "sourceid", "ei", "iflsig"];
+            paramsToRemove.forEach(param => searchParams.delete(param));
 
             targetUrl.search = searchParams.toString();
           }
