@@ -257,30 +257,73 @@ iOS: WiFi Settings > Configure DNS
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const checkPrivacy = () => {
-    setResult(`🔒 Privacy & Security Check:
+  const checkPrivacy = async () => {
+    try {
+      // Get IP info
+      const ipResponse = await fetch('https://ipapi.co/json/');
+      const ipData = await ipResponse.json();
 
-🌐 Your Connection Info:
-• User Agent: ${navigator.userAgent.split(' ')[0]}...
-• Language: ${navigator.language}
+      const connectionInfo = `🌐 Your Connection Information:
+
+📍 Location & Network:
+• IP Address: ${ipData.ip || 'Unable to detect'}
+• Location: ${ipData.city || 'Unknown'}, ${ipData.region || 'Unknown'}, ${ipData.country_name || 'Unknown'}
+• ISP/Organization: ${ipData.org || 'Unknown'}
+• Network Type: ${ipData.network || 'Unknown'}
+• Timezone: ${ipData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
+
+💻 Browser & Device:
+• User Agent: ${navigator.userAgent}
+• Browser Language: ${navigator.language}
 • Platform: ${navigator.platform}
+• Screen Resolution: ${window.screen.width}x${window.screen.height}
+• Viewport Size: ${window.innerWidth}x${window.innerHeight}
+• Color Depth: ${window.screen.colorDepth}-bit
+• Pixel Ratio: ${window.devicePixelRatio}
+
+🔧 Browser Features:
 • Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
-• Online: ${navigator.onLine ? 'Yes' : 'No'}
+• JavaScript Enabled: Yes (obviously)
+• Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
+• Online Status: ${navigator.onLine ? 'Online' : 'Offline'}
+• Do Not Track: ${navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled'}
 
-🛡️ Privacy Tips for School:
-• Use Incognito/Private browsing
-• Clear browser data regularly
-• Be aware of network monitoring
-• Use HTTPS websites when possible
-• Avoid logging into personal accounts on school devices
+⏰ Time Information:
+• Local Time: ${new Date().toLocaleString()}
+• UTC Time: ${new Date().toUTCString()}
+• Timezone Offset: UTC${new Date().getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset() / 60)}`;
 
-📡 Network Security:
-• School WiFi is likely monitored
-• Use school-approved services
-• Avoid downloading suspicious files
-• Report security issues to IT
+      setResult(connectionInfo);
+    } catch (error) {
+      // Fallback if IP service fails
+      const basicInfo = `🌐 Your Connection Information:
 
-⚠️ Important: Follow your school's technology policy!`);
+💻 Browser & Device:
+• User Agent: ${navigator.userAgent}
+• Browser Language: ${navigator.language}
+• Platform: ${navigator.platform}
+• Screen Resolution: ${window.screen.width}x${window.screen.height}
+• Viewport Size: ${window.innerWidth}x${window.innerHeight}
+• Color Depth: ${window.screen.colorDepth}-bit
+• Pixel Ratio: ${window.devicePixelRatio}
+
+🔧 Browser Features:
+• Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
+• JavaScript Enabled: Yes
+• Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
+• Online Status: ${navigator.onLine ? 'Online' : 'Offline'}
+• Do Not Track: ${navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled'}
+
+⏰ Time Information:
+• Local Time: ${new Date().toLocaleString()}
+• UTC Time: ${new Date().toUTCString()}
+• Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+• Timezone Offset: UTC${new Date().getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset() / 60)}
+
+ℹ️ Note: IP location data unavailable`;
+
+      setResult(basicInfo);
+    }
   };
 
   return (
