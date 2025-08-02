@@ -8,11 +8,10 @@ const detectAboutBlank = (req: any): boolean => {
   const referer = req.headers.referer || "";
   const origin = req.headers.origin || "";
 
+  // Only detect about:blank if we have strong indicators
   return (
     referer === "https://www.google.com/" ||
-    origin === "https://www.google.com" ||
-    referer.includes("about:blank") ||
-    (!referer && req.headers["sec-fetch-site"] === "cross-site")
+    origin === "https://www.google.com"
   );
 };
 
