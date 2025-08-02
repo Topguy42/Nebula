@@ -1112,16 +1112,41 @@ export default function Index() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 py-8 mt-20">
-        <div className="container mx-auto px-6">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <VortexLogo className="w-6 h-6" />
-              <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">VortexPortal</span>
+      <footer className="relative z-10 mt-32 border-t border-border/40 backdrop-blur-sm bg-background/80">
+        <div className="container mx-auto px-6 py-12">
+          <div className="text-center space-y-6">
+            <div className="flex items-center justify-center gap-4">
+              <VortexLogo className="w-8 h-8" />
+              <div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">VortexPortal</span>
+                <p className="text-xs text-muted-foreground font-medium">Professional Web Proxy</p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Enterprise-Grade Security • Zero-Log Policy • Lightning Fast Performance
-            </p>
+
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span>Enterprise-Grade Security</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span>Zero-Log Policy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                <span>Lightning Fast Performance</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                <span>Global Network</span>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-border/40">
+              <p className="text-xs text-muted-foreground/80">
+                © 2024 VortexPortal. Built for professionals who demand reliability and security.
+              </p>
+            </div>
           </div>
         </div>
       </footer>
