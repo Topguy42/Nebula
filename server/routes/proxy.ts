@@ -85,6 +85,26 @@ export const handleProxy: RequestHandler = async (req, res) => {
         }
       }
 
+      // Google-specific optimizations for faster search
+      if (hostname.includes("google.com") || hostname.includes("google.") || hostname === "google.com") {
+        headers["Origin"] = "https://www.google.com";
+        headers["Referer"] = "https://www.google.com/";
+        headers["DNT"] = "1";
+        headers["X-Requested-With"] = "XMLHttpRequest";
+
+        // Use optimized Google parameters for faster loading
+        if (targetUrl.pathname.includes("/search")) {
+          const searchParams = new URLSearchParams(targetUrl.search);
+
+          // Add fast loading parameters
+          searchParams.set("tbs", "li:1"); // Lighter interface
+          searchParams.set("safe", "active"); // Prevent extra filtering overhead
+          searchParams.set("lr", "lang_en"); // English results for speed
+
+          targetUrl.search = searchParams.toString();
+        }
+      }
+
       // Add referrer for subsequent requests
       const urlPath = targetUrl.pathname;
       if (urlPath !== "/" && urlPath !== "") {
