@@ -93,6 +93,8 @@ export default function Index() {
   const [proxyUrl, setProxyUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"proxy" | "games">("proxy");
+  const [currentUrl, setCurrentUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleProxySubmit = (e: React.FormEvent) => {
     e.preventDefault();
