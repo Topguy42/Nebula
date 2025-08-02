@@ -31,6 +31,9 @@ import {
   Globe,
   Youtube,
   FileText,
+  Grid3X3,
+  Settings,
+  Wrench,
 } from "lucide-react";
 
 const popularGames = [
