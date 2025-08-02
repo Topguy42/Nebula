@@ -289,8 +289,43 @@ function processHTML(content: string, targetUrl: URL): string {
       content = content.replace("</HEAD>", proxyEnhancements + "</HEAD>");
     }
 
-    // Don't rewrite URLs in HTML - let JavaScript handle everything
-    // This makes the proxy completely transparent to the target site
+    // Simple HTML URL rewriting (avoiding infinite loops)
+    const rewriteUrl = (url: string): string => {
+      if (!url || url.startsWith('/api/proxy') || url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('javascript:') || url.startsWith('mailto:') || url.startsWith('tel:')) {
+        return url;
+      }
+
+      try {
+        let fullUrl: string;
+        if (url.startsWith('//')) {
+          fullUrl = targetUrl.protocol + url;
+        } else if (url.startsWith('http://') || url.startsWith('https://')) {
+          fullUrl = url;
+        } else if (url.startsWith('/')) {
+          fullUrl = targetUrl.origin + url;
+        } else {
+          fullUrl = new URL(url, targetUrl.href).href;
+        }
+        return `/api/proxy?url=${encodeURIComponent(fullUrl)}`;
+      } catch (e) {
+        return url;
+      }
+    };
+
+    // Rewrite href attributes
+    content = content.replace(/href\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      return `href="${rewriteUrl(url)}"`;
+    });
+
+    // Rewrite src attributes
+    content = content.replace(/src\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      return `src="${rewriteUrl(url)}"`;
+    });
+
+    // Rewrite action attributes
+    content = content.replace(/action\s*=\s*["']([^"']+)["']/gi, (match, url) => {
+      return `action="${rewriteUrl(url)}"`;
+    });
 
     return content;
   } catch (error) {
