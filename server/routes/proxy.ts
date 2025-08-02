@@ -283,8 +283,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
         ) {
           res.setHeader(
             "Content-Security-Policy",
-            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *;",
+            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *; frame-src *; child-src *; object-src *; media-src *;",
           );
+
+          // Additional headers to improve Google compatibility
+          res.setHeader("X-Content-Type-Options", "nosniff");
+          res.setHeader("Referrer-Policy", "no-referrer-when-downgrade");
+          res.setHeader("Permissions-Policy", "camera=*, microphone=*, geolocation=*");
         } else {
           res.setHeader(
             "Content-Security-Policy",
