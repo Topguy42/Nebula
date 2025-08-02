@@ -210,11 +210,6 @@ export const handleProxy: RequestHandler = async (req, res) => {
         }
       }
 
-      // Add dynamic referrer if rotation is enabled
-      if (referrer_rotation === "true" && dynamicReferrer) {
-        headers["Referer"] = dynamicReferrer;
-      }
-
       // YouTube-specific headers and handling
       if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
         headers["Origin"] = "https://www.youtube.com";
