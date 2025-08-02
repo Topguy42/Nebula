@@ -588,18 +588,39 @@ export default function Index() {
               variant="outline"
               size="sm"
               onClick={() => {
-                // Extract the actual URL from the proxy URL
                 const iframe = document.querySelector('iframe');
-                if (iframe && iframe.src) {
-                  const urlParams = new URLSearchParams(iframe.src.split('?')[1]);
-                  const actualUrl = urlParams.get('url');
-                  if (actualUrl) {
-                    window.open(actualUrl, '_blank');
-                  }
+                if (iframe) {
+                  // Focus the iframe for dev tools inspection
+                  iframe.focus();
+                  iframe.scrollIntoView({ behavior: 'smooth' });
+
+                  // Show a temporary notification
+                  const notification = document.createElement('div');
+                  notification.textContent = 'Press F12 to open dev tools and inspect the iframe content';
+                  notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    background: hsl(var(--card));
+                    border: 1px solid hsl(var(--border));
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    z-index: 1000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                  `;
+                  document.body.appendChild(notification);
+
+                  // Remove notification after 3 seconds
+                  setTimeout(() => {
+                    if (notification.parentNode) {
+                      notification.parentNode.removeChild(notification);
+                    }
+                  }, 3000);
                 }
               }}
               className="gap-2"
-              title="Open in new tab for dev tools"
+              title="Focus iframe for dev tools inspection"
             >
               <Code className="h-4 w-4" />
               Dev Tools
