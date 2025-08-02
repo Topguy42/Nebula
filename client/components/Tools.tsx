@@ -90,13 +90,15 @@ export default function Tools({}: ToolsProps) {
   const [rotationInterval, setRotationInterval] = useState(5);
   const [rotationIntervalId, setRotationIntervalId] = useState<NodeJS.Timeout | null>(null);
 
+  // Initialize referrer rotation from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('proxy-referrer-rotation') === 'true';
+    setReferrerRotation(saved);
+  }, []);
+
   // Clear result when switching tools
   useEffect(() => {
     setResult("");
-    // Stop referrer rotation when switching tools
-    if (selectedTool !== "referrercontrol") {
-      setReferrerRotation(false);
-    }
   }, [selectedTool]);
 
   // Cleanup referrer rotation on unmount
