@@ -580,16 +580,16 @@ ${selectedMethod}
             </div>
           )}
 
-          {selectedTool === "mirrorfinder" && (
+          {selectedTool === "referrercontrol" && (
             <div className="space-y-4">
               <Input
-                type="text"
-                placeholder="Enter website or content to find alternatives"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                type="url"
+                placeholder="Enter target website URL (e.g., example.com)"
+                value={targetUrl}
+                onChange={(e) => setTargetUrl(e.target.value)}
               />
-              <Button onClick={findMirrors} className="w-full">
-                Find Alternative Access
+              <Button onClick={generateReferrerLinks} className="w-full">
+                Generate Referrer Bypass Methods
               </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
