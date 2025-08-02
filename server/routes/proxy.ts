@@ -157,8 +157,11 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
 function processHTML(content: string, targetUrl: URL): string {
   try {
-    // Add base tag for relative URLs
-    const baseTag = `<base href="${targetUrl.origin}/">`;
+    // Remove existing base tags to avoid conflicts
+    content = content.replace(/<base[^>]*>/gi, '');
+
+    // Add our proxy-aware base tag
+    const baseTag = `<base href="/api/proxy?url=${encodeURIComponent(targetUrl.origin + '/')}" target="_self">`;
 
     // Insert base tag after <head>
     if (content.includes("<head>")) {
