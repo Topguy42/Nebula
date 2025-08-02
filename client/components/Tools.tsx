@@ -10,195 +10,277 @@ import {
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Link,
-  Code,
-  Image,
-  Key,
-  Monitor,
-  MapPin,
-  QrCode,
+  Globe,
+  Wifi,
+  Download,
+  BookOpen,
+  Timer,
   FileText,
+  Search,
+  Shield,
 } from "lucide-react";
 
 const toolsList = [
   {
-    name: "URL Shortener",
-    icon: Link,
-    description: "Create short URLs and QR codes for any website",
-    category: "Web",
+    name: "Site Checker",
+    icon: Globe,
+    description: "Check if websites are accessible and find alternatives",
+    category: "Access",
   },
   {
-    name: "HTML/CSS Formatter",
-    icon: Code,
-    description: "Format and minify HTML, CSS, and JavaScript code",
-    category: "Development",
-  },
-  {
-    name: "Image to Base64",
-    icon: Image,
-    description: "Convert images to Base64 for embedding",
-    category: "Utility",
-  },
-  {
-    name: "Password Generator",
-    icon: Key,
-    description: "Generate secure passwords with custom options",
-    category: "Security",
-  },
-  {
-    name: "User Agent Info",
-    icon: Monitor,
-    description: "View your browser and system information",
-    category: "Info",
-  },
-  {
-    name: "IP Geolocation",
-    icon: MapPin,
-    description: "Check IP address location and network info",
+    name: "DNS Tools",
+    icon: Wifi,
+    description: "Test different DNS servers and connectivity",
     category: "Network",
   },
   {
-    name: "QR Code Tools",
-    icon: QrCode,
-    description: "Generate and decode QR codes",
+    name: "Content Downloader", 
+    icon: Download,
+    description: "Download videos and content for offline study",
     category: "Utility",
   },
   {
-    name: "Text Tools",
+    name: "Study Timer",
+    icon: Timer,
+    description: "Pomodoro timer and focus sessions",
+    category: "Productivity",
+  },
+  {
+    name: "Text Browser",
     icon: FileText,
-    description: "Text encoding, decoding, and manipulation",
-    category: "Text",
+    description: "Access websites in text-only mode",
+    category: "Access",
+  },
+  {
+    name: "Mirror Finder",
+    icon: Search,
+    description: "Find alternative URLs and mirror sites",
+    category: "Access",
+  },
+  {
+    name: "Study Notes",
+    icon: BookOpen,
+    description: "Offline note-taking and study guides",
+    category: "Education",
+  },
+  {
+    name: "Privacy Check",
+    icon: Shield,
+    description: "Check your connection privacy and security",
+    category: "Security",
   },
 ];
 
 interface ToolsProps {}
 
 export default function Tools({}: ToolsProps) {
-  const [urlInput, setUrlInput] = useState("");
-  const [codeInput, setCodeInput] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [passwordOptions, setPasswordOptions] = useState({
-    length: 16,
-    uppercase: true,
-    lowercase: true,
-    numbers: true,
-    symbols: true,
-  });
-  const [ipInput, setIpInput] = useState("");
-  const [qrInput, setQrInput] = useState("");
-  const [textInput, setTextInput] = useState("");
+  const [websiteInput, setWebsiteInput] = useState("");
+  const [dnsServer, setDnsServer] = useState("8.8.8.8");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [studyTime, setStudyTime] = useState(25);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [textBrowserUrl, setTextBrowserUrl] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [studyNotes, setStudyNotes] = useState("");
   const [result, setResult] = useState("");
-  const [selectedTool, setSelectedTool] = useState("urlshortener");
+  const [selectedTool, setSelectedTool] = useState("sitechecker");
+  const [timeLeft, setTimeLeft] = useState(studyTime * 60);
 
-  const generatePassword = () => {
-    const chars = {
-      lowercase: "abcdefghijklmnopqrstuvwxyz",
-      uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-      numbers: "0123456789",
-      symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
-    };
+  const checkWebsiteAccess = async () => {
+    if (!websiteInput) return;
+    
+    setResult("Checking website accessibility...");
+    
+    try {
+      // Try to fetch the website
+      const url = websiteInput.startsWith('http') ? websiteInput : `https://${websiteInput}`;
+      const response = await fetch(`/api/proxy-check?url=${encodeURIComponent(url)}`);
+      
+      if (response.ok) {
+        setResult(`✅ ${websiteInput} is accessible`);
+      } else {
+        setResult(`❌ ${websiteInput} may be blocked. Try these alternatives:
+        
+🔗 Alternative methods:
+• Try HTTPS instead of HTTP
+• Use Google Translate: translate.google.com/translate?u=${encodeURIComponent(websiteInput)}
+• Use Archive.org: web.archive.org/web/*/${websiteInput}
+• Try adding 's' to make it HTTPS
+• Use different subdomain: m.${websiteInput} or www.${websiteInput}
 
-    let charset = "";
-    if (passwordOptions.lowercase) charset += chars.lowercase;
-    if (passwordOptions.uppercase) charset += chars.uppercase;
-    if (passwordOptions.numbers) charset += chars.numbers;
-    if (passwordOptions.symbols) charset += chars.symbols;
+🌐 Alternative DNS servers:
+• Cloudflare: 1.1.1.1
+• OpenDNS: 208.67.222.222
+• Quad9: 9.9.9.9`);
+      }
+    } catch (error) {
+      setResult(`❌ ${websiteInput} appears to be blocked or unreachable.
 
-    if (!charset) {
-      setResult("Error: Please select at least one character type");
+🔧 Try these workarounds:
+• Use Google Cache: cache:${websiteInput}
+• Try mobile version: m.${websiteInput}
+• Use translate proxy: translate.google.com
+• Check if HTTPS works: https://${websiteInput}
+• Try different ports if applicable`);
+    }
+  };
+
+  const testDNS = async () => {
+    setResult(`Testing DNS server: ${dnsServer}
+
+🔍 Common DNS Servers:
+• Cloudflare: 1.1.1.1, 1.0.0.1 (Fast & Private)
+• Google: 8.8.8.8, 8.8.4.4 (Reliable)
+• OpenDNS: 208.67.222.222, 208.67.220.220 (Family Safe)
+• Quad9: 9.9.9.9 (Security focused)
+
+📝 How to change DNS on your device:
+Windows: Network Settings > Adapter Options > Properties > IPv4
+Mac: System Preferences > Network > Advanced > DNS
+Android: WiFi Settings > Modify Network > Advanced
+iOS: WiFi Settings > Configure DNS
+
+⚠️ Note: Some schools may block DNS changes`);
+  };
+
+  const getVideoDownloadInfo = () => {
+    if (!videoUrl) return;
+    
+    setResult(`📹 Video Download Options for studying:
+
+🎯 For YouTube videos:
+• Add 'ss' before youtube: ssyoutube.com/watch?v=...
+• Use YouTube Premium for offline (if available)
+• Try KeepVid or similar services
+• Use browser extensions (if allowed)
+
+📚 Educational Content:
+• Khan Academy has offline app
+• TED Talks downloadable
+• MIT OpenCourseWare PDFs
+• Coursera offline mode
+
+⚡ Quick tips:
+• Right-click → Save video (sometimes works)
+• Use 'Save Page As' for full content
+• Screenshot important slides
+• Take notes while watching
+
+⚠️ Always respect copyright and school policies!`);
+  };
+
+  const startStudyTimer = () => {
+    if (timerRunning) {
+      setTimerRunning(false);
       return;
     }
 
-    let password = "";
-    for (let i = 0; i < passwordOptions.length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
-    setResult(`Generated Password: ${password}`);
-  };
-
-  const getUserAgentInfo = () => {
-    const userAgent = navigator.userAgent;
-    const platform = navigator.platform;
-    const language = navigator.language;
-    const cookieEnabled = navigator.cookieEnabled;
-    const onLine = navigator.onLine;
+    setTimeLeft(studyTime * 60);
+    setTimerRunning(true);
     
-    const info = `
-Browser: ${userAgent}
-Platform: ${platform}
-Language: ${language}
-Screen: ${window.screen.width}x${window.screen.height}
-Viewport: ${window.innerWidth}x${window.innerHeight}
-Cookies Enabled: ${cookieEnabled}
-Online: ${onLine}
-Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
-    `.trim();
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          setTimerRunning(false);
+          setResult("🎉 Study session complete! Time for a break.");
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const getTextBrowserInfo = () => {
+    setResult(`📖 Text-Only Browsing Tips:
+
+🌐 Text-based alternatives:
+• Add '/text' to some URLs
+• Use Lynx browser if available  
+• Google Cache (text version)
+• Archive.org snapshots
+• RSS feeds for news sites
+
+📱 Mobile versions (often lighter):
+• m.wikipedia.org
+• m.reddit.com  
+• mobile.twitter.com
+• m.youtube.com
+
+🔧 Browser settings:
+• Disable images in browser
+• Turn off JavaScript
+• Use reader mode
+• Block CSS loading
+
+📚 Study-friendly sites:
+• Simple Wikipedia: simple.wikipedia.org
+• Text-only news: text.npr.org
+• Academic databases (often text-heavy)
+• Government education sites (.edu/.gov)`);
+  };
+
+  const findMirrors = () => {
+    if (!searchQuery) return;
     
-    setResult(info);
+    setResult(`🔍 Finding alternatives for: "${searchQuery}"
+
+🪞 Mirror Site Methods:
+• Add 'mirror' to search: "${searchQuery} mirror site"
+• Try different TLDs: .org, .net, .info, .me
+• Use proxy sites (be careful!)
+• Check if site has official mirrors
+
+🔗 Alternative access methods:
+• Google Cache: cache:${searchQuery}
+• Archive.org: web.archive.org
+• Google Translate proxy
+• Bing translator proxy
+
+📚 Educational alternatives:
+• Wikipedia for general info
+• Khan Academy for learning
+• MIT OpenCourseWare 
+• Coursera/edX for courses
+• Library databases
+
+🛡️ Safety tips:
+• Verify official mirror sites
+• Avoid suspicious redirects
+• Use school-approved resources first
+• Check with teachers for alternatives`);
   };
 
-  const checkIpLocation = async () => {
-    try {
-      const ip = ipInput || ""; // Use current IP if none specified
-      const response = await fetch(ip ? `https://ipapi.co/${ip}/json/` : `https://ipapi.co/json/`);
-      const data = await response.json();
-      
-      if (data.error) {
-        setResult(`Error: ${data.reason}`);
-        return;
-      }
-      
-      const info = `
-IP Address: ${data.ip}
-Location: ${data.city}, ${data.region}, ${data.country_name}
-ISP: ${data.org}
-Timezone: ${data.timezone}
-Postal Code: ${data.postal}
-Coordinates: ${data.latitude}, ${data.longitude}
-      `.trim();
-      
-      setResult(info);
-    } catch (error) {
-      setResult("Error: Unable to fetch IP information");
-    }
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleImageToBase64 = (file: File) => {
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target?.result as string;
-      setResult(`Base64 Data URL:\n${base64}`);
-    };
-    reader.readAsDataURL(file);
-  };
+  const checkPrivacy = () => {
+    setResult(`🔒 Privacy & Security Check:
 
-  const formatCode = (type: string) => {
-    try {
-      let formatted = "";
-      
-      switch (type) {
-        case "json":
-          formatted = JSON.stringify(JSON.parse(codeInput), null, 2);
-          break;
-        case "minify":
-          formatted = codeInput.replace(/\s+/g, " ").trim();
-          break;
-        case "html":
-          // Basic HTML formatting
-          formatted = codeInput
-            .replace(/></g, ">\n<")
-            .replace(/^\s*\n/gm, "");
-          break;
-        default:
-          formatted = codeInput;
-      }
-      
-      setResult(formatted);
-    } catch (error) {
-      setResult("Error: Invalid format or syntax");
-    }
+🌐 Your Connection Info:
+• User Agent: ${navigator.userAgent.split(' ')[0]}...
+• Language: ${navigator.language}
+• Platform: ${navigator.platform}
+• Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
+• Online: ${navigator.onLine ? 'Yes' : 'No'}
+
+🛡️ Privacy Tips for School:
+• Use Incognito/Private browsing
+• Clear browser data regularly
+• Be aware of network monitoring
+• Use HTTPS websites when possible
+• Avoid logging into personal accounts on school devices
+
+📡 Network Security:
+• School WiFi is likely monitored
+• Use school-approved services
+• Avoid downloading suspicious files
+• Report security issues to IT
+
+⚠️ Important: Follow your school's technology policy!`);
   };
 
   return (
@@ -253,341 +335,207 @@ Coordinates: ${data.latitude}, ${data.longitude}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {selectedTool === "urlshortener" && (
+          {selectedTool === "sitechecker" && (
+            <div className="space-y-4">
+              <Input
+                type="text"
+                placeholder="Enter website URL (e.g., wikipedia.org)"
+                value={websiteInput}
+                onChange={(e) => setWebsiteInput(e.target.value)}
+              />
+              <Button onClick={checkWebsiteAccess} className="w-full">
+                Check Website Access
+              </Button>
+              {result && (
+                <div className="p-4 bg-muted rounded-lg">
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
+                </div>
+              )}
+            </div>
+          )}
+
+          {selectedTool === "dnstools" && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">DNS Server:</label>
+                <select 
+                  value={dnsServer}
+                  onChange={(e) => setDnsServer(e.target.value)}
+                  className="w-full p-2 border rounded-md bg-background"
+                >
+                  <option value="8.8.8.8">Google DNS (8.8.8.8)</option>
+                  <option value="1.1.1.1">Cloudflare DNS (1.1.1.1)</option>
+                  <option value="208.67.222.222">OpenDNS (208.67.222.222)</option>
+                  <option value="9.9.9.9">Quad9 DNS (9.9.9.9)</option>
+                </select>
+              </div>
+              <Button onClick={testDNS} className="w-full">
+                Get DNS Information
+              </Button>
+              {result && (
+                <div className="p-4 bg-muted rounded-lg">
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
+                </div>
+              )}
+            </div>
+          )}
+
+          {selectedTool === "contentdownloader" && (
             <div className="space-y-4">
               <Input
                 type="url"
-                placeholder="Enter URL to shorten"
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder="Enter video URL for download info"
+                value={videoUrl}
+                onChange={(e) => setVideoUrl(e.target.value)}
               />
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={() => {
-                    if (urlInput) {
-                      // Using tinyurl service
-                      const shortUrl = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(urlInput)}`;
-                      fetch(shortUrl)
-                        .then(response => response.text())
-                        .then(data => setResult(`Short URL: ${data}`))
-                        .catch(() => setResult("Error: Unable to shorten URL"));
-                    }
-                  }}
-                  variant="outline"
-                >
-                  Shorten URL
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (urlInput) {
-                      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(urlInput)}`;
-                      setResult(`QR Code: ${qrUrl}`);
-                    }
-                  }}
-                  variant="outline"
-                >
-                  Generate QR
-                </Button>
-              </div>
+              <Button onClick={getVideoDownloadInfo} className="w-full">
+                Get Download Options
+              </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
-                  {result.includes("QR Code:") ? (
-                    <div className="text-center">
-                      <img src={result.split("QR Code: ")[1]} alt="QR Code" className="mx-auto mb-2" />
-                      <p className="text-sm">QR Code for: {urlInput}</p>
-                    </div>
-                  ) : (
-                    <p className="text-sm font-mono break-all">{result}</p>
-                  )}
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
             </div>
           )}
 
-          {selectedTool === "htmlcssformatter" && (
+          {selectedTool === "studytimer" && (
             <div className="space-y-4">
-              <Textarea
-                placeholder="Paste your HTML, CSS, or JavaScript code here"
-                value={codeInput}
-                onChange={(e) => setCodeInput(e.target.value)}
-                className="min-h-[150px] font-mono"
-              />
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  onClick={() => formatCode("json")}
-                  variant="outline"
-                >
-                  Format JSON
-                </Button>
-                <Button
-                  onClick={() => formatCode("html")}
-                  variant="outline"
-                >
-                  Format HTML
-                </Button>
-                <Button
-                  onClick={() => formatCode("minify")}
-                  variant="outline"
-                >
-                  Minify
-                </Button>
-              </div>
-              {result && (
-                <div className="p-4 bg-muted rounded-lg">
-                  <pre className="text-sm font-mono whitespace-pre-wrap break-all overflow-auto max-h-60">
-                    {result}
-                  </pre>
-                </div>
-              )}
-            </div>
-          )}
-
-          {selectedTool === "imagetobase64" && (
-            <div className="space-y-4">
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Study Time (minutes):</label>
                 <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setImageFile(file);
-                      handleImageToBase64(file);
-                    }
-                  }}
+                  type="range"
+                  min="5"
+                  max="60"
+                  value={studyTime}
+                  onChange={(e) => setStudyTime(parseInt(e.target.value))}
                   className="w-full"
                 />
-                <p className="text-sm text-muted-foreground mt-2">
-                  Select an image file to convert to Base64
-                </p>
+                <p className="text-center text-sm text-muted-foreground">{studyTime} minutes</p>
               </div>
+              
+              {timerRunning && (
+                <div className="text-center p-6 bg-primary/10 rounded-lg">
+                  <div className="text-4xl font-mono font-bold text-primary">
+                    {formatTime(timeLeft)}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Focus time remaining</p>
+                </div>
+              )}
+              
+              <Button 
+                onClick={startStudyTimer} 
+                className="w-full"
+                variant={timerRunning ? "destructive" : "default"}
+              >
+                {timerRunning ? "Stop Timer" : "Start Study Session"}
+              </Button>
+              
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-medium mb-2">Base64 Output:</p>
-                  <textarea
-                    value={result}
-                    readOnly
-                    className="w-full h-32 text-xs font-mono bg-background border rounded p-2"
-                  />
-                  <Button
-                    onClick={() => navigator.clipboard.writeText(result)}
-                    className="mt-2"
-                    size="sm"
-                  >
-                    Copy to Clipboard
-                  </Button>
+                  <p className="text-center text-lg font-medium">{result}</p>
                 </div>
               )}
             </div>
           )}
 
-          {selectedTool === "passwordgenerator" && (
+          {selectedTool === "textbrowser" && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Length: {passwordOptions.length}</label>
-                  <input
-                    type="range"
-                    min="4"
-                    max="50"
-                    value={passwordOptions.length}
-                    onChange={(e) => setPasswordOptions({...passwordOptions, length: parseInt(e.target.value)})}
-                    className="w-full"
-                  />
-                </div>
-                <div className="space-y-2">
-                  {[
-                    { key: 'uppercase', label: 'Uppercase (A-Z)' },
-                    { key: 'lowercase', label: 'Lowercase (a-z)' },
-                    { key: 'numbers', label: 'Numbers (0-9)' },
-                    { key: 'symbols', label: 'Symbols (!@#$...)' },
-                  ].map(option => (
-                    <label key={option.key} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={passwordOptions[option.key as keyof typeof passwordOptions] as boolean}
-                        onChange={(e) => setPasswordOptions({
-                          ...passwordOptions,
-                          [option.key]: e.target.checked
-                        })}
-                      />
-                      {option.label}
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <Button onClick={generatePassword} className="w-full">
-                Generate Password
+              <Input
+                type="url"
+                placeholder="Enter website for text-only access tips"
+                value={textBrowserUrl}
+                onChange={(e) => setTextBrowserUrl(e.target.value)}
+              />
+              <Button onClick={getTextBrowserInfo} className="w-full">
+                Get Text-Only Access Info
               </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-lg font-mono break-all">{result}</p>
-                  <Button
-                    onClick={() => navigator.clipboard.writeText(result.split(": ")[1])}
-                    className="mt-2"
-                    size="sm"
-                  >
-                    Copy Password
-                  </Button>
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
             </div>
           )}
 
-          {selectedTool === "useragentinfo" && (
-            <div className="space-y-4">
-              <Button onClick={getUserAgentInfo} className="w-full">
-                Get Browser Information
-              </Button>
-              {result && (
-                <div className="p-4 bg-muted rounded-lg">
-                  <pre className="text-sm font-mono whitespace-pre-wrap">{result}</pre>
-                </div>
-              )}
-            </div>
-          )}
-
-          {selectedTool === "ipgeolocation" && (
+          {selectedTool === "mirrorfinder" && (
             <div className="space-y-4">
               <Input
                 type="text"
-                placeholder="Enter IP address (leave empty for your current IP)"
-                value={ipInput}
-                onChange={(e) => setIpInput(e.target.value)}
+                placeholder="Enter website or content to find alternatives"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Button onClick={checkIpLocation} className="w-full">
-                Check IP Location
+              <Button onClick={findMirrors} className="w-full">
+                Find Alternative Access
               </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <pre className="text-sm font-mono whitespace-pre-wrap">{result}</pre>
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
             </div>
           )}
 
-          {selectedTool === "qrcodetools" && (
-            <div className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Enter text or URL for QR code"
-                value={qrInput}
-                onChange={(e) => setQrInput(e.target.value)}
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={() => {
-                    if (qrInput) {
-                      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrInput)}`;
-                      setResult(qrUrl);
-                    }
-                  }}
-                  variant="outline"
-                >
-                  Generate QR Code
-                </Button>
-                <Button
-                  onClick={() => {
-                    // QR code scanner would require camera access
-                    setResult("QR Scanner: Use your device's camera to scan QR codes");
-                  }}
-                  variant="outline"
-                >
-                  QR Scanner Info
-                </Button>
-              </div>
-              {result && (
-                <div className="p-4 bg-muted rounded-lg text-center">
-                  {result.startsWith("https://") ? (
-                    <img src={result} alt="QR Code" className="mx-auto" />
-                  ) : (
-                    <p className="text-sm">{result}</p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {selectedTool === "texttools" && (
+          {selectedTool === "studynotes" && (
             <div className="space-y-4">
               <Textarea
-                placeholder="Enter text to encode/decode"
-                value={textInput}
-                onChange={(e) => setTextInput(e.target.value)}
-                className="min-h-[100px]"
+                placeholder="Type your study notes here. They'll be saved locally in your browser."
+                value={studyNotes}
+                onChange={(e) => {
+                  setStudyNotes(e.target.value);
+                  localStorage.setItem('study-notes', e.target.value);
+                }}
+                className="min-h-[200px]"
+                onFocus={() => {
+                  const saved = localStorage.getItem('study-notes');
+                  if (saved) setStudyNotes(saved);
+                }}
               />
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={() => {
-                    if (textInput) {
-                      const encoded = btoa(textInput);
-                      setResult(`Base64 Encoded: ${encoded}`);
-                    }
+                    const blob = new Blob([studyNotes], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'study-notes.txt';
+                    a.click();
                   }}
                   variant="outline"
                 >
-                  Base64 Encode
+                  Download Notes
                 </Button>
                 <Button
                   onClick={() => {
-                    try {
-                      const decoded = atob(textInput);
-                      setResult(`Base64 Decoded: ${decoded}`);
-                    } catch {
-                      setResult("Error: Invalid Base64");
-                    }
+                    localStorage.removeItem('study-notes');
+                    setStudyNotes('');
+                    setResult('Notes cleared!');
                   }}
                   variant="outline"
                 >
-                  Base64 Decode
-                </Button>
-                <Button
-                  onClick={() => {
-                    const encoded = encodeURIComponent(textInput);
-                    setResult(`URL Encoded: ${encoded}`);
-                  }}
-                  variant="outline"
-                >
-                  URL Encode
-                </Button>
-                <Button
-                  onClick={() => {
-                    try {
-                      const decoded = decodeURIComponent(textInput);
-                      setResult(`URL Decoded: ${decoded}`);
-                    } catch {
-                      setResult("Error: Invalid URL encoding");
-                    }
-                  }}
-                  variant="outline"
-                >
-                  URL Decode
+                  Clear Notes
                 </Button>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={() => {
-                    const wordCount = textInput.trim().split(/\s+/).length;
-                    const charCount = textInput.length;
-                    setResult(`Words: ${wordCount}, Characters: ${charCount}`);
-                  }}
-                  variant="outline"
-                >
-                  Word Count
-                </Button>
-                <Button
-                  onClick={() => {
-                    const reversed = textInput.split('').reverse().join('');
-                    setResult(`Reversed: ${reversed}`);
-                  }}
-                  variant="outline"
-                >
-                  Reverse Text
-                </Button>
+              <div className="text-sm text-muted-foreground">
+                💡 Tip: Your notes are saved locally in your browser. Download them to keep permanently!
               </div>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-mono break-all">{result}</p>
+                  <p className="text-sm">{result}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {selectedTool === "privacycheck" && (
+            <div className="space-y-4">
+              <Button onClick={checkPrivacy} className="w-full">
+                Check Privacy & Security Info
+              </Button>
+              {result && (
+                <div className="p-4 bg-muted rounded-lg">
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
             </div>
