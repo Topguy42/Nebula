@@ -58,10 +58,10 @@ const toolsList = [
     category: "Bypass",
   },
   {
-    name: "Study Notes",
-    icon: BookOpen,
-    description: "Offline note-taking and study guides",
-    category: "Education",
+    name: "Cloaker",
+    icon: Shield,
+    description: "Change website title and favicon for privacy",
+    category: "Privacy",
   },
   {
     name: "Privacy Check",
