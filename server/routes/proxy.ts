@@ -1,5 +1,66 @@
 import { RequestHandler } from "express";
 
+// About:blank emulation system
+const aboutBlankRequestMap = new Map<string, number>();
+const EMULATION_DELAY = 2000; // 2 second delay for about:blank requests to Google
+
+const detectAboutBlank = (req: any): boolean => {
+  const referer = req.headers.referer || "";
+  const origin = req.headers.origin || "";
+
+  return (
+    referer === "https://www.google.com/" ||
+    origin === "https://www.google.com" ||
+    referer.includes("about:blank") ||
+    (!referer && req.headers["sec-fetch-site"] === "cross-site")
+  );
+};
+
+const generateRealHeaders = (hostname: string, isAboutBlank: boolean) => {
+  const realReferrers = [
+    "https://www.bing.com/",
+    "https://duckduckgo.com/",
+    "https://search.yahoo.com/",
+    "https://www.ecosia.org/",
+    "https://startpage.com/",
+    "https://en.wikipedia.org/",
+    "https://news.ycombinator.com/",
+    "https://reddit.com/r/all"
+  ];
+
+  const realUserAgents = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+  ];
+
+  if (isAboutBlank && hostname.includes("google")) {
+    // Make about:blank requests look like they're coming from a real search engine
+    const randomReferrer = realReferrers[Math.floor(Math.random() * realReferrers.length)];
+    const randomUA = realUserAgents[Math.floor(Math.random() * realUserAgents.length)];
+
+    return {
+      "User-Agent": randomUA,
+      "Referer": randomReferrer,
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "Accept-Language": "en-US,en;q=0.5",
+      "Accept-Encoding": "gzip, deflate, br",
+      "DNT": "1",
+      "Connection": "keep-alive",
+      "Upgrade-Insecure-Requests": "1",
+      "Sec-Fetch-Dest": "document",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "cross-site",
+      "Sec-Fetch-User": "?1",
+      "Cache-Control": "max-age=0"
+    };
+  }
+
+  return null;
+};
+
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
     const { url, referrer_rotation } = req.query;
