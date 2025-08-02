@@ -218,60 +218,64 @@ ${selectedProxies.map(proxy => `• https://${proxy}`).join('\n')}
     }, 1000);
   };
 
-  const testNetworkConnectivity = async () => {
-    const testUrl = networkTestUrl || "google.com";
-    setResult("🔍 Testing network connectivity...");
+  const getFilterBypassMethods = () => {
+    const methods = {
+      keyword: `🔍 Keyword Filter Bypass:
+• Use synonyms or alternative spellings
+• Add numbers or symbols: g4ming, soci@l
+• Use different languages for same word
+• Try abbreviated forms: YT for YouTube
+• Use URL shorteners to hide destination
+• Search in images then click through`,
 
-    let results = "🌐 Network Connectivity Information:\n\n";
+      url: `🌐 URL Filter Bypass:
+• Try HTTPS instead of HTTP
+• Add 's' to domain: https://site.com
+• Use IP address instead of domain name
+• Try different subdomains: m., www., mobile.
+• Use port numbers: site.com:443
+• Try different TLDs: .net, .org, .io`,
 
-    // Basic connectivity check
-    results += `📡 Browser Status:
-• Online Status: ${navigator.onLine ? '✅ Online' : '❌ Offline'}
-• User Agent: ${navigator.userAgent.split(' ')[0]}...
-• Language: ${navigator.language}
-• Platform: ${navigator.platform}\n\n`;
+      content: `📄 Content Filter Bypass:
+• Use Google Translate as proxy
+• View cached/archived versions
+• Use text-only versions of sites
+• Access mobile versions (often less filtered)
+• Use RSS feeds for news content
+• Try reader mode in browsers`
+    };
 
-    // Connection API info (if available)
-    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-    if (connection) {
-      results += `📊 Connection Details:
-• Type: ${connection.effectiveType || 'Unknown'}
-• Speed: ${connection.downlink ? `${connection.downlink} Mbps` : 'Unknown'}
-• RTT: ${connection.rtt ? `${connection.rtt}ms` : 'Unknown'}
-• Save Data: ${connection.saveData ? 'Enabled' : 'Disabled'}\n\n`;
-    }
+    const selectedMethod = methods[filterType as keyof typeof methods] || methods.keyword;
 
-    // DNS suggestions for the target URL
-    if (testUrl && testUrl !== "google.com") {
-      results += `🔍 Testing suggestions for "${testUrl}":
-• Try HTTPS: https://${testUrl}
-• Try HTTP: http://${testUrl}
-• Try www: https://www.${testUrl}
-• Try mobile: https://m.${testUrl}
-• Try subdomain: Check if site has mobile/m/touch subdomain\n\n`;
-    }
+    setResult(`🛡️ Filter Bypass Methods:
 
-    // DNS server recommendations
-    results += `🌐 DNS Server Options:
-• Current: Usually your ISP's DNS
-• Cloudflare: 1.1.1.1 (Fast, Privacy-focused)
-• Google: 8.8.8.8 (Reliable, Fast)
-• Quad9: 9.9.9.9 (Security-focused)
-• OpenDNS: 208.67.222.222 (Family-safe)\n\n`;
+${selectedMethod}
 
-    // Practical testing tips
-    results += `🔧 Manual Testing Tips:
-• Open DevTools (F12) → Network tab
-• Try opening target site in new tab
-• Check browser console for errors
-• Test with/without VPN if available
-• Try different browsers
-• Clear DNS cache: ipconfig /flushdns (Windows)
+🔧 General Bypass Techniques:
+• Change DNS servers (1.1.1.1, 8.8.8.8)
+• Use different browsers
+• Clear browser cache and cookies
+• Disable JavaScript temporarily
+• Use incognito/private browsing mode
+• Try different network (mobile hotspot)
 
-⚠️ Note: Browser security prevents direct DNS testing
-Use these manual methods for accurate results`;
+🌍 Alternative Access:
+• Google Cache: cache:website.com
+• Archive.org: web.archive.org
+• Proxy sites: croxyproxy.com, hide.me
+• Mirror sites: often domain.org when .com blocked
+• API access: Some sites have open APIs
 
-    setResult(results);
+📱 Mobile Tricks:
+• Use mobile apps instead of websites
+• Mobile versions often less restricted
+• Different app stores may have alternatives
+
+⚠️ Remember:
+• Always follow school/organization policies
+• Use for educational purposes only
+• Respect network administrator rules
+• Don't overuse - avoid detection`);
   };
 
   const findMirrors = () => {
