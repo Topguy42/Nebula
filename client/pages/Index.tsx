@@ -848,15 +848,15 @@ export default function Index() {
               <div className="flex flex-wrap justify-center gap-4 text-sm">
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                   <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                  <span className="font-medium">Zero-Log Policy</span>
+                  <span className="font-medium">No Logging</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20">
                   <div className="w-2 h-2 rounded-full bg-teal-500"></div>
-                  <span className="font-medium">Enterprise Security</span>
+                  <span className="font-medium">Secure Access</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20">
                   <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
-                  <span className="font-medium">Global Network</span>
+                  <span className="font-medium">Fast Speeds</span>
                 </div>
               </div>
             </div>
