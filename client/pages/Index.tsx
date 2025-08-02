@@ -246,20 +246,29 @@ export default function Index() {
           !query.includes(" ") &&
           query.split(".").length >= 2);
 
+      let finalUrl = "";
       if (isUrl) {
         // Handle as URL
         let url = query;
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
           url = "https://" + url;
         }
+        finalUrl = url;
         setDisplayUrl(url);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        finalUrl = searchUrl;
         setDisplayUrl(`Google Search: ${query}`);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
       }
+
+      // Add to recent history
+      setRecentHistory(prev => {
+        const updated = [finalUrl, ...prev.filter(url => url !== finalUrl)];
+        return updated.slice(0, 5); // Keep only 5 recent items
+      });
     }
   };
 
