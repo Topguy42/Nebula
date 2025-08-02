@@ -459,6 +459,72 @@ export const handleProxy: RequestHandler = async (req, res) => {
     } catch (fetchError) {
       clearTimeout(timeoutId);
 
+      // Special handling for Google in about:blank mode - try different approaches
+      if ((hostname.includes("google.com") || hostname.includes("google.")) && isFromAboutBlank) {
+        console.log(`[PROXY] Google fetch failed in about:blank, trying fallback approach: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`);
+
+        // Try with even simpler headers
+        try {
+          const fallbackHeaders: Record<string, string> = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1"
+          };
+
+          const fallbackResponse = await fetch(targetUrl.toString(), {
+            headers: fallbackHeaders,
+            redirect: "follow",
+          });
+
+          if (fallbackResponse.ok) {
+            const content = await fallbackResponse.text();
+            const processedContent = processGoogleSearchFast(content, targetUrl);
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
+            res.setHeader("X-Frame-Options", "SAMEORIGIN");
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            return res.send(processedContent);
+          }
+        } catch (fallbackError) {
+          console.log(`[PROXY] Fallback also failed: ${fallbackError instanceof Error ? fallbackError.message : 'Unknown error'}`);
+        }
+
+        // If both attempts fail, auto-retry with a loading screen
+        return res.status(200).send(`
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title>Connecting to Google...</title>
+              <script>
+                let retryCount = parseInt(localStorage.getItem('googleRetryCount') || '0');
+                if (retryCount < 3) {
+                  localStorage.setItem('googleRetryCount', (retryCount + 1).toString());
+                  setTimeout(() => window.location.reload(), 2000 + (retryCount * 1000));
+                } else {
+                  localStorage.removeItem('googleRetryCount');
+                  document.getElementById('retryBtn').style.display = 'block';
+                  document.getElementById('loadingMsg').textContent = 'Connection failed. Please try manually.';
+                }
+              </script>
+            </head>
+            <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
+              <div style="background: white; border-radius: 8px; padding: 24px; max-width: 400px; margin: 100px auto;">
+                <div style="font-size: 32px; margin-bottom: 16px;">🔄</div>
+                <h3 style="margin: 0 0 12px 0;">Connecting to Google...</h3>
+                <p id="loadingMsg" style="color: #6b7280; margin: 0 0 16px 0;">Attempting connection...</p>
+                <div style="width: 100%; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                  <div style="width: 0%; height: 100%; background: #10b981; animation: progress 2s linear forwards;"></div>
+                </div>
+                <button id="retryBtn" onclick="localStorage.removeItem('googleRetryCount'); window.location.reload();" style="display: none; margin-top: 16px; background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Try Again</button>
+                <style>@keyframes progress { to { width: 100%; } }</style>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+
       if (fetchError instanceof Error && fetchError.name === "AbortError") {
         return res.status(200).send(`
           <html>
