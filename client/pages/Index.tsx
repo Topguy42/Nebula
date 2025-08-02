@@ -722,80 +722,85 @@ export default function Index() {
       </div>
 
       {/* Header */}
-      <header className="relative z-50 py-6">
-        <div className="container mx-auto px-6">
+      <header className="relative z-50 backdrop-blur-sm bg-background/80 border-b border-border/40">
+        <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Brand */}
             <div className="flex items-center gap-4">
-              <VortexLogo className="w-12 h-12" />
+              <VortexLogo className="w-10 h-10" />
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
                   VortexPortal
                 </h1>
-                <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">
-                  PROFESSIONAL WEB PROXY
+                <p className="text-xs text-muted-foreground font-medium tracking-wide">
+                  Professional Web Proxy
                 </p>
               </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-4 text-sm font-medium">
+            <nav className="flex items-center bg-muted/40 rounded-full p-1 backdrop-blur-sm border border-border/50">
               <button
                 onClick={() => setActiveTab("proxy")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "proxy"
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                 }`}
               >
                 <Globe className="h-4 w-4" />
-                PROXY
+                <span className="hidden md:inline">Proxy</span>
               </button>
               <button
                 onClick={() => setActiveTab("games")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "games"
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                 }`}
               >
                 <Gamepad2 className="h-4 w-4" />
-                GAMES
+                <span className="hidden md:inline">Games</span>
               </button>
               <button
                 onClick={() => setActiveTab("apps")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "apps"
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                 }`}
               >
                 <Grid3X3 className="h-4 w-4" />
-                APPS
+                <span className="hidden md:inline">Apps</span>
               </button>
               <button
                 onClick={() => setActiveTab("tools")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "tools"
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                 }`}
               >
                 <Wrench className="h-4 w-4" />
-                TOOLS
+                <span className="hidden md:inline">Tools</span>
               </button>
               <button
                 onClick={() => setActiveTab("settings")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "settings"
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
                 }`}
               >
                 <SettingsIcon className="h-4 w-4" />
-                SETTINGS
+                <span className="hidden md:inline">Settings</span>
               </button>
             </nav>
+
+            {/* Theme Toggle */}
+            <div className="flex items-center">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
