@@ -138,6 +138,8 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
         res.setHeader("Content-Type", "text/css; charset=utf-8");
         res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "*");
+        res.setHeader("Access-Control-Allow-Methods", "*");
         res.setHeader("Cache-Control", "public, max-age=3600");
 
         return res.send(cssContent);
