@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Settings as SettingsIcon, Shield, Zap, Volume2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useTheme } from "@/hooks/use-theme";
+import { Settings as SettingsIcon, Shield, Zap, Volume2, Moon, Sun } from "lucide-react";
 
 interface SettingsProps {
   settings: {
