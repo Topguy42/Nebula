@@ -499,9 +499,9 @@ export default function Index() {
           }
         };
 
-        // Get saved search engine preference, default to DuckDuckGo
-        const savedEngine = localStorage.getItem('preferred-search-engine') || 'duckduckgo';
-        const selectedEngine = searchEngines[savedEngine as keyof typeof searchEngines] || searchEngines.duckduckgo;
+        // Get saved search engine preference, default to Google
+        const savedEngine = localStorage.getItem('preferred-search-engine') || 'google';
+        const selectedEngine = searchEngines[savedEngine as keyof typeof searchEngines] || searchEngines.google;
 
         finalUrl = selectedEngine.url;
         setDisplayUrl(selectedEngine.display);
