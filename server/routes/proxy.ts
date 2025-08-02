@@ -73,6 +73,22 @@ export const handleProxy: RequestHandler = async (req, res) => {
         ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
         : userAgents[Math.floor(Math.random() * userAgents.length)];
 
+      // Dynamic referrer rotation
+      let dynamicReferrer = "";
+      if (referrer_rotation === "true") {
+        // Rotate referrer based on current time to constantly change it
+        const rotationIndex = Math.floor(Date.now() / 5000) % referrerSources.length; // Changes every 5 seconds
+        dynamicReferrer = referrerSources[rotationIndex];
+        if (dynamicReferrer && !dynamicReferrer.includes("search?")) {
+          // For non-search referrers, use as-is
+        } else if (dynamicReferrer) {
+          // For search engines, add the target domain as search query
+          const domain = new URL(targetUrl.toString()).hostname;
+          dynamicReferrer = dynamicReferrer + encodeURIComponent(domain);
+        }
+        console.log(`[PROXY] Using rotating referrer: ${dynamicReferrer || 'none'}`);
+      }
+
       const headers: Record<string, string> = {
         "User-Agent": randomUA,
         Accept:
@@ -83,13 +99,18 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Upgrade-Insecure-Requests": "1",
         "Sec-Fetch-Dest": "document",
         "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-Site": dynamicReferrer ? "cross-site" : "none",
         "Sec-Fetch-User": "?1",
         "Sec-Ch-Ua":
           '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
         "Sec-Ch-Ua-Mobile": "?0",
         "Sec-Ch-Ua-Platform": '"Windows"',
       };
+
+      // Add dynamic referrer if rotation is enabled
+      if (referrer_rotation === "true" && dynamicReferrer) {
+        headers["Referer"] = dynamicReferrer;
+      }
 
       // YouTube-specific headers and handling
       if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
