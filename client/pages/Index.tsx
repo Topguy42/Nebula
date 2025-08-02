@@ -287,6 +287,7 @@ export default function Index() {
     if (proxyUrl.trim()) {
       const query = proxyUrl.trim();
       setIsLoading(true);
+      setProxyError(null);
 
       // Check if about blank is enabled
       if (settings.aboutBlank) {
