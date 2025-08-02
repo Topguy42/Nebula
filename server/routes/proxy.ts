@@ -344,6 +344,16 @@ function processHTML(content: string, targetUrl: URL): string {
       <meta name="viewport" content="width=device-width, initial-scale=1">
     `;
 
+    // Add DNS prefetch and preconnect for performance
+    if (isYouTube) {
+      proxyEnhancements += `
+        <link rel="dns-prefetch" href="//i.ytimg.com">
+        <link rel="dns-prefetch" href="//s.ytimg.com">
+        <link rel="dns-prefetch" href="//googleads.g.doubleclick.net">
+        <link rel="preconnect" href="https://www.youtube.com">
+      `;
+    }
+
     // Insert enhancements before closing head tag
     if (content.includes("</head>")) {
       content = content.replace("</head>", proxyEnhancements + "</head>");
