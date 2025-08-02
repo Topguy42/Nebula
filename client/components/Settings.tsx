@@ -21,6 +21,8 @@ interface SettingsProps {
 }
 
 export default function Settings({ settings, setSettings }: SettingsProps) {
+  const { theme, setTheme } = useTheme();
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="space-y-6">
@@ -34,17 +36,31 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">Dark Mode</p>
+                <p className="font-medium">Theme</p>
                 <p className="text-sm text-muted-foreground">
-                  Toggle dark/light theme
+                  Choose your preferred theme
                 </p>
               </div>
-              <Switch
-                checked={settings.darkMode}
-                onCheckedChange={(checked) =>
-                  setSettings((prev: any) => ({ ...prev, darkMode: checked }))
-                }
-              />
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={theme === "light" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTheme("light")}
+                  className="gap-2"
+                >
+                  <Sun className="h-4 w-4" />
+                  Light
+                </Button>
+                <Button
+                  variant={theme === "dark" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTheme("dark")}
+                  className="gap-2"
+                >
+                  <Moon className="h-4 w-4" />
+                  Dark
+                </Button>
+              </div>
             </div>
             <Separator />
             <div className="flex items-center justify-between">
