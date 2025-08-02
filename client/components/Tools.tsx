@@ -233,6 +233,63 @@ ${changes.join('\n')}
 Your tab appearance has been reset to normal.`);
   };
 
+  const searchEngines = [
+    {
+      id: "duckduckgo",
+      name: "DuckDuckGo",
+      url: "https://duckduckgo.com/?q=",
+      description: "Privacy-focused, works well in proxy environments"
+    },
+    {
+      id: "bing",
+      name: "Bing",
+      url: "https://www.bing.com/search?q=",
+      description: "Microsoft's search engine, reliable proxy compatibility"
+    },
+    {
+      id: "startpage",
+      name: "Startpage",
+      url: "https://www.startpage.com/search?q=",
+      description: "Private Google results, good for bypassing restrictions"
+    },
+    {
+      id: "searx",
+      name: "SearX",
+      url: "https://searx.org/search?q=",
+      description: "Open source, aggregates results from multiple engines"
+    },
+    {
+      id: "google",
+      name: "Google",
+      url: "https://www.google.com/search?q=",
+      description: "May have restrictions in proxy/about:blank environments"
+    }
+  ];
+
+  const updateSearchEngine = () => {
+    localStorage.setItem('preferred-search-engine', selectedSearchEngine);
+    const engine = searchEngines.find(e => e.id === selectedSearchEngine);
+
+    setResult(`🔍 Search Engine Updated!
+
+• Default search engine: ${engine?.name}
+• URL: ${engine?.url}
+• Description: ${engine?.description}
+
+💡 This will be used when you search from the main page.
+Your new search engine will take effect on the next search.
+
+🚀 ${engine?.name} is now your default search engine!`);
+  };
+
+  // Initialize search engine from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('preferred-search-engine');
+    if (saved) {
+      setSelectedSearchEngine(saved);
+    }
+  }, []);
+
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
 
