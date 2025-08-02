@@ -357,7 +357,7 @@ function processHTML(content: string, targetUrl: URL): string {
       content = content.replace(/<meta[^>]*http-equiv[^>]*["\']?X-UA-Compatible[^>]*>/gi, "");
     }
 
-    // Add iframe-friendly styles with YouTube optimizations
+    // Add iframe-friendly styles with site-specific optimizations
     let proxyEnhancements = `
       <style>
         /* Iframe-friendly styles */
@@ -372,6 +372,18 @@ function processHTML(content: string, targetUrl: URL): string {
         #masthead, .ytd-masthead { position: relative !important; top: 0 !important; }
         .ytd-app { padding-top: 0 !important; }
         ytd-popup-container { z-index: 9999 !important; }`;
+    }
+
+    if (isGoogle) {
+      proxyEnhancements += `
+        /* Google Search optimizations for speed and iframe compatibility */
+        #searchform { position: relative !important; }
+        .sfbg { position: relative !important; }
+        #gb { position: relative !important; }
+        .minidiv { display: none !important; } /* Hide chat widget for speed */
+        .kno-ecr-pt { max-height: none !important; } /* Remove height restrictions on knowledge cards */
+        .g { margin-bottom: 20px !important; } /* Better spacing for results */
+        #appbar { position: relative !important; }`;
     }
 
     proxyEnhancements += `
