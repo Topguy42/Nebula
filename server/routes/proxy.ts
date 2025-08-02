@@ -239,7 +239,8 @@ export const handleProxy: RequestHandler = async (req, res) => {
           "accept-language"
         ] as string;
       }
-      if (originalHeaders["cookie"]) {
+      // Don't forward cookies for Google to avoid detection
+      if (originalHeaders["cookie"] && !isGoogleRequest) {
         headers["Cookie"] = originalHeaders["cookie"] as string;
       }
 
