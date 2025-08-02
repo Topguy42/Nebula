@@ -33,17 +33,11 @@ export const handleProxy: RequestHandler = async (req, res) => {
       `);
     }
 
-    // Add small delay for certain sites to avoid rate limiting
     const hostname = targetUrl.hostname.toLowerCase();
-    if (hostname.includes("speedtest") || hostname.includes("fast.com")) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, 1000 + Math.random() * 2000),
-      );
-    }
 
     // Fetch the content with better error handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout for speed
 
     try {
       console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
@@ -64,7 +58,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
           "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Language": "en-US,en;q=0.9",
         "Accept-Encoding": "gzip, deflate, br",
-        "Cache-Control": "max-age=0",
+        "Cache-Control": "no-cache",
         "Upgrade-Insecure-Requests": "1",
         "Sec-Fetch-Dest": "document",
         "Sec-Fetch-Mode": "navigate",
@@ -75,6 +69,21 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Sec-Ch-Ua-Mobile": "?0",
         "Sec-Ch-Ua-Platform": '"Windows"',
       };
+
+      // YouTube-specific headers and handling
+      if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
+        headers["Origin"] = "https://www.youtube.com";
+        headers["Referer"] = "https://www.youtube.com/";
+        headers["X-YouTube-Client-Name"] = "1";
+        headers["X-YouTube-Client-Version"] = "2.20231214.04.00";
+        headers["X-Requested-With"] = "XMLHttpRequest";
+        headers["DNT"] = "1";
+
+        // Use mobile YouTube for better compatibility
+        if (targetUrl.hostname === "www.youtube.com" || targetUrl.hostname === "youtube.com") {
+          targetUrl.hostname = "m.youtube.com";
+        }
+      }
 
       // Add referrer for subsequent requests
       const urlPath = targetUrl.pathname;
@@ -134,10 +143,18 @@ export const handleProxy: RequestHandler = async (req, res) => {
         // Set security headers
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.setHeader("X-Frame-Options", "SAMEORIGIN");
-        res.setHeader(
-          "Content-Security-Policy",
-          "frame-ancestors *; default-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';",
-        );
+        // Relaxed CSP for YouTube and other sites
+        if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
+          res.setHeader(
+            "Content-Security-Policy",
+            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; media-src *; img-src *; connect-src *; object-src *; child-src *;",
+          );
+        } else {
+          res.setHeader(
+            "Content-Security-Policy",
+            "frame-ancestors *; default-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';",
+          );
+        }
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Headers", "*");
         res.setHeader("Access-Control-Allow-Methods", "*");
