@@ -341,7 +341,6 @@ export default function Index() {
     // Check if about blank is enabled
     if (settings.aboutBlank) {
       if (aboutBlankWindow && !aboutBlankWindow.closed) {
-        loadInAboutBlank(gameUrl, `Game: ${gameUrl.split('/').pop() || 'Game'}`);
         aboutBlankWindow.focus();
       }
       setIsLoading(false);
