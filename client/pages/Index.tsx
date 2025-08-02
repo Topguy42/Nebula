@@ -688,36 +688,48 @@ export default function Index() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Animated gradient orbs */}
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20 blur-3xl animate-pulse"></div>
+        {/* Sophisticated gradient orbs */}
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-blue-500/20 blur-3xl animate-float"></div>
         <div
-          className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-l from-blue-500/20 to-primary/20 blur-3xl animate-pulse"
-          style={{ animationDelay: "1s" }}
+          className="absolute -top-40 -right-40 w-[400px] h-[400px] rounded-full bg-gradient-to-l from-blue-500/25 via-indigo-500/15 to-purple-500/20 blur-3xl animate-float-delayed"
         ></div>
         <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-gradient-to-br from-cyan-400/10 to-violet-600/10 blur-2xl animate-pulse"
-          style={{ animationDelay: "2s" }}
+          className="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-gradient-to-br from-purple-400/10 via-indigo-400/15 to-blue-400/10 blur-2xl animate-float"
+          style={{ animationDelay: "3s" }}
+        ></div>
+        <div
+          className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] rounded-full bg-gradient-to-tl from-indigo-400/15 via-purple-400/10 to-blue-400/15 blur-2xl animate-float-delayed"
+          style={{ animationDelay: "1.5s" }}
         ></div>
 
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+        {/* Enhanced grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,.03)_1px,transparent_1px)] bg-[size:60px_60px] dark:bg-[linear-gradient(rgba(129,140,248,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(129,140,248,.03)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,#000_70%,transparent_110%)]"></div>
 
-        {/* Floating particles */}
+        {/* Subtle geometric elements */}
+        <div className="absolute top-1/4 left-1/6 w-1 h-20 bg-gradient-to-b from-transparent via-indigo-300/20 to-transparent rotate-45"></div>
+        <div className="absolute top-3/4 right-1/6 w-1 h-16 bg-gradient-to-b from-transparent via-purple-300/20 to-transparent rotate-45"></div>
+        <div className="absolute top-1/2 left-3/4 w-1 h-12 bg-gradient-to-b from-transparent via-blue-300/20 to-transparent -rotate-45"></div>
+
+        {/* Floating particles with better design */}
         <div
-          className="absolute top-20 left-10 w-2 h-2 bg-primary/30 rounded-full animate-bounce"
+          className="absolute top-20 left-10 w-1.5 h-1.5 bg-indigo-400/40 rounded-full animate-float"
           style={{ animationDelay: "0.5s" }}
         ></div>
         <div
-          className="absolute top-40 right-20 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce"
-          style={{ animationDelay: "1.5s" }}
+          className="absolute top-40 right-20 w-1 h-1 bg-purple-400/50 rounded-full animate-float"
+          style={{ animationDelay: "2s" }}
         ></div>
         <div
-          className="absolute bottom-40 left-1/4 w-1.5 h-1.5 bg-purple-400/30 rounded-full animate-bounce"
-          style={{ animationDelay: "2.5s" }}
+          className="absolute bottom-40 left-1/5 w-2 h-2 bg-blue-400/30 rounded-full animate-float-delayed"
+          style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="absolute top-1/3 right-1/3 w-1 h-1 bg-cyan-400/40 rounded-full animate-bounce"
-          style={{ animationDelay: "3s" }}
+          className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-indigo-300/40 rounded-full animate-float"
+          style={{ animationDelay: "3.5s" }}
+        ></div>
+        <div
+          className="absolute bottom-20 right-10 w-1 h-1 bg-purple-300/50 rounded-full animate-float-delayed"
+          style={{ animationDelay: "4s" }}
         ></div>
       </div>
 
