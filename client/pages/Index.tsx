@@ -282,20 +282,7 @@ export default function Index() {
       game.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  // Calculator function for safe evaluation
-  const calculateResult = (expression: string) => {
-    try {
-      // Only allow numbers, operators, and parentheses
-      const sanitized = expression.replace(/[^0-9+\-*/.() ]/g, '');
-      if (!sanitized) return "Error: Empty expression";
 
-      // Use Function constructor for safe evaluation
-      const result = Function('"use strict"; return (' + sanitized + ')')();
-      return isNaN(result) ? "Error: Invalid calculation" : result.toString();
-    } catch {
-      return "Error: Invalid expression";
-    }
-  };
 
   // If showing iframe content
   if (currentUrl) {
