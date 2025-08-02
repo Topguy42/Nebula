@@ -470,32 +470,39 @@ export default function Index() {
         const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}${referrerRotation ? '&referrer_rotation=true' : ''}`);
       } else {
-        // Handle as search query - use alternative search engines to avoid Google restrictions
-        const searchEngines = [
-          {
+        // Handle as search query - use saved search engine preference
+        const searchEngines = {
+          duckduckgo: {
             name: "DuckDuckGo",
             url: `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
             display: `DuckDuckGo Search: ${query}`
           },
-          {
+          bing: {
             name: "Bing",
             url: `https://www.bing.com/search?q=${encodeURIComponent(query)}`,
             display: `Bing Search: ${query}`
           },
-          {
+          startpage: {
             name: "Startpage",
             url: `https://www.startpage.com/search?q=${encodeURIComponent(query)}`,
             display: `Startpage Search: ${query}`
           },
-          {
+          searx: {
+            name: "SearX",
+            url: `https://searx.org/search?q=${encodeURIComponent(query)}`,
+            display: `SearX Search: ${query}`
+          },
+          google: {
             name: "Google",
             url: `https://www.google.com/search?q=${encodeURIComponent(query)}`,
             display: `Google Search: ${query}`
           }
-        ];
+        };
 
-        // Use DuckDuckGo as default since it's more privacy-friendly and works better in proxy environments
-        const selectedEngine = searchEngines[0]; // DuckDuckGo
+        // Get saved search engine preference, default to DuckDuckGo
+        const savedEngine = localStorage.getItem('preferred-search-engine') || 'duckduckgo';
+        const selectedEngine = searchEngines[savedEngine as keyof typeof searchEngines] || searchEngines.duckduckgo;
+
         finalUrl = selectedEngine.url;
         setDisplayUrl(selectedEngine.display);
         const referrerRotation = localStorage.getItem('proxy-referrer-rotation') === 'true';
