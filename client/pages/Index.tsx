@@ -401,7 +401,7 @@ export default function Index() {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>Google</title>
+            <title>about:blank</title>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta name="referrer" content="same-origin">
@@ -476,20 +476,6 @@ export default function Index() {
     if (proxyUrl.trim()) {
       const query = proxyUrl.trim();
       setProxyError(null);
-
-      // Check if about blank is enabled AND we're not already inside the about:blank iframe
-      if (settings.aboutBlank && window.parent === window) {
-        // We're in the main window, not inside the about:blank iframe
-        if (aboutBlankWindow && !aboutBlankWindow.closed) {
-          // Focus the about:blank window that contains the full Vortex app
-          aboutBlankWindow.focus();
-        }
-        setProxyUrl("");
-        return;
-      }
-
-      // If we reach here, either about:blank is disabled OR we're inside the about:blank iframe
-      // In both cases, we should process the proxy request normally
 
       // Check if it's a URL
       const isUrl =
@@ -569,14 +555,6 @@ export default function Index() {
   const handleGamePlay = (gameUrl: string) => {
     setProxyError(null);
 
-    // Check if about blank is enabled AND we're not already inside the about:blank iframe
-    if (settings.aboutBlank && window.parent === window) {
-      if (aboutBlankWindow && !aboutBlankWindow.closed) {
-        aboutBlankWindow.focus();
-      }
-      return;
-    }
-
     setDisplayUrl(gameUrl);
     const referrerRotation =
       localStorage.getItem("proxy-referrer-rotation") === "true";
@@ -589,14 +567,6 @@ export default function Index() {
 
   const handleQuickLink = (url: string) => {
     setProxyError(null);
-
-    // Check if about blank is enabled AND we're not already inside the about:blank iframe
-    if (settings.aboutBlank && window.parent === window) {
-      if (aboutBlankWindow && !aboutBlankWindow.closed) {
-        aboutBlankWindow.focus();
-      }
-      return;
-    }
 
     setDisplayUrl(url);
     const referrerRotation =
@@ -833,13 +803,13 @@ export default function Index() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center bg-muted/40 rounded-full p-1 backdrop-blur-sm border border-border/50">
+            <nav className="flex items-center bg-muted/60 rounded-full p-1 backdrop-blur-sm border border-border shadow-lg">
               <button
                 onClick={() => setActiveTab("proxy")}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "proxy"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Globe className="h-4 w-4" />
@@ -850,7 +820,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "games"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Gamepad2 className="h-4 w-4" />
@@ -861,7 +831,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "apps"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Grid3X3 className="h-4 w-4" />
@@ -872,7 +842,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "tools"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <Wrench className="h-4 w-4" />
@@ -883,7 +853,7 @@ export default function Index() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
                   activeTab === "settings"
                     ? "bg-primary text-primary-foreground shadow-lg"
-                    : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/80 hover:shadow-md"
                 }`}
               >
                 <SettingsIcon className="h-4 w-4" />
@@ -919,7 +889,7 @@ export default function Index() {
                         placeholder="Enter website URL or search query..."
                         value={proxyUrl}
                         onChange={(e) => setProxyUrl(e.target.value)}
-                        className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                        className="h-16 text-lg backdrop-blur-sm bg-background/80 border-2 border-border focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/90 group-hover:border-primary/60 placeholder:text-muted-foreground shadow-lg"
                       />
                       <Button
                         type="submit"
@@ -939,7 +909,7 @@ export default function Index() {
                     placeholder="Search games by name or category..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                    className="h-16 text-lg backdrop-blur-sm bg-background/80 border-2 border-border focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/90 group-hover:border-primary/60 placeholder:text-muted-foreground shadow-lg"
                   />
                 </div>
               ) : activeTab === "apps" ? (
@@ -950,7 +920,7 @@ export default function Index() {
                     placeholder="Search web applications..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                    className="h-16 text-lg backdrop-blur-sm bg-background/80 border-2 border-border focus:border-primary/80 rounded-2xl pl-14 pr-6 transition-all duration-300 hover:shadow-xl hover:bg-background/90 group-hover:border-primary/60 placeholder:text-muted-foreground shadow-lg"
                   />
                 </div>
               ) : activeTab === "tools" ? (
@@ -995,11 +965,11 @@ export default function Index() {
                         onClick={() => handleQuickLink(link.url)}
                         className="group cursor-pointer w-24 sm:w-28"
                       >
-                        <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-gradient-to-br from-background/80 via-emerald-50/30 to-teal-50/30 dark:from-background/60 dark:via-emerald-950/20 dark:to-teal-950/20 border border-emerald-200/30 dark:border-emerald-800/30 hover:border-emerald-400/50 dark:hover:border-emerald-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                        <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-gradient-to-br from-background/90 via-emerald-50/50 to-teal-50/40 dark:from-background/60 dark:via-emerald-950/20 dark:to-teal-950/20 border border-emerald-200/50 dark:border-emerald-800/30 hover:border-emerald-400/70 dark:hover:border-emerald-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg">
                           {/* Icon */}
                           <div className="flex justify-center mb-4">
                             <div
-                              className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-gradient-to-br from-emerald-100/80 to-teal-100/60 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-lg border border-emerald-300/50 dark:border-emerald-700/50`}
+                              className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-gradient-to-br from-emerald-100/90 to-teal-100/80 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-lg border border-emerald-300/70 dark:border-emerald-700/50`}
                             >
                               <IconComponent />
                             </div>
@@ -1027,7 +997,7 @@ export default function Index() {
                 {filteredGames.map((game) => (
                   <Card
                     key={game.name}
-                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm bg-background/60 border-2 border-border/50 hover:border-primary/40 hover:shadow-2xl rounded-2xl overflow-hidden"
+                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm bg-background/85 border-2 border-border hover:border-primary/60 hover:shadow-2xl rounded-2xl overflow-hidden shadow-lg"
                   >
                     <CardHeader className="pb-4 space-y-3">
                       <div className="flex items-start justify-between">

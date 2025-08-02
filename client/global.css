@@ -9,44 +9,44 @@
    * A different format will require also updating the theme in tailwind.config.ts.
   */
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 99%;
     --foreground: 222 84% 4.9%;
 
-    --card: 0 0% 100%;
+    --card: 0 0% 98%;
     --card-foreground: 222 84% 4.9%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 222 84% 4.9%;
 
-    --primary: 160 84% 39%;
+    --primary: 160 84% 35%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220 8.9% 10%;
+    --secondary: 220 14.3% 93%;
+    --secondary-foreground: 220 8.9% 15%;
 
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.8% 46.1%;
+    --muted: 220 14.3% 94%;
+    --muted-foreground: 220 8.8% 35%;
 
-    --accent: 158 64% 95%;
-    --accent-foreground: 160 84% 15%;
+    --accent: 158 64% 92%;
+    --accent-foreground: 160 84% 20%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 160 84% 39%;
+    --border: 220 13% 85%;
+    --input: 220 13% 88%;
+    --ring: 160 84% 35%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 0 0% 96%;
     --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary: 160 84% 35%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 158 64% 95%;
-    --sidebar-accent-foreground: 160 84% 15%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 160 84% 39%;
+    --sidebar-accent: 158 64% 90%;
+    --sidebar-accent-foreground: 160 84% 20%;
+    --sidebar-border: 220 13% 82%;
+    --sidebar-ring: 160 84% 35%;
   }
 
   .dark {
@@ -142,23 +142,46 @@
     }
   }
 
+  /* Light mode specific enhancements */
+  .light-mode-shadow {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .light-mode-border {
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .light-mode-bg-enhanced {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
   .backdrop-blur-glass {
     backdrop-filter: blur(16px) saturate(200%);
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   .dark .backdrop-blur-glass {
     background-color: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: none;
   }
 
   .card-gradient-light {
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(240, 253, 250, 0.8) 100%
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(240, 253, 250, 0.9) 100%
     );
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow:
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 1px 2px -1px rgba(0, 0, 0, 0.06);
   }
 
   .dark .card-gradient-dark {
