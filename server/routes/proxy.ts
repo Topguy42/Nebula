@@ -57,79 +57,39 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     const hostname = targetUrl.hostname.toLowerCase();
 
-    // Rate limiting for Google
+    // Light rate limiting for Google - only when really needed
     if (hostname.includes('google.com') || hostname.includes('google.')) {
       const lastRequest = googleRequestTimes.get(clientIP) || 0;
       const timeSinceLastRequest = Date.now() - lastRequest;
 
+      // Only rate limit if requests are very frequent (less than 1 second apart)
       if (timeSinceLastRequest < GOOGLE_RATE_LIMIT_MS) {
         const waitTime = Math.ceil((GOOGLE_RATE_LIMIT_MS - timeSinceLastRequest) / 1000);
-        return res.status(200).send(`
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>Please Wait</title>
-            </head>
-            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; text-align: center; background: #f8fafc; margin: 0;">
-              <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-size: 48px; margin-bottom: 16px;">⏱️</div>
-                <h2 style="color: #1f2937; margin: 0 0 12px 0; font-size: 24px;">Rate Limited</h2>
-                <p style="color: #6b7280; margin: 0 0 24px 0; line-height: 1.5;">Please wait <strong>${waitTime} seconds</strong> before searching Google again to avoid being blocked.</p>
-                <div style="margin: 24px 0;">
-                  <button onclick="history.back()" style="background: #6b7280; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-right: 12px; font-size: 14px;">Go Back</button>
-                  <button onclick="setTimeout(() => window.location.reload(), ${waitTime * 1000})" style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px;">Retry in ${waitTime}s</button>
-                </div>
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                  <a href="${targetUrl.toString()}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; font-size: 14px;">🔗 Open in New Tab Instead</a>
-                </div>
-              </div>
-            </body>
-          </html>
-        `);
-      }
-
-      // Track request count per IP
-      const hourKey = Math.floor(Date.now() / (1000 * 60 * 60)); // Reset every hour
-      const requestData = requestCounts.get(clientIP) || { count: 0, lastReset: hourKey };
-
-      if (requestData.lastReset !== hourKey) {
-        requestData.count = 0;
-        requestData.lastReset = hourKey;
-      }
-
-      requestData.count++;
-      requestCounts.set(clientIP, requestData);
-
-      // If too many requests in an hour, show cooldown
-      if (requestData.count > 20) {
-        return res.status(200).send(`
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>Cooldown Period</title>
-            </head>
-            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px; text-align: center; background: #f8fafc; margin: 0;">
-              <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="font-size: 48px; margin-bottom: 16px;">🛑</div>
-                <h2 style="color: #dc2626; margin: 0 0 12px 0; font-size: 24px;">Too Many Requests</h2>
-                <p style="color: #6b7280; margin: 0 0 24px 0; line-height: 1.5;">You've made too many Google searches. Please wait an hour or try other search engines.</p>
-                <div style="margin: 24px 0;">
-                  <button onclick="history.back()" style="background: #6b7280; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-right: 12px; font-size: 14px;">Go Back</button>
-                </div>
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                  <p style="color: #6b7280; margin: 0 0 12px 0; font-size: 14px;">Try these alternatives:</p>
-                  <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                    <a href="/api/proxy?url=${encodeURIComponent('https://duckduckgo.com/?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #f59e0b; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">DuckDuckGo</a>
-                    <a href="/api/proxy?url=${encodeURIComponent('https://www.bing.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #3b82f6; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Bing</a>
-                    <a href="/api/proxy?url=${encodeURIComponent('https://www.startpage.com/search?q=' + (targetUrl.searchParams.get('q') || 'search'))}" style="background: #10b981; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Startpage</a>
+        if (waitTime > 0) {
+          // Auto-retry with minimal delay
+          return res.status(200).send(`
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title>Loading...</title>
+                <script>
+                  setTimeout(() => window.location.reload(), ${Math.max(waitTime * 1000, 500)});
+                </script>
+              </head>
+              <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
+                <div style="background: white; border-radius: 8px; padding: 20px; max-width: 300px; margin: 100px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                  <div style="font-size: 24px; margin-bottom: 12px;">🔄</div>
+                  <h3 style="margin: 0 0 8px 0; color: #1f2937;">Loading Google...</h3>
+                  <div style="width: 100%; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                    <div style="width: 0%; height: 100%; background: #10b981; animation: progress ${Math.max(waitTime, 0.5)}s linear forwards;"></div>
                   </div>
+                  <style>@keyframes progress { to { width: 100%; } }</style>
                 </div>
-              </div>
-            </body>
-          </html>
-        `);
+              </body>
+            </html>
+          `);
+        }
       }
 
       googleRequestTimes.set(clientIP, Date.now());
