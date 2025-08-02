@@ -103,8 +103,16 @@ export default function Tools({}: ToolsProps) {
   useEffect(() => {
     return () => {
       setReferrerRotation(false);
+      if (rotationIntervalId) {
+        clearInterval(rotationIntervalId);
+      }
+      // Clean up simulation iframe
+      const iframe = document.getElementById('referrer-simulation-frame');
+      if (iframe) {
+        iframe.remove();
+      }
     };
-  }, []);
+  }, [rotationIntervalId]);
 
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
@@ -185,7 +193,7 @@ iOS: WiFi Settings > Configure DNS
 
     setResult(`🌐 Working Proxy Servers (${proxyRegion.toUpperCase()}):
 
-���� Free Proxy Sites:
+📡 Free Proxy Sites:
 ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 🔧 Manual Proxy Setup:
