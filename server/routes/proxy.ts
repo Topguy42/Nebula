@@ -95,8 +95,57 @@ export const handleProxy: RequestHandler = async (req, res) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
 
         return res.send(content);
+      } else if (contentType.includes("text/css")) {
+        // Handle CSS files - rewrite url() references
+        let cssContent = await response.text();
+
+        cssContent = cssContent.replace(/url\s*\(\s*["']?([^"')]+)["']?\s*\)/gi, (match, url) => {
+          if (!url || url.startsWith('data:') || url.startsWith('blob:')) {
+            return match;
+          }
+
+          try {
+            let fullUrl: string;
+            if (url.startsWith('//')) {
+              fullUrl = targetUrl.protocol + url;
+            } else if (url.startsWith('http://') || url.startsWith('https://')) {
+              fullUrl = url;
+            } else {
+              fullUrl = new URL(url, targetUrl.href).href;
+            }
+            return `url("/api/proxy?url=${encodeURIComponent(fullUrl)}")`;
+          } catch (e) {
+            return match;
+          }
+        });
+
+        res.setHeader("Content-Type", "text/css; charset=utf-8");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Cache-Control", "public, max-age=3600");
+
+        return res.send(cssContent);
+      } else if (contentType.includes("application/javascript") || contentType.includes("text/javascript")) {
+        // Handle JavaScript files
+        let jsContent = await response.text();
+
+        // Basic JS URL rewriting for common patterns (fetch, XMLHttpRequest, etc.)
+        // Note: This is limited - sophisticated JS apps may still have issues
+        jsContent = jsContent.replace(/(["'`])((https?:)?\/\/[^"'`\s]+)(["'`])/gi, (match, quote1, url, protocol, quote2) => {
+          try {
+            let fullUrl = url.startsWith('//') ? targetUrl.protocol + url : url;
+            return `${quote1}/api/proxy?url=${encodeURIComponent(fullUrl)}${quote2}`;
+          } catch (e) {
+            return match;
+          }
+        });
+
+        res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Cache-Control", "public, max-age=3600");
+
+        return res.send(jsContent);
       } else {
-        // For non-HTML content (images, CSS, JS, etc.)
+        // For other content types (images, etc.)
         const buffer = await response.arrayBuffer();
         const uint8Array = new Uint8Array(buffer);
 
