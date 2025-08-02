@@ -98,20 +98,16 @@ export default function Tools({}: ToolsProps) {
     setResult("");
   }, [selectedTool]);
 
-  // Cleanup referrer rotation on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      setReferrerRotation(false);
-      if (rotationIntervalId) {
-        clearInterval(rotationIntervalId);
-      }
-      // Clean up simulation iframe
+      // Clean up any simulation elements
       const iframe = document.getElementById('referrer-simulation-frame');
       if (iframe) {
         iframe.remove();
       }
     };
-  }, [rotationIntervalId]);
+  }, []);
 
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
