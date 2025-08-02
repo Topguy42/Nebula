@@ -688,48 +688,53 @@ export default function Index() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Sophisticated gradient orbs */}
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-indigo-500/20 via-purple-500/15 to-blue-500/20 blur-3xl animate-float"></div>
+        {/* Ultra-modern gradient orbs */}
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-cyan-500/25 blur-3xl animate-float"></div>
         <div
-          className="absolute -top-40 -right-40 w-[400px] h-[400px] rounded-full bg-gradient-to-l from-blue-500/25 via-indigo-500/15 to-purple-500/20 blur-3xl animate-float-delayed"
+          className="absolute -top-40 -right-40 w-[400px] h-[400px] rounded-full bg-gradient-to-l from-cyan-500/30 via-teal-500/20 to-emerald-500/25 blur-3xl animate-float-delayed"
         ></div>
         <div
-          className="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-gradient-to-br from-purple-400/10 via-indigo-400/15 to-blue-400/10 blur-2xl animate-float"
+          className="absolute top-1/3 left-1/4 w-[350px] h-[350px] rounded-full bg-gradient-to-br from-teal-400/15 via-emerald-400/20 to-cyan-400/15 blur-2xl animate-float"
           style={{ animationDelay: "3s" }}
         ></div>
         <div
-          className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] rounded-full bg-gradient-to-tl from-indigo-400/15 via-purple-400/10 to-blue-400/15 blur-2xl animate-float-delayed"
+          className="absolute bottom-1/4 right-1/4 w-[280px] h-[280px] rounded-full bg-gradient-to-tl from-emerald-400/20 via-teal-400/15 to-cyan-400/20 blur-2xl animate-float-delayed"
           style={{ animationDelay: "1.5s" }}
         ></div>
 
-        {/* Enhanced grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,.03)_1px,transparent_1px)] bg-[size:60px_60px] dark:bg-[linear-gradient(rgba(129,140,248,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(129,140,248,.03)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+        {/* Sophisticated grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,.04)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.04)_1px,transparent_1px)] bg-[size:60px_60px] dark:bg-[linear-gradient(rgba(20,184,166,.04)_1px,transparent_1px),linear-gradient(90deg,rgba(20,184,166,.04)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,#000_70%,transparent_110%)]"></div>
 
-        {/* Subtle geometric elements */}
-        <div className="absolute top-1/4 left-1/6 w-1 h-20 bg-gradient-to-b from-transparent via-indigo-300/20 to-transparent rotate-45"></div>
-        <div className="absolute top-3/4 right-1/6 w-1 h-16 bg-gradient-to-b from-transparent via-purple-300/20 to-transparent rotate-45"></div>
-        <div className="absolute top-1/2 left-3/4 w-1 h-12 bg-gradient-to-b from-transparent via-blue-300/20 to-transparent -rotate-45"></div>
+        {/* Modern geometric elements */}
+        <div className="absolute top-1/4 left-1/6 w-1 h-24 bg-gradient-to-b from-transparent via-emerald-300/25 to-transparent rotate-45"></div>
+        <div className="absolute top-3/4 right-1/6 w-1 h-20 bg-gradient-to-b from-transparent via-teal-300/25 to-transparent rotate-45"></div>
+        <div className="absolute top-1/2 left-3/4 w-1 h-16 bg-gradient-to-b from-transparent via-cyan-300/25 to-transparent -rotate-45"></div>
+        <div className="absolute top-1/6 right-1/3 w-1 h-18 bg-gradient-to-b from-transparent via-emerald-300/20 to-transparent rotate-12"></div>
 
-        {/* Floating particles with better design */}
+        {/* Refined floating particles */}
         <div
-          className="absolute top-20 left-10 w-1.5 h-1.5 bg-indigo-400/40 rounded-full animate-float"
+          className="absolute top-20 left-10 w-1.5 h-1.5 bg-emerald-400/50 rounded-full animate-float"
           style={{ animationDelay: "0.5s" }}
         ></div>
         <div
-          className="absolute top-40 right-20 w-1 h-1 bg-purple-400/50 rounded-full animate-float"
+          className="absolute top-40 right-20 w-1 h-1 bg-teal-400/60 rounded-full animate-float"
           style={{ animationDelay: "2s" }}
         ></div>
         <div
-          className="absolute bottom-40 left-1/5 w-2 h-2 bg-blue-400/30 rounded-full animate-float-delayed"
+          className="absolute bottom-40 left-1/5 w-2 h-2 bg-cyan-400/40 rounded-full animate-float-delayed"
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-indigo-300/40 rounded-full animate-float"
+          className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-emerald-300/50 rounded-full animate-float"
           style={{ animationDelay: "3.5s" }}
         ></div>
         <div
-          className="absolute bottom-20 right-10 w-1 h-1 bg-purple-300/50 rounded-full animate-float-delayed"
+          className="absolute bottom-20 right-10 w-1 h-1 bg-teal-300/60 rounded-full animate-float-delayed"
           style={{ animationDelay: "4s" }}
+        ></div>
+        <div
+          className="absolute top-2/3 left-1/6 w-1.5 h-1.5 bg-cyan-300/45 rounded-full animate-float"
+          style={{ animationDelay: "5s" }}
         ></div>
       </div>
 
