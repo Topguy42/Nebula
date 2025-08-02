@@ -134,7 +134,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
                                 !req.headers.referer;
 
         if (isFromAboutBlank) {
-          // Special handling for about:blank to avoid rate limiting
+          // Special handling for about:blank - make it look exactly like a normal Google request
           headers["Origin"] = "https://www.google.com";
           headers["Referer"] = "https://www.google.com/";
           headers["Sec-Fetch-Site"] = "same-origin";
@@ -143,11 +143,19 @@ export const handleProxy: RequestHandler = async (req, res) => {
           headers["Sec-Fetch-Dest"] = "document";
           headers["Cache-Control"] = "max-age=0";
           headers["Upgrade-Insecure-Requests"] = "1";
+          headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8";
+          headers["Accept-Language"] = "en-US,en;q=0.9";
+          headers["Accept-Encoding"] = "gzip, deflate, br";
 
-          // Remove headers that might indicate proxy usage
+          // Use a very standard, non-suspicious User-Agent for about:blank
+          headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+
+          // Remove ALL headers that might indicate proxy usage
           delete headers["X-Forwarded-For"];
           delete headers["X-Real-IP"];
           delete headers["Via"];
+          delete headers["X-Forwarded-Proto"];
+          delete headers["X-Forwarded-Host"];
         } else {
           // Normal Google handling
           headers["Origin"] = "https://www.google.com";
