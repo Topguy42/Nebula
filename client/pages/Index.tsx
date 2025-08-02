@@ -1010,8 +1010,8 @@ export default function Index() {
           )}
 
           {activeTab === "apps" && (
-            <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {webApps
                   .filter(
                     (app) =>
@@ -1030,27 +1030,27 @@ export default function Index() {
                     return (
                       <Card
                         key={app.name}
-                        className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer"
+                        className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm bg-background/60 border-2 border-border/50 hover:border-primary/40 hover:shadow-2xl cursor-pointer rounded-2xl overflow-hidden"
                         onClick={() => handleQuickLink(app.url)}
                       >
-                        <CardHeader className="pb-4">
+                        <CardHeader className="pb-4 space-y-4">
                           <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-lg bg-primary/10">
+                            <div className="flex items-start gap-4">
+                              <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors">
                                 <IconComponent className="h-6 w-6 text-primary" />
                               </div>
-                              <div>
-                                <CardTitle className="text-xl">
+                              <div className="space-y-2">
+                                <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
                                   {app.name}
                                 </CardTitle>
-                                <CardDescription className="text-base mt-1">
+                                <CardDescription className="text-base text-muted-foreground leading-relaxed">
                                   {app.description}
                                 </CardDescription>
                               </div>
                             </div>
                             <Badge
                               variant="secondary"
-                              className="text-xs font-medium"
+                              className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary border-primary/20 shrink-0"
                             >
                               {app.category}
                             </Badge>
@@ -1059,10 +1059,10 @@ export default function Index() {
                         <CardContent className="pt-0">
                           <Button
                             size="sm"
-                            className="w-full gap-2 group-hover:scale-105 transition-transform font-medium"
+                            className="w-full gap-2 group-hover:scale-105 transition-all font-semibold shadow-lg hover:shadow-xl"
                           >
                             <ExternalLink className="h-4 w-4" />
-                            Launch App
+                            Launch Application
                           </Button>
                         </CardContent>
                       </Card>
