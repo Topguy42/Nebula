@@ -222,42 +222,54 @@ Fragment: ${url.hash}
     const testUrl = networkTestUrl || "google.com";
     setResult("🔍 Testing network connectivity...");
 
-    const tests = [
-      { name: "Google DNS", url: "https://8.8.8.8" },
-      { name: "Cloudflare DNS", url: "https://1.1.1.1" },
-      { name: "Target Site (HTTP)", url: `http://${testUrl}` },
-      { name: "Target Site (HTTPS)", url: `https://${testUrl}` },
-    ];
+    let results = "🌐 Network Connectivity Information:\n\n";
 
-    let results = "🌐 Network Connectivity Test Results:\n\n";
+    // Basic connectivity check
+    results += `📡 Browser Status:
+• Online Status: ${navigator.onLine ? '✅ Online' : '❌ Offline'}
+• User Agent: ${navigator.userAgent.split(' ')[0]}...
+• Language: ${navigator.language}
+• Platform: ${navigator.platform}\n\n`;
 
-    for (const test of tests) {
-      try {
-        const startTime = Date.now();
-        const response = await fetch(test.url, {
-          method: 'HEAD',
-          mode: 'no-cors',
-          cache: 'no-cache'
-        });
-        const endTime = Date.now();
-        const responseTime = endTime - startTime;
-
-        results += `✅ ${test.name}: Connected (${responseTime}ms)\n`;
-      } catch (error) {
-        results += `❌ ${test.name}: Failed to connect\n`;
-      }
+    // Connection API info (if available)
+    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    if (connection) {
+      results += `📊 Connection Details:
+• Type: ${connection.effectiveType || 'Unknown'}
+• Speed: ${connection.downlink ? `${connection.downlink} Mbps` : 'Unknown'}
+• RTT: ${connection.rtt ? `${connection.rtt}ms` : 'Unknown'}
+• Save Data: ${connection.saveData ? 'Enabled' : 'Disabled'}\n\n`;
     }
 
-    results += `\n📊 Additional Info:
-• Navigator Online: ${navigator.onLine ? 'Yes' : 'No'}
-• Connection Type: ${(navigator as any).connection?.effectiveType || 'Unknown'}
-• Downlink Speed: ${(navigator as any).connection?.downlink || 'Unknown'} Mbps
-• RTT: ${(navigator as any).connection?.rtt || 'Unknown'}ms
+    // DNS suggestions for the target URL
+    if (testUrl && testUrl !== "google.com") {
+      results += `🔍 Testing suggestions for "${testUrl}":
+• Try HTTPS: https://${testUrl}
+• Try HTTP: http://${testUrl}
+• Try www: https://www.${testUrl}
+• Try mobile: https://m.${testUrl}
+• Try subdomain: Check if site has mobile/m/touch subdomain\n\n`;
+    }
 
-💡 Tips:
-• If HTTPS fails but HTTP works, try both versions
-• DNS failures might indicate filtering
-• Try different DNS servers if connections fail`;
+    // DNS server recommendations
+    results += `🌐 DNS Server Options:
+• Current: Usually your ISP's DNS
+• Cloudflare: 1.1.1.1 (Fast, Privacy-focused)
+• Google: 8.8.8.8 (Reliable, Fast)
+• Quad9: 9.9.9.9 (Security-focused)
+• OpenDNS: 208.67.222.222 (Family-safe)\n\n`;
+
+    // Practical testing tips
+    results += `🔧 Manual Testing Tips:
+• Open DevTools (F12) → Network tab
+• Try opening target site in new tab
+• Check browser console for errors
+• Test with/without VPN if available
+• Try different browsers
+• Clear DNS cache: ipconfig /flushdns (Windows)
+
+⚠️ Note: Browser security prevents direct DNS testing
+Use these manual methods for accurate results`;
 
     setResult(results);
   };
