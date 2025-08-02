@@ -310,6 +310,73 @@ export default function Index() {
   // Store reference to about:blank window
   const [aboutBlankWindow, setAboutBlankWindow] = useState<Window | null>(null);
 
+  // Anti-GoGuardian functionality
+  useEffect(() => {
+    if (settings.antiGoGuardian) {
+      const preventClose = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue = "Are you sure you want to leave? Your session will be lost.";
+        return "Are you sure you want to leave? Your session will be lost.";
+      };
+
+      const preventVisibilityChange = () => {
+        // Keep the page "active" to prevent monitoring software from detecting inactivity
+        if (document.hidden) {
+          document.dispatchEvent(new Event('visibilitychange'));
+        }
+      };
+
+      const preventFocus = (e: Event) => {
+        // Prevent focus loss detection
+        e.preventDefault();
+        window.focus();
+      };
+
+      const preventTabClose = (e: KeyboardEvent) => {
+        // Prevent Ctrl+W, Ctrl+F4, Alt+F4
+        if (
+          (e.ctrlKey && e.key === 'w') ||
+          (e.ctrlKey && e.key === 'F4') ||
+          (e.altKey && e.key === 'F4')
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      };
+
+      // Add event listeners
+      window.addEventListener('beforeunload', preventClose);
+      document.addEventListener('visibilitychange', preventVisibilityChange);
+      window.addEventListener('blur', preventFocus);
+      window.addEventListener('keydown', preventTabClose, true);
+
+      // Prevent right-click context menu
+      const preventContextMenu = (e: MouseEvent) => {
+        e.preventDefault();
+        return false;
+      };
+      document.addEventListener('contextmenu', preventContextMenu);
+
+      // Override window.close
+      const originalClose = window.close;
+      window.close = () => {
+        console.log('Tab close attempt blocked by anti-GoGuardian');
+        return false;
+      };
+
+      // Cleanup function
+      return () => {
+        window.removeEventListener('beforeunload', preventClose);
+        document.removeEventListener('visibilitychange', preventVisibilityChange);
+        window.removeEventListener('blur', preventFocus);
+        window.removeEventListener('keydown', preventTabClose, true);
+        document.removeEventListener('contextmenu', preventContextMenu);
+        window.close = originalClose;
+      };
+    }
+  }, [settings.antiGoGuardian]);
+
   // Effect to trigger about:blank immediately when setting is enabled
   useEffect(() => {
     if (settings.aboutBlank) {
