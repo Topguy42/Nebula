@@ -522,7 +522,7 @@ export default function Index() {
                     </Button>
                   </div>
                 </form>
-              ) : (
+              ) : activeTab === "games" ? (
                 <div className="relative">
                   <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
                   <Input
@@ -532,6 +532,27 @@ export default function Index() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
                   />
+                </div>
+              ) : activeTab === "apps" ? (
+                <div className="relative">
+                  <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search web applications..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
+                  />
+                </div>
+              ) : activeTab === "tools" ? (
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold mb-4">Built-in Tools</h2>
+                  <p className="text-muted-foreground text-lg">Select a tool from below to get started</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold mb-4">Settings & Preferences</h2>
+                  <p className="text-muted-foreground text-lg">Customize your Nebula experience</p>
                 </div>
               )}
             </div>
