@@ -253,8 +253,8 @@ function processHTML(content: string, targetUrl: URL): string {
     );
     content = content.replace(/<meta[^>]*name[^>]*["\']?referrer[^>]*>/gi, "");
 
-    // Add iframe-friendly styles
-    const proxyStyles = `
+    // Add iframe-friendly styles and anti-detection script
+    const proxyEnhancements = `
       <style>
         /* Proxy Enhancement Styles */
         * {
@@ -274,6 +274,41 @@ function processHTML(content: string, targetUrl: URL): string {
           pointer-events: auto !important;
         }
       </style>
+      <script>
+        // Prevent some proxy detection methods
+        try {
+          // Override location properties to hide proxy
+          Object.defineProperty(window, 'location', {
+            value: {
+              ...window.location,
+              hostname: '${targetUrl.hostname}',
+              host: '${targetUrl.host}',
+              origin: '${targetUrl.origin}',
+              protocol: '${targetUrl.protocol}',
+              href: '${targetUrl.href}'
+            },
+            writable: false
+          });
+
+          // Override document.domain if needed
+          try {
+            document.domain = '${targetUrl.hostname}';
+          } catch(e) {}
+
+          // Hide iframe context
+          Object.defineProperty(window, 'parent', {
+            value: window,
+            writable: false
+          });
+          Object.defineProperty(window, 'top', {
+            value: window,
+            writable: false
+          });
+
+        } catch(e) {
+          // Silently fail if overrides don't work
+        }
+      </script>
     `;
 
     // Insert styles before closing head tag
