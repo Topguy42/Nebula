@@ -1068,7 +1068,7 @@ export default function Index() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 mt-8 border-t border-border/40 backdrop-blur-sm bg-background/80">
+      <footer className="relative z-10 border-t border-border/40 backdrop-blur-sm bg-background/80">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
