@@ -102,23 +102,6 @@ export const handleProxy: RequestHandler = async (req, res) => {
         // Enhanced HTML processing
         content = processHTML(content, targetUrl);
 
-        // Add warning for sites that commonly block proxies
-        const hostname = targetUrl.hostname.toLowerCase();
-        const problematicSites = ['speedtest.net', 'fast.com', 'netflix.com', 'banking'];
-        if (problematicSites.some(site => hostname.includes(site))) {
-          const warningBanner = `
-            <div style="position: fixed; top: 0; left: 0; right: 0; background: #f59e0b; color: white; padding: 8px; text-align: center; z-index: 99999; font-family: Arial, sans-serif; font-size: 14px;">
-              ⚠️ This site may not work properly through a proxy. Try using "About Blank" mode in settings for better compatibility.
-              <button onclick="this.parentElement.style.display='none'" style="background: none; border: 1px solid white; color: white; margin-left: 10px; padding: 2px 8px; cursor: pointer;">×</button>
-            </div>
-            <script>
-              // Add top margin to account for warning banner
-              document.body.style.marginTop = '40px';
-            </script>
-          `;
-          content = content.replace('</head>', warningBanner + '</head>');
-        }
-
         // Set security headers
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.setHeader("X-Frame-Options", "SAMEORIGIN");
