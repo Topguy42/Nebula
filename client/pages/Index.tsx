@@ -696,17 +696,22 @@ export default function Index() {
               <div>
                 <h3 className="text-2xl font-semibold mb-8">Quick Access</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-                  {quickLinks.map((link) => (
-                    <Button
-                      key={link.name}
-                      variant="outline"
-                      onClick={() => handleQuickLink(link.url)}
-                      className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl"
-                    >
-                      <span className="text-2xl">{link.icon}</span>
-                      <span className="text-xs font-medium">{link.name}</span>
-                    </Button>
-                  ))}
+                  {quickLinks.map((link) => {
+                    const IconComponent = link.icon;
+                    return (
+                      <Button
+                        key={link.name}
+                        variant="outline"
+                        onClick={() => handleQuickLink(link.url)}
+                        className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl group"
+                      >
+                        <div className={`${link.color} group-hover:scale-110 transition-transform duration-200`}>
+                          <IconComponent />
+                        </div>
+                        <span className="text-xs font-medium">{link.name}</span>
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
 
