@@ -889,7 +889,7 @@ export default function Index() {
                         placeholder="Enter website URL or search query..."
                         value={proxyUrl}
                         onChange={(e) => setProxyUrl(e.target.value)}
-                        className="h-16 text-lg backdrop-blur-sm bg-background/60 border-2 border-border/50 focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/80 group-hover:border-primary/40 placeholder:text-muted-foreground/60"
+                        className="h-16 text-lg backdrop-blur-sm bg-background/80 border-2 border-border focus:border-primary/80 rounded-2xl px-6 pr-20 transition-all duration-300 hover:shadow-xl hover:bg-background/90 group-hover:border-primary/60 placeholder:text-muted-foreground shadow-lg"
                       />
                       <Button
                         type="submit"
