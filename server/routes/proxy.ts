@@ -57,43 +57,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     const hostname = targetUrl.hostname.toLowerCase();
 
-    // Light rate limiting for Google - only when really needed
-    if (hostname.includes('google.com') || hostname.includes('google.')) {
-      const lastRequest = googleRequestTimes.get(clientIP) || 0;
-      const timeSinceLastRequest = Date.now() - lastRequest;
 
-      // Only rate limit if requests are very frequent (less than 1 second apart)
-      if (timeSinceLastRequest < GOOGLE_RATE_LIMIT_MS) {
-        const waitTime = Math.ceil((GOOGLE_RATE_LIMIT_MS - timeSinceLastRequest) / 1000);
-        if (waitTime > 0) {
-          // Auto-retry with minimal delay
-          return res.status(200).send(`
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <title>Loading...</title>
-                <script>
-                  setTimeout(() => window.location.reload(), ${Math.max(waitTime * 1000, 500)});
-                </script>
-              </head>
-              <body style="font-family: system-ui; padding: 20px; text-align: center; background: #f8fafc;">
-                <div style="background: white; border-radius: 8px; padding: 20px; max-width: 300px; margin: 100px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                  <div style="font-size: 24px; margin-bottom: 12px;">🔄</div>
-                  <h3 style="margin: 0 0 8px 0; color: #1f2937;">Loading Google...</h3>
-                  <div style="width: 100%; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
-                    <div style="width: 0%; height: 100%; background: #10b981; animation: progress ${Math.max(waitTime, 0.5)}s linear forwards;"></div>
-                  </div>
-                  <style>@keyframes progress { to { width: 100%; } }</style>
-                </div>
-              </body>
-            </html>
-          `);
-        }
-      }
-
-      googleRequestTimes.set(clientIP, Date.now());
-    }
 
     // Fetch the content with better error handling
     const controller = new AbortController();
