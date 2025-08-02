@@ -115,88 +115,86 @@ const webApps = [
     url: "https://docs.google.com",
     icon: FileText,
     description: "Create and edit documents online",
-    category: "Productivity"
+    category: "Productivity",
   },
   {
     name: "Gmail",
     url: "https://gmail.com",
     icon: Mail,
     description: "Email and communication",
-    category: "Communication"
+    category: "Communication",
   },
   {
     name: "Google Drive",
     url: "https://drive.google.com",
     icon: Download,
     description: "Cloud storage and file sharing",
-    category: "Storage"
+    category: "Storage",
   },
   {
     name: "WhatsApp Web",
     url: "https://web.whatsapp.com",
     icon: MessageSquare,
     description: "Messaging app for web",
-    category: "Communication"
+    category: "Communication",
   },
   {
     name: "Google Calendar",
     url: "https://calendar.google.com",
     icon: Calendar,
     description: "Schedule and manage events",
-    category: "Productivity"
+    category: "Productivity",
   },
   {
     name: "Spotify Web",
     url: "https://open.spotify.com",
     icon: Music,
     description: "Music streaming service",
-    category: "Entertainment"
+    category: "Entertainment",
   },
   {
     name: "Photopea",
     url: "https://photopea.com",
     icon: Camera,
     description: "Online photo editor",
-    category: "Design"
+    category: "Design",
   },
   {
     name: "Google Maps",
     url: "https://maps.google.com",
     icon: Map,
     description: "Navigation and location services",
-    category: "Navigation"
+    category: "Navigation",
   },
   {
     name: "Notion",
     url: "https://notion.so",
     icon: BookOpen,
     description: "Notes and project management",
-    category: "Productivity"
+    category: "Productivity",
   },
   {
     name: "CodePen",
     url: "https://codepen.io",
     icon: Code,
     description: "Online code editor and playground",
-    category: "Development"
+    category: "Development",
   },
   {
     name: "Translate",
     url: "https://translate.google.com",
     icon: Globe,
     description: "Language translation service",
-    category: "Utility"
+    category: "Utility",
   },
   {
     name: "YouTube Studio",
     url: "https://studio.youtube.com",
     icon: Youtube,
     description: "Video creation and management",
-    category: "Content"
+    category: "Content",
   },
 ];
-
-
 
 // Custom N Logo Component
 const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
@@ -210,7 +208,9 @@ const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
 export default function Index() {
   const [proxyUrl, setProxyUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"proxy" | "games" | "apps" | "tools" | "settings">("proxy");
+  const [activeTab, setActiveTab] = useState<
+    "proxy" | "games" | "apps" | "tools" | "settings"
+  >("proxy");
   const [currentUrl, setCurrentUrl] = useState("");
   const [displayUrl, setDisplayUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -219,7 +219,7 @@ export default function Index() {
     "https://google.com",
     "https://github.com",
     "https://youtube.com",
-    "https://wikipedia.org"
+    "https://wikipedia.org",
   ]);
 
   // Settings state
@@ -230,7 +230,7 @@ export default function Index() {
     privacy: true,
     volume: [75],
     quality: "high",
-    aboutBlank: false
+    aboutBlank: false,
   });
 
   // Store reference to about:blank window
@@ -281,8 +281,6 @@ export default function Index() {
     }
   }, [settings.aboutBlank]);
 
-
-
   const handleProxySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (proxyUrl.trim()) {
@@ -328,8 +326,8 @@ export default function Index() {
       }
 
       // Add to recent history
-      setRecentHistory(prev => {
-        const updated = [finalUrl, ...prev.filter(url => url !== finalUrl)];
+      setRecentHistory((prev) => {
+        const updated = [finalUrl, ...prev.filter((url) => url !== finalUrl)];
         return updated.slice(0, 5); // Keep only 5 recent items
       });
     }
@@ -380,8 +378,6 @@ export default function Index() {
       game.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       game.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
-
 
   // If showing iframe content
   if (currentUrl) {
@@ -573,12 +569,18 @@ export default function Index() {
               ) : activeTab === "tools" ? (
                 <div className="text-center">
                   <h2 className="text-3xl font-bold mb-4">Built-in Tools</h2>
-                  <p className="text-muted-foreground text-lg">Select a tool from below to get started</p>
+                  <p className="text-muted-foreground text-lg">
+                    Select a tool from below to get started
+                  </p>
                 </div>
               ) : (
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold mb-4">Settings & Preferences</h2>
-                  <p className="text-muted-foreground text-lg">Customize your Nebula experience</p>
+                  <h2 className="text-3xl font-bold mb-4">
+                    Settings & Preferences
+                  </h2>
+                  <p className="text-muted-foreground text-lg">
+                    Customize your Nebula experience
+                  </p>
                 </div>
               )}
             </div>
@@ -619,7 +621,9 @@ export default function Index() {
                           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
                             {index + 1}
                           </div>
-                          <span className="truncate flex-1 text-left">{url}</span>
+                          <span className="truncate flex-1 text-left">
+                            {url}
+                          </span>
                         </div>
                       </Button>
                     ))}
@@ -641,7 +645,9 @@ export default function Index() {
                         <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
                           ⭐
                         </div>
-                        <span className="truncate flex-1 text-left">{url.replace(/^https?:\/\//, '')}</span>
+                        <span className="truncate flex-1 text-left">
+                          {url.replace(/^https?:\/\//, "")}
+                        </span>
                       </div>
                     </Button>
                   ))}
@@ -712,10 +718,17 @@ export default function Index() {
             <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {webApps
-                  .filter(app =>
-                    app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    app.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    app.description.toLowerCase().includes(searchQuery.toLowerCase())
+                  .filter(
+                    (app) =>
+                      app.name
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      app.category
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      app.description
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
                   )
                   .map((app) => {
                     const IconComponent = app.icon;
@@ -732,7 +745,9 @@ export default function Index() {
                                 <IconComponent className="h-6 w-6 text-primary" />
                               </div>
                               <div>
-                                <CardTitle className="text-xl">{app.name}</CardTitle>
+                                <CardTitle className="text-xl">
+                                  {app.name}
+                                </CardTitle>
                                 <CardDescription className="text-base mt-1">
                                   {app.description}
                                 </CardDescription>
@@ -760,10 +775,15 @@ export default function Index() {
                   })}
               </div>
 
-              {webApps.filter(app =>
-                app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                app.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                app.description.toLowerCase().includes(searchQuery.toLowerCase())
+              {webApps.filter(
+                (app) =>
+                  app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  app.category
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  app.description
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()),
               ).length === 0 && (
                 <div className="text-center py-12">
                   <ExternalLink className="h-16 w-16 text-muted-foreground mx-auto mb-4" />

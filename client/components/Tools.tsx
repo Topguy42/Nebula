@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Calculator,
@@ -17,37 +23,37 @@ const toolsList = [
     name: "Calculator",
     icon: Calculator,
     description: "Basic arithmetic operations",
-    category: "Math"
+    category: "Math",
   },
   {
     name: "Hash Generator",
     icon: Hash,
     description: "Generate MD5, SHA1, SHA256 hashes",
-    category: "Security"
+    category: "Security",
   },
   {
     name: "Text Encoder/Decoder",
     icon: FileText,
     description: "Base64, URL encoding/decoding",
-    category: "Text"
+    category: "Text",
   },
   {
     name: "QR Code Generator",
     icon: QrCode,
     description: "Generate QR codes for text or URLs",
-    category: "Utility"
+    category: "Utility",
   },
   {
     name: "Color Picker",
     icon: Palette,
     description: "Pick and convert colors between formats",
-    category: "Design"
+    category: "Design",
   },
   {
     name: "Timestamp Converter",
     icon: Clock,
     description: "Convert between timestamps and dates",
-    category: "Time"
+    category: "Time",
   },
 ];
 
@@ -65,9 +71,9 @@ export default function Tools({}: ToolsProps) {
 
   const calculateResult = (expression: string) => {
     try {
-      const sanitized = expression.replace(/[^0-9+\-*/.() ]/g, '');
+      const sanitized = expression.replace(/[^0-9+\-*/.() ]/g, "");
       if (!sanitized) return "Error: Empty expression";
-      const result = Function('"use strict"; return (' + sanitized + ')')();
+      const result = Function('"use strict"; return (' + sanitized + ")")();
       return isNaN(result) ? "Error: Invalid calculation" : result.toString();
     } catch {
       return "Error: Invalid expression";
@@ -80,7 +86,7 @@ export default function Tools({}: ToolsProps) {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
         {toolsList.map((tool) => {
           const IconComponent = tool.icon;
-          const toolKey = tool.name.toLowerCase().replace(/[\s\/]/g, '');
+          const toolKey = tool.name.toLowerCase().replace(/[\s\/]/g, "");
           return (
             <Button
               key={tool.name}
@@ -100,7 +106,10 @@ export default function Tools({}: ToolsProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             {(() => {
-              const tool = toolsList.find(t => t.name.toLowerCase().replace(/[\s\/]/g, '') === selectedTool);
+              const tool = toolsList.find(
+                (t) =>
+                  t.name.toLowerCase().replace(/[\s\/]/g, "") === selectedTool,
+              );
               if (tool) {
                 const IconComponent = tool.icon;
                 return (
@@ -114,7 +123,12 @@ export default function Tools({}: ToolsProps) {
             })()}
           </CardTitle>
           <CardDescription>
-            {toolsList.find(t => t.name.toLowerCase().replace(/[\s\/]/g, '') === selectedTool)?.description}
+            {
+              toolsList.find(
+                (t) =>
+                  t.name.toLowerCase().replace(/[\s\/]/g, "") === selectedTool,
+              )?.description
+            }
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -128,7 +142,9 @@ export default function Tools({}: ToolsProps) {
                 className="text-lg"
               />
               <Button
-                onClick={() => setCalculatorResult(calculateResult(calculatorInput))}
+                onClick={() =>
+                  setCalculatorResult(calculateResult(calculatorInput))
+                }
                 className="w-full"
               >
                 Calculate
@@ -155,9 +171,14 @@ export default function Tools({}: ToolsProps) {
                     if (hashInput) {
                       const encoder = new TextEncoder();
                       const data = encoder.encode(hashInput);
-                      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                      const hashBuffer = await crypto.subtle.digest(
+                        "SHA-256",
+                        data,
+                      );
                       const hashArray = Array.from(new Uint8Array(hashBuffer));
-                      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                      const hashHex = hashArray
+                        .map((b) => b.toString(16).padStart(2, "0"))
+                        .join("");
                       setCalculatorResult(`SHA-256: ${hashHex}`);
                     }
                   }}
@@ -168,7 +189,9 @@ export default function Tools({}: ToolsProps) {
               </div>
               {calculatorResult && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-mono break-all">{calculatorResult}</p>
+                  <p className="text-sm font-mono break-all">
+                    {calculatorResult}
+                  </p>
                 </div>
               )}
             </div>
@@ -232,7 +255,9 @@ export default function Tools({}: ToolsProps) {
               </div>
               {calculatorResult && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-mono break-all">{calculatorResult}</p>
+                  <p className="text-sm font-mono break-all">
+                    {calculatorResult}
+                  </p>
                 </div>
               )}
             </div>
@@ -257,9 +282,13 @@ export default function Tools({}: ToolsProps) {
               >
                 Generate QR Code
               </Button>
-              {calculatorResult && calculatorResult.startsWith('https://') && (
+              {calculatorResult && calculatorResult.startsWith("https://") && (
                 <div className="p-4 bg-muted rounded-lg text-center">
-                  <img src={calculatorResult} alt="QR Code" className="mx-auto" />
+                  <img
+                    src={calculatorResult}
+                    alt="QR Code"
+                    className="mx-auto"
+                  />
                 </div>
               )}
             </div>
@@ -296,7 +325,7 @@ export default function Tools({}: ToolsProps) {
                   <p className="text-sm font-medium mb-1">RGB</p>
                   <p className="font-mono">
                     {(() => {
-                      const hex = colorValue.replace('#', '');
+                      const hex = colorValue.replace("#", "");
                       const r = parseInt(hex.substr(0, 2), 16);
                       const g = parseInt(hex.substr(2, 2), 16);
                       const b = parseInt(hex.substr(4, 2), 16);

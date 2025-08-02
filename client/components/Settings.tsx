@@ -3,12 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import {
-  Settings as SettingsIcon,
-  Shield,
-  Zap,
-  Volume2,
-} from "lucide-react";
+import { Settings as SettingsIcon, Shield, Zap, Volume2 } from "lucide-react";
 
 interface SettingsProps {
   settings: {
@@ -38,33 +33,48 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Dark Mode</p>
-                <p className="text-sm text-muted-foreground">Toggle dark/light theme</p>
+                <p className="text-sm text-muted-foreground">
+                  Toggle dark/light theme
+                </p>
               </div>
               <Switch
                 checked={settings.darkMode}
-                onCheckedChange={(checked) => setSettings((prev: any) => ({ ...prev, darkMode: checked }))}
+                onCheckedChange={(checked) =>
+                  setSettings((prev: any) => ({ ...prev, darkMode: checked }))
+                }
               />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Notifications</p>
-                <p className="text-sm text-muted-foreground">Receive browser notifications</p>
+                <p className="text-sm text-muted-foreground">
+                  Receive browser notifications
+                </p>
               </div>
               <Switch
                 checked={settings.notifications}
-                onCheckedChange={(checked) => setSettings((prev: any) => ({ ...prev, notifications: checked }))}
+                onCheckedChange={(checked) =>
+                  setSettings((prev: any) => ({
+                    ...prev,
+                    notifications: checked,
+                  }))
+                }
               />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Auto-play Media</p>
-                <p className="text-sm text-muted-foreground">Automatically play videos and audio</p>
+                <p className="text-sm text-muted-foreground">
+                  Automatically play videos and audio
+                </p>
               </div>
               <Switch
                 checked={settings.autoplay}
-                onCheckedChange={(checked) => setSettings((prev: any) => ({ ...prev, autoplay: checked }))}
+                onCheckedChange={(checked) =>
+                  setSettings((prev: any) => ({ ...prev, autoplay: checked }))
+                }
               />
             </div>
           </CardContent>
@@ -81,22 +91,30 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Enhanced Privacy</p>
-                <p className="text-sm text-muted-foreground">Block trackers and ads</p>
+                <p className="text-sm text-muted-foreground">
+                  Block trackers and ads
+                </p>
               </div>
               <Switch
                 checked={settings.privacy}
-                onCheckedChange={(checked) => setSettings((prev: any) => ({ ...prev, privacy: checked }))}
+                onCheckedChange={(checked) =>
+                  setSettings((prev: any) => ({ ...prev, privacy: checked }))
+                }
               />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">About Blank Mode</p>
-                <p className="text-sm text-muted-foreground">Block all requests with styled about:blank page</p>
+                <p className="text-sm text-muted-foreground">
+                  Block all requests with styled about:blank page
+                </p>
               </div>
               <Switch
                 checked={settings.aboutBlank}
-                onCheckedChange={(checked) => setSettings((prev: any) => ({ ...prev, aboutBlank: checked }))}
+                onCheckedChange={(checked) =>
+                  setSettings((prev: any) => ({ ...prev, aboutBlank: checked }))
+                }
               />
             </div>
             <Separator />
@@ -104,18 +122,24 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Volume</p>
-                  <p className="text-sm text-muted-foreground">Default media volume</p>
+                  <p className="text-sm text-muted-foreground">
+                    Default media volume
+                  </p>
                 </div>
                 <Volume2 className="h-4 w-4" />
               </div>
               <Slider
                 value={settings.volume}
-                onValueChange={(value) => setSettings((prev: any) => ({ ...prev, volume: value }))}
+                onValueChange={(value) =>
+                  setSettings((prev: any) => ({ ...prev, volume: value }))
+                }
                 max={100}
                 step={1}
                 className="w-full"
               />
-              <p className="text-sm text-muted-foreground text-center">{settings.volume[0]}%</p>
+              <p className="text-sm text-muted-foreground text-center">
+                {settings.volume[0]}%
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -130,13 +154,19 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
           <CardContent className="space-y-6">
             <div className="space-y-3">
               <p className="font-medium">Proxy Quality</p>
-              <p className="text-sm text-muted-foreground mb-3">Higher quality uses more bandwidth</p>
+              <p className="text-sm text-muted-foreground mb-3">
+                Higher quality uses more bandwidth
+              </p>
               <div className="grid grid-cols-3 gap-2">
-                {['low', 'medium', 'high'].map((quality) => (
+                {["low", "medium", "high"].map((quality) => (
                   <Button
                     key={quality}
-                    variant={settings.quality === quality ? "default" : "outline"}
-                    onClick={() => setSettings((prev: any) => ({ ...prev, quality }))}
+                    variant={
+                      settings.quality === quality ? "default" : "outline"
+                    }
+                    onClick={() =>
+                      setSettings((prev: any) => ({ ...prev, quality }))
+                    }
                     className="capitalize"
                   >
                     {quality}
@@ -148,7 +178,9 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
         </Card>
 
         <div className="text-center pt-6">
-          <p className="text-sm text-muted-foreground">Nebula v1.0.0 • Made with ❤️</p>
+          <p className="text-sm text-muted-foreground">
+            Nebula v1.0.0 • Made with ❤️
+          </p>
         </div>
       </div>
     </div>
