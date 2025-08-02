@@ -52,10 +52,10 @@ const toolsList = [
     category: "Bypass",
   },
   {
-    name: "Mirror Finder",
-    icon: Search,
-    description: "Find alternative URLs and mirror sites",
-    category: "Access",
+    name: "Referrer Control",
+    icon: ExternalLink,
+    description: "Manipulate referrer headers to bypass restrictions",
+    category: "Bypass",
   },
   {
     name: "Study Notes",
