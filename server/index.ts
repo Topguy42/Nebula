@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleProxy } from "./routes/proxy";
+import { handleProxyCheck } from "./routes/proxy-check";
 
 export function createServer() {
   const app = express();
