@@ -116,11 +116,11 @@ export default function Index() {
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
           url = "https://" + url;
         }
-        setCurrentUrl(url);
+        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        setCurrentUrl(searchUrl);
+        setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
       }
     }
   };
