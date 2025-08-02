@@ -22,7 +22,8 @@ const GOOGLE_RATE_LIMIT_MS = 2000; // 2 seconds between Google requests per IP
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
     const { url, referrer_rotation } = req.query;
-    console.log(`[PROXY] Request for: ${url}`);
+    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+    console.log(`[PROXY] Request for: ${url} from IP: ${clientIP}`);
 
     if (!url || typeof url !== "string") {
       return res.status(400).send(`
