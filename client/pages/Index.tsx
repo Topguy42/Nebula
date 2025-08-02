@@ -1098,7 +1098,7 @@ export default function Index() {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-border/40">
+            <div className="pt-4 border-t border-border/40">
               <p className="text-xs text-muted-foreground/80">
                 © 2024 VortexPortal. Browse freely, access anything.
               </p>
