@@ -1,9 +1,5 @@
 import { RequestHandler } from "express";
 
-// Rate limiting for about:blank requests to Google
-const aboutBlankRequests = new Map<string, number>();
-const ABOUT_BLANK_COOLDOWN = 3000; // 3 seconds between Google requests from about:blank
-
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
     const { url, referrer_rotation } = req.query;
