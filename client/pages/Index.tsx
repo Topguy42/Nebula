@@ -251,16 +251,6 @@ export default function Index() {
   const [displayUrl, setDisplayUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Tools state
-  const [calculatorInput, setCalculatorInput] = useState("");
-  const [calculatorResult, setCalculatorResult] = useState("");
-  const [hashInput, setHashInput] = useState("");
-  const [textEncodeInput, setTextEncodeInput] = useState("");
-  const [qrCodeInput, setQrCodeInput] = useState("");
-  const [colorValue, setColorValue] = useState("#3b82f6");
-  const [timestampInput, setTimestampInput] = useState("");
-  const [selectedTool, setSelectedTool] = useState("calculator");
-
   // Settings state
   const [settings, setSettings] = useState({
     darkMode: true,
