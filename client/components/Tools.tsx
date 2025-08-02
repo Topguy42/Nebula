@@ -129,13 +129,27 @@ export default function Tools({}: ToolsProps) {
   }, [originalTitle, originalFavicon]);
 
   const updateFavicon = (url: string) => {
-    let favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
-    if (!favicon) {
-      favicon = document.createElement('link');
-      favicon.rel = 'icon';
-      document.head.appendChild(favicon);
+    try {
+      // Try to update the top-level window first (works when not in iframe)
+      const targetDocument = window.top !== window ? window.top!.document : document;
+      let favicon = targetDocument.querySelector('link[rel="icon"]') as HTMLLinkElement;
+
+      if (!favicon) {
+        favicon = targetDocument.createElement('link');
+        favicon.rel = 'icon';
+        targetDocument.head.appendChild(favicon);
+      }
+      favicon.href = url;
+    } catch (error) {
+      // Fallback to current document if cross-origin access is blocked
+      let favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+      if (!favicon) {
+        favicon = document.createElement('link');
+        favicon.rel = 'icon';
+        document.head.appendChild(favicon);
+      }
+      favicon.href = url;
     }
-    favicon.href = url;
   };
 
   const applyCloaker = () => {
@@ -147,8 +161,19 @@ export default function Tools({}: ToolsProps) {
     let changes = [];
 
     if (cloakerTitle) {
-      document.title = cloakerTitle;
-      changes.push(`• Title changed to: "${cloakerTitle}"`);
+      try {
+        // Try to update the top-level window title
+        if (window.top !== window) {
+          window.top!.document.title = cloakerTitle;
+        } else {
+          document.title = cloakerTitle;
+        }
+        changes.push(`• Title changed to: "${cloakerTitle}"`);
+      } catch (error) {
+        // Fallback to current document
+        document.title = cloakerTitle;
+        changes.push(`• Title changed to: "${cloakerTitle}" (local only)`);
+      }
     }
 
     if (cloakerFavicon) {
@@ -167,16 +192,27 @@ ${changes.join('\n')}
 💡 Tips:
 • Your browser tab now appears as the disguised site
 • Use common websites like "Google Classroom" or "Khan Academy"
+• Works even when browsing through proxy
 • Remember to restore when done to avoid confusion
 
-⚠️ Note: This only changes the appearance of THIS tab.
-Other tabs and windows are not affected.`);
+✅ The cloaker is now active and will disguise your tab!`);
   };
 
   const restoreCloaker = () => {
-    if (originalTitle) {
-      document.title = originalTitle;
+    try {
+      // Try to restore top-level window title
+      if (window.top !== window && originalTitle) {
+        window.top!.document.title = originalTitle;
+      } else if (originalTitle) {
+        document.title = originalTitle;
+      }
+    } catch (error) {
+      // Fallback to current document
+      if (originalTitle) {
+        document.title = originalTitle;
+      }
     }
+
     if (originalFavicon) {
       updateFavicon(originalFavicon);
     }
