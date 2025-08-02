@@ -39,14 +39,22 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     try {
       console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
-      // Build more realistic headers
+      // Build more realistic headers with randomization
+      const userAgents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+      ];
+
+      const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+
       const headers: Record<string, string> = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "User-Agent": randomUA,
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
         "Accept-Language": "en-US,en;q=0.9",
         "Accept-Encoding": "gzip, deflate, br",
-        "DNT": "1",
-        "Connection": "keep-alive",
+        "Cache-Control": "max-age=0",
         "Upgrade-Insecure-Requests": "1",
         "Sec-Fetch-Dest": "document",
         "Sec-Fetch-Mode": "navigate",
@@ -57,13 +65,19 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Sec-Ch-Ua-Platform": '"Windows"',
       };
 
+      // Add referrer for subsequent requests
+      const urlPath = targetUrl.pathname;
+      if (urlPath !== '/' && urlPath !== '') {
+        headers['Referer'] = targetUrl.origin + '/';
+      }
+
       // Copy some headers from the original request if they exist
       const originalHeaders = req.headers;
       if (originalHeaders['accept-language']) {
         headers['Accept-Language'] = originalHeaders['accept-language'] as string;
       }
-      if (originalHeaders['referer']) {
-        headers['Referer'] = originalHeaders['referer'] as string;
+      if (originalHeaders['cookie']) {
+        headers['Cookie'] = originalHeaders['cookie'] as string;
       }
 
       const response = await fetch(targetUrl.toString(), {
