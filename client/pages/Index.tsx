@@ -571,11 +571,6 @@ export default function Index() {
             {/* Logo */}
             <NebulaLogo className="w-12 h-12" />
 
-            {/* Theme Toggle */}
-            <div className="md:absolute md:right-6">
-              <ThemeToggle />
-            </div>
-
             {/* Navigation */}
             <nav className="flex items-center space-x-8 text-sm font-medium">
               <button
