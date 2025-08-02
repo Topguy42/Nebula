@@ -803,7 +803,7 @@ export default function Index() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex items-center bg-muted/40 rounded-full p-1 backdrop-blur-sm border border-border/50">
+            <nav className="flex items-center bg-muted/60 rounded-full p-1 backdrop-blur-sm border border-border shadow-lg">
               <button
                 onClick={() => setActiveTab("proxy")}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${
