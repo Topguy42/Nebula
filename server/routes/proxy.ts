@@ -130,7 +130,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
         }
       }
 
-      // Google-specific optimizations for faster search
+      // Google-specific optimizations for about:blank and proxy environments
       if (
         hostname.includes("google.com") ||
         hostname.includes("google.") ||
@@ -144,6 +144,22 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["Accept-Language"] = "en-US,en;q=0.5";
         headers["Connection"] = "keep-alive";
         headers["Upgrade-Insecure-Requests"] = "1";
+
+        // Additional headers to bypass about:blank restrictions
+        headers["Sec-Fetch-Site"] = "same-origin";
+        headers["Sec-Fetch-Mode"] = "navigate";
+        headers["Sec-Fetch-User"] = "?1";
+        headers["Sec-Fetch-Dest"] = "document";
+        headers["X-Requested-With"] = "";
+        headers["X-Forwarded-For"] = "8.8.8.8";
+        headers["X-Real-IP"] = "8.8.8.8";
+
+        // Override referrer for about:blank environments
+        if (dynamicReferrer) {
+          headers["Referer"] = dynamicReferrer;
+        } else {
+          headers["Referer"] = "https://www.google.com/";
+        }
 
         // Use optimized Google parameters for faster loading
         if (targetUrl.pathname.includes("/search")) {
