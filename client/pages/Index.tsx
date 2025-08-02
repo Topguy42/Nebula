@@ -944,7 +944,7 @@ export default function Index() {
                         <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-background/60 border border-border/50 hover:border-primary/40 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:bg-background/80">
                           {/* Icon */}
                           <div className="flex justify-center mb-4">
-                            <div className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-background/80 shadow-lg`}>
+                            <div className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 shadow-lg border border-emerald-200/50 dark:border-emerald-800/50`}>
                               <IconComponent />
                             </div>
                           </div>
