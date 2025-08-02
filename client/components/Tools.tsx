@@ -92,7 +92,18 @@ export default function Tools({}: ToolsProps) {
   // Clear result when switching tools
   useEffect(() => {
     setResult("");
+    // Stop referrer rotation when switching tools
+    if (selectedTool !== "referrercontrol") {
+      setReferrerRotation(false);
+    }
   }, [selectedTool]);
+
+  // Cleanup referrer rotation on unmount
+  useEffect(() => {
+    return () => {
+      setReferrerRotation(false);
+    };
+  }, []);
 
   const checkWebsiteAccess = async () => {
     if (!websiteInput) return;
