@@ -377,6 +377,7 @@ export default function Index() {
     setDisplayUrl("");
     setProxyUrl("");
     setIsLoading(false);
+    setProxyError(null);
   };
 
   const filteredGames = popularGames.filter(
