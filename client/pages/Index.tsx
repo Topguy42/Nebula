@@ -655,7 +655,7 @@ export default function Index() {
                       placeholder="Search with Google or enter address"
                       value={proxyUrl}
                       onChange={(e) => setProxyUrl(e.target.value)}
-                      className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl px-8"
+                      className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl px-8 transition-all duration-300 hover:shadow-lg"
                     />
                     <Button
                       type="submit"
@@ -674,7 +674,7 @@ export default function Index() {
                     placeholder="Search games..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
+                    className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl pl-16 pr-8 transition-all duration-300 hover:shadow-lg"
                   />
                 </div>
               ) : activeTab === "apps" ? (
@@ -685,7 +685,7 @@ export default function Index() {
                     placeholder="Search web applications..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
+                    className="h-20 text-xl backdrop-blur-glass border-border/50 focus:border-primary rounded-2xl pl-16 pr-8 transition-all duration-300 hover:shadow-lg"
                   />
                 </div>
               ) : activeTab === "tools" ? (
@@ -721,7 +721,7 @@ export default function Index() {
                         key={link.name}
                         variant="outline"
                         onClick={() => handleQuickLink(link.url)}
-                        className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl group"
+                        className="h-20 flex-col gap-3 backdrop-blur-glass hover:backdrop-blur-glass border-border/50 hover:border-primary/50 transition-all duration-300 hover:scale-105 rounded-xl group hover:shadow-xl"
                       >
                         <div
                           className={`${link.color} group-hover:scale-110 transition-transform duration-200`}
@@ -791,7 +791,7 @@ export default function Index() {
                 {filteredGames.map((game) => (
                   <Card
                     key={game.name}
-                    className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl"
+                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl animate-float"
                   >
                     <CardHeader className="pb-4">
                       <div className="flex items-start justify-between">
@@ -864,7 +864,7 @@ export default function Index() {
                     return (
                       <Card
                         key={app.name}
-                        className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer"
+                        className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer animate-float-delayed"
                         onClick={() => handleQuickLink(app.url)}
                       >
                         <CardHeader className="pb-4">
