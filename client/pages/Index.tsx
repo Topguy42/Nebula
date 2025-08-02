@@ -652,7 +652,7 @@ export default function Index() {
             <NebulaLogo className="w-12 h-12" />
 
             {/* Navigation */}
-            <nav className="flex items-center space-x-8 text-sm font-medium">
+            <nav className="flex items-center space-x-4 text-sm font-medium">
               <button
                 onClick={() => setActiveTab("proxy")}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
