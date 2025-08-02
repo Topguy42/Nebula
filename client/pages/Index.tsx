@@ -603,7 +603,7 @@ export default function Index() {
               </div>
               <div className="flex items-center gap-3">
                 <VortexLogo className="w-7 h-7" />
-                <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">VortexPortal</span>
+                <span className="font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">VortexPortal</span>
               </div>
             </div>
             <div className="flex-1 max-w-2xl mx-4">
@@ -638,7 +638,7 @@ export default function Index() {
         {proxyError ? (
           <div className="flex-1 flex items-center justify-center bg-background">
             <div className="text-center p-8 max-w-md">
-              <div className="text-4xl mb-4">⚠���</div>
+              <div className="text-4xl mb-4">⚠️</div>
               <h3 className="text-xl font-semibold mb-2">Proxy Error</h3>
               <p className="text-muted-foreground mb-4">{proxyError}</p>
               <Button
