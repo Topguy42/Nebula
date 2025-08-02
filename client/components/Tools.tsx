@@ -34,9 +34,9 @@ const toolsList = [
     category: "Network",
   },
   {
-    name: "Content Downloader", 
-    icon: Download,
-    description: "Download videos and content for offline study",
+    name: "URL Tools",
+    icon: Link2,
+    description: "Encode/decode URLs and manipulate web addresses",
     category: "Utility",
   },
   {
@@ -46,10 +46,10 @@ const toolsList = [
     category: "Productivity",
   },
   {
-    name: "Text Browser",
-    icon: FileText,
-    description: "Access websites in text-only mode",
-    category: "Access",
+    name: "Network Tester",
+    icon: Activity,
+    description: "Test connectivity and network performance",
+    category: "Network",
   },
   {
     name: "Mirror Finder",
@@ -289,7 +289,7 @@ iOS: WiFi Settings > Configure DNS
 🔧 Browser Features:
 • Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
 • JavaScript Enabled: Yes (obviously)
-• Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
+��� Local Storage: ${typeof(Storage) !== "undefined" ? 'Available' : 'Not Available'}
 • Online Status: ${navigator.onLine ? 'Online' : 'Offline'}
 • Do Not Track: ${navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled'}
 
@@ -303,7 +303,7 @@ iOS: WiFi Settings > Configure DNS
       // Fallback if IP service fails
       const basicInfo = `🌐 Your Connection Information:
 
-���� Browser & Device:
+💻 Browser & Device:
 • User Agent: ${navigator.userAgent}
 • Browser Language: ${navigator.language}
 • Platform: ${navigator.platform}
