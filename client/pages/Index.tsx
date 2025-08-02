@@ -911,21 +911,21 @@ export default function Index() {
                         onClick={() => handleQuickLink(link.url)}
                         className="group cursor-pointer"
                       >
-                        <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-background/60 border border-border/50 hover:border-primary/40 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:bg-background/80">
+                        <div className="relative p-6 rounded-2xl backdrop-blur-sm bg-gradient-to-br from-background/80 via-emerald-50/30 to-teal-50/30 dark:from-background/60 dark:via-emerald-950/20 dark:to-teal-950/20 border border-emerald-200/30 dark:border-emerald-800/30 hover:border-emerald-400/50 dark:hover:border-emerald-600/50 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                           {/* Icon */}
                           <div className="flex justify-center mb-4">
-                            <div className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 shadow-lg border border-emerald-200/50 dark:border-emerald-800/50`}>
+                            <div className={`${link.color} group-hover:scale-110 transition-transform duration-300 p-3 rounded-xl bg-gradient-to-br from-emerald-100/80 to-teal-100/60 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-lg border border-emerald-300/50 dark:border-emerald-700/50`}>
                               <IconComponent />
                             </div>
                           </div>
                           {/* Label */}
                           <div className="text-center">
-                            <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                            <span className="text-sm font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                               {link.name}
                             </span>
                           </div>
                           {/* Hover effect */}
-                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
                       </div>
                     );
