@@ -429,18 +429,40 @@ export default function Index() {
         )}
 
         {/* Iframe */}
-        <iframe
-          src={currentUrl}
-          className="w-full h-[calc(100vh-73px)] border-0"
-          onLoad={() => setIsLoading(false)}
-          onError={() => {
-            setIsLoading(false);
-            console.log("Iframe failed to load");
-          }}
-          title="Browsing content"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
-          allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
-        />
+        {proxyError ? (
+          <div className="flex-1 flex items-center justify-center bg-background">
+            <div className="text-center p-8 max-w-md">
+              <div className="text-4xl mb-4">⚠️</div>
+              <h3 className="text-xl font-semibold mb-2">Proxy Error</h3>
+              <p className="text-muted-foreground mb-4">{proxyError}</p>
+              <Button
+                onClick={handleBackToHome}
+                variant="outline"
+                className="gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Go Back
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <iframe
+            src={currentUrl}
+            className="w-full h-[calc(100vh-73px)] border-0"
+            onLoad={() => {
+              setIsLoading(false);
+              console.log("Iframe loaded successfully");
+            }}
+            onError={(e) => {
+              setIsLoading(false);
+              setProxyError("Failed to load the requested website. It may be blocking proxy access.");
+              console.error("Iframe failed to load:", e);
+            }}
+            title="Browsing content"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
+            allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
+          />
+        )}
       </div>
     );
   }
