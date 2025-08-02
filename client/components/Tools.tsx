@@ -86,9 +86,6 @@ export default function Tools({}: ToolsProps) {
   const [selectedTool, setSelectedTool] = useState("sitechecker");
   const [timeLeft, setTimeLeft] = useState(studyTime * 60);
   const [referrerRotation, setReferrerRotation] = useState(false);
-  const [currentReferrer, setCurrentReferrer] = useState("none");
-  const [rotationInterval, setRotationInterval] = useState(5);
-  const [rotationIntervalId, setRotationIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   // Initialize referrer rotation from localStorage
   useEffect(() => {
@@ -369,7 +366,7 @@ Status: 🟢 Active (Rotation #${Math.floor(Date.now() / 1000) % 1000})
 
 🌍 Rotation Sequence:
 ${referrerSources.map((r, i) =>
-  `${i === currentIndex ? "👉" : "  "} ${r.name} ${i === currentIndex ? "(CURRENT)" : ""}`
+  `${i === currentIndex ? "����" : "  "} ${r.name} ${i === currentIndex ? "(CURRENT)" : ""}`
 ).join("\n")}
 
 💡 How it works:
