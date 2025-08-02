@@ -401,7 +401,7 @@ export default function Index() {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>Google</title>
+            <title>about:blank</title>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta name="referrer" content="same-origin">
