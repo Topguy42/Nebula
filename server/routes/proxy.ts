@@ -71,45 +71,10 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     const hostname = targetUrl.hostname.toLowerCase();
 
-    // Rate limiting for Google requests to prevent 429 errors
-    const isGoogleRequest = hostname.includes("google.com") || hostname.includes("google.");
-    if (isGoogleRequest) {
-      const now = Date.now();
-      const clientKey = clientIP + "_google";
-
-      if (!requestTimestamps.has(clientKey)) {
-        requestTimestamps.set(clientKey, []);
-      }
-
-      const timestamps = requestTimestamps.get(clientKey)!;
-      // Clean old timestamps
-      const validTimestamps = timestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW);
-
-      if (validTimestamps.length >= MAX_REQUESTS_PER_MINUTE) {
-        return res.status(200).send(`
-          <html>
-            <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-              <h2>⏱️ Please Wait</h2>
-              <p>Too many Google requests. Please wait a moment before searching again.</p>
-              <p>This helps prevent rate limiting from Google.</p>
-              <button onclick="history.back()">Go Back</button>
-              <script>
-                setTimeout(() => {
-                  document.querySelector('button').textContent = 'Try Again';
-                  document.querySelector('button').onclick = () => location.reload();
-                }, 30000);
-              </script>
-            </body>
-          </html>
-        `);
-      }
-
-      validTimestamps.push(now);
-      requestTimestamps.set(clientKey, validTimestamps);
-    }
-
-    // Simple detection without complex rate limiting for now
+    // Simple detection for about:blank and Google
     const isAboutBlank = detectAboutBlank(req);
+    const isGoogleRequest =
+      hostname.includes("google.com") || hostname.includes("google.");
 
     console.log(
       `[PROXY] About:blank detected: ${isAboutBlank}, Google request: ${isGoogleRequest}`,
