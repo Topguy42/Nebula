@@ -841,16 +841,16 @@ export default function Index() {
 
               {/* Feature Highlights */}
               <div className="flex flex-wrap justify-center gap-4 text-sm">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20">
-                  <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                   <span className="font-medium">Zero-Log Policy</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20">
-                  <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20">
+                  <div className="w-2 h-2 rounded-full bg-teal-500"></div>
                   <span className="font-medium">Enterprise Security</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20">
-                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+                  <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
                   <span className="font-medium">Global Network</span>
                 </div>
               </div>
