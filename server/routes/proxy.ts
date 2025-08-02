@@ -39,8 +39,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
     // Detect if this is likely from about:blank based on headers (used throughout the function)
     const isFromAboutBlank =
       req.headers.referer === "https://www.google.com/" ||
-      req.headers.origin === "https://www.google.com" ||
-      !req.headers.referer;
+      req.headers.origin === "https://www.google.com";
 
     // Fetch the content with better error handling
     const controller = new AbortController();
