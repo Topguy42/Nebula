@@ -1067,20 +1067,7 @@ export default function Index() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-border/40 backdrop-blur-sm bg-background/80">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <VortexLogo className="w-6 h-6" />
-              <span className="text-lg font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">VortexPortal</span>
-            </div>
-            <p className="text-xs text-muted-foreground/80">
-              © 2024 VortexPortal. Browse freely, access anything.
-            </p>
-          </div>
-        </div>
-      </footer>
+
     </div>
   );
 }
