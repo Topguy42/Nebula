@@ -531,15 +531,49 @@ export default function Index() {
         <div className="backdrop-blur-glass border-b border-border/50 px-6 py-3 sticky top-0 z-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleBackToHome}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.history.back()}
+                  className="px-3"
+                  title="Go back"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.history.forward()}
+                  className="px-3"
+                  title="Go forward"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const iframe = document.querySelector('iframe');
+                    if (iframe) {
+                      iframe.src = iframe.src;
+                    }
+                  }}
+                  className="px-3"
+                  title="Refresh page"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBackToHome}
+                  className="gap-2 ml-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Home
+                </Button>
+              </div>
               <div className="flex items-center gap-2">
                 <NebulaLogo className="w-6 h-6" />
                 <span className="font-semibold">Nebula</span>
