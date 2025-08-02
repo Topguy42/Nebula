@@ -949,41 +949,44 @@ export default function Index() {
           )}
 
           {activeTab === "games" && (
-            <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredGames.map((game) => (
                   <Card
                     key={game.name}
-                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl"
+                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-sm bg-background/60 border-2 border-border/50 hover:border-primary/40 hover:shadow-2xl rounded-2xl overflow-hidden"
                   >
-                    <CardHeader className="pb-4">
+                    <CardHeader className="pb-4 space-y-3">
                       <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-xl">{game.name}</CardTitle>
-                          <CardDescription className="text-base mt-1">
+                        <div className="space-y-2">
+                          <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">{game.name}</CardTitle>
+                          <CardDescription className="text-base text-muted-foreground leading-relaxed">
                             {game.description}
                           </CardDescription>
                         </div>
                         <Badge
                           variant="secondary"
-                          className="text-xs font-medium"
+                          className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary border-primary/20"
                         >
                           {game.category}
                         </Badge>
                       </div>
                     </CardHeader>
-                    <CardContent className="pt-0">
+                    <CardContent className="pt-0 space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium text-muted-foreground">
-                            {game.rating}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-semibold text-foreground">
+                              {game.rating}
+                            </span>
+                          </div>
+                          <span className="text-xs text-muted-foreground">rating</span>
                         </div>
                         <Button
                           size="sm"
                           onClick={() => handleGamePlay(game.url)}
-                          className="gap-2 group-hover:scale-105 transition-transform font-medium"
+                          className="gap-2 group-hover:scale-105 transition-all font-semibold shadow-lg hover:shadow-xl px-6"
                         >
                           <Play className="h-4 w-4" />
                           Play Now
