@@ -122,49 +122,19 @@ export const handleProxy: RequestHandler = async (req, res) => {
         }
       }
 
-      // Google-specific optimizations for about:blank and proxy environments
+      // Google-specific headers - standard for all requests
       if (
         hostname.includes("google.com") ||
         hostname.includes("google.") ||
         hostname === "google.com"
       ) {
-        if (isFromAboutBlank) {
-          // Special handling for about:blank - make it look exactly like a normal Google request
-          headers["Origin"] = "https://www.google.com";
-          headers["Referer"] = "https://www.google.com/";
-          headers["Sec-Fetch-Site"] = "same-origin";
-          headers["Sec-Fetch-Mode"] = "navigate";
-          headers["Sec-Fetch-User"] = "?1";
-          headers["Sec-Fetch-Dest"] = "document";
-          headers["Cache-Control"] = "max-age=0";
-          headers["Upgrade-Insecure-Requests"] = "1";
-          headers["Accept"] =
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8";
-          headers["Accept-Language"] = "en-US,en;q=0.9";
-          headers["Accept-Encoding"] = "gzip, deflate, br";
-
-          // Use a very standard, non-suspicious User-Agent for about:blank
-          headers["User-Agent"] =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-
-          // Remove ALL headers that might indicate proxy usage
-          delete headers["X-Forwarded-For"];
-          delete headers["X-Real-IP"];
-          delete headers["Via"];
-          delete headers["X-Forwarded-Proto"];
-          delete headers["X-Forwarded-Host"];
-        } else {
-          // Normal Google handling
-          headers["Origin"] = "https://www.google.com";
-          headers["Referer"] = dynamicReferrer || "https://www.google.com/";
-          headers["Sec-Fetch-Site"] = dynamicReferrer
-            ? "cross-site"
-            : "same-origin";
-          headers["Sec-Fetch-Mode"] = "navigate";
-          headers["Sec-Fetch-User"] = "?1";
-          headers["Sec-Fetch-Dest"] = "document";
-          headers["Cache-Control"] = "no-cache";
-        }
+        // Standard Google headers that work for all environments
+        headers["Referer"] = dynamicReferrer || "https://www.google.com/";
+        headers["Sec-Fetch-Site"] = dynamicReferrer ? "cross-site" : "same-origin";
+        headers["Sec-Fetch-Mode"] = "navigate";
+        headers["Sec-Fetch-User"] = "?1";
+        headers["Sec-Fetch-Dest"] = "document";
+        headers["Cache-Control"] = "no-cache";
 
         headers["DNT"] = "1";
         headers["Accept"] =
