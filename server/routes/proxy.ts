@@ -71,7 +71,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     const hostname = targetUrl.hostname.toLowerCase();
 
-    // Simple detection without complex rate limiting for now
+    // Simple detection for about:blank and Google
     const isAboutBlank = detectAboutBlank(req);
     const isGoogleRequest =
       hostname.includes("google.com") || hostname.includes("google.");
@@ -88,19 +88,29 @@ export const handleProxy: RequestHandler = async (req, res) => {
 
     try {
       console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
-      // Build more realistic headers with randomization
+      // More realistic User-Agent selection for Google
       const userAgents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
       ];
 
-      // Use simple, reliable headers for all requests
-      const randomUA =
-        userAgents[Math.floor(Math.random() * userAgents.length)];
+      // Use consistent User-Agent for Google to avoid detection
+      let selectedUA;
+      if (isGoogleRequest) {
+        // Use client IP to select consistent UA for each user
+        const uaIndex =
+          Math.abs(
+            clientIP.split("").reduce((a, b) => {
+              a = (a << 5) - a + b.charCodeAt(0);
+              return a & a;
+            }, 0),
+          ) % userAgents.length;
+        selectedUA = userAgents[uaIndex];
+      } else {
+        selectedUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+      }
 
       // Simple referrer rotation
       let dynamicReferrer = "";
@@ -119,7 +129,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       }
 
       const headers: Record<string, string> = {
-        "User-Agent": randomUA,
+        "User-Agent": selectedUA,
         Accept:
           "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",
@@ -159,62 +169,37 @@ export const handleProxy: RequestHandler = async (req, res) => {
         }
       }
 
-      // Google-specific headers - standard for all requests
+      // Google-specific headers - minimal to avoid detection
       if (
         hostname.includes("google.com") ||
         hostname.includes("google.") ||
         hostname === "google.com"
       ) {
-        // Standard Google headers that work for all environments
-        headers["Referer"] = dynamicReferrer || "https://www.google.com/";
-        headers["Sec-Fetch-Site"] = dynamicReferrer
-          ? "cross-site"
-          : "same-origin";
-        headers["Sec-Fetch-Mode"] = "navigate";
-        headers["Sec-Fetch-User"] = "?1";
-        headers["Sec-Fetch-Dest"] = "document";
-        headers["Cache-Control"] = "no-cache";
+        // Minimal headers for Google
+        headers["Referer"] = "https://www.google.com/";
+        delete headers["DNT"]; // Remove DNT to avoid detection
+        delete headers["Sec-Ch-Ua"]; // Remove Chrome-specific headers
+        delete headers["Sec-Ch-Ua-Mobile"];
+        delete headers["Sec-Ch-Ua-Platform"];
+        delete headers["Sec-Fetch-Site"];
+        delete headers["Sec-Fetch-Mode"];
+        delete headers["Sec-Fetch-User"];
+        delete headers["Sec-Fetch-Dest"];
 
-        headers["DNT"] = "1";
-        headers["Accept"] =
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
-        headers["Accept-Language"] = "en-US,en;q=0.9";
-        headers["Connection"] = "keep-alive";
-        headers["Upgrade-Insecure-Requests"] = "1";
-
-        // Standard Google search parameters for all requests
+        // Clean search parameters only if necessary
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
-
-          // Check if we have a search query
           const query = searchParams.get("q");
+
           if (!query) {
-            // If no query, redirect to homepage to avoid empty search
             targetUrl.pathname = "/";
             targetUrl.search = "";
           } else {
-            // Clean, standard search parameters
-            searchParams.set("safe", "active");
-            searchParams.set("lr", "lang_en");
-            searchParams.set("hl", "en");
-            searchParams.set("num", "10");
-            searchParams.set("start", "0");
-            searchParams.set("client", "firefox-b-d");
-            searchParams.set("source", "hp");
-
-            // Remove tracking parameters
-            const paramsToRemove = [
-              "ved",
-              "uact",
-              "gs_lcp",
-              "sclient",
-              "sourceid",
-              "ei",
-              "iflsig",
-            ];
-            paramsToRemove.forEach((param) => searchParams.delete(param));
-
-            targetUrl.search = searchParams.toString();
+            // Keep minimal parameters
+            const newParams = new URLSearchParams();
+            newParams.set("q", query);
+            newParams.set("hl", "en");
+            targetUrl.search = newParams.toString();
           }
         }
       }
@@ -232,7 +217,8 @@ export const handleProxy: RequestHandler = async (req, res) => {
           "accept-language"
         ] as string;
       }
-      if (originalHeaders["cookie"]) {
+      // Don't forward cookies for Google to avoid detection
+      if (originalHeaders["cookie"] && !isGoogleRequest) {
         headers["Cookie"] = originalHeaders["cookie"] as string;
       }
 
