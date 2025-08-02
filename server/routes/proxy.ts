@@ -229,6 +229,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
         headers["Cookie"] = originalHeaders["cookie"] as string;
       }
 
+      console.log(`[PROXY] Making request to: ${targetUrl.toString()}`);
+      console.log(`[PROXY] Headers:`, headers);
+
       const response = await fetch(targetUrl.toString(), {
         signal: controller.signal,
         headers,
