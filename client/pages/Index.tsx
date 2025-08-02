@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,6 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Tools from "@/components/Tools";
+import Settings from "@/components/Settings";
 import {
   Gamepad2,
   Star,
@@ -16,6 +18,18 @@ import {
   ExternalLink,
   Search,
   ArrowLeft,
+  Download,
+  Mail,
+  MessageSquare,
+  Calendar,
+  Music,
+  Camera,
+  Map,
+  BookOpen,
+  Code,
+  Globe,
+  Youtube,
+  FileText,
 } from "lucide-react";
 
 const popularGames = [
@@ -95,6 +109,93 @@ const quickLinks = [
   { name: "TikTok", url: "https://tiktok.com", icon: "🎵" },
 ];
 
+const webApps = [
+  {
+    name: "Google Docs",
+    url: "https://docs.google.com",
+    icon: FileText,
+    description: "Create and edit documents online",
+    category: "Productivity",
+  },
+  {
+    name: "Gmail",
+    url: "https://gmail.com",
+    icon: Mail,
+    description: "Email and communication",
+    category: "Communication",
+  },
+  {
+    name: "Google Drive",
+    url: "https://drive.google.com",
+    icon: Download,
+    description: "Cloud storage and file sharing",
+    category: "Storage",
+  },
+  {
+    name: "WhatsApp Web",
+    url: "https://web.whatsapp.com",
+    icon: MessageSquare,
+    description: "Messaging app for web",
+    category: "Communication",
+  },
+  {
+    name: "Google Calendar",
+    url: "https://calendar.google.com",
+    icon: Calendar,
+    description: "Schedule and manage events",
+    category: "Productivity",
+  },
+  {
+    name: "Spotify Web",
+    url: "https://open.spotify.com",
+    icon: Music,
+    description: "Music streaming service",
+    category: "Entertainment",
+  },
+  {
+    name: "Photopea",
+    url: "https://photopea.com",
+    icon: Camera,
+    description: "Online photo editor",
+    category: "Design",
+  },
+  {
+    name: "Google Maps",
+    url: "https://maps.google.com",
+    icon: Map,
+    description: "Navigation and location services",
+    category: "Navigation",
+  },
+  {
+    name: "Notion",
+    url: "https://notion.so",
+    icon: BookOpen,
+    description: "Notes and project management",
+    category: "Productivity",
+  },
+  {
+    name: "CodePen",
+    url: "https://codepen.io",
+    icon: Code,
+    description: "Online code editor and playground",
+    category: "Development",
+  },
+  {
+    name: "Translate",
+    url: "https://translate.google.com",
+    icon: Globe,
+    description: "Language translation service",
+    category: "Utility",
+  },
+  {
+    name: "YouTube Studio",
+    url: "https://studio.youtube.com",
+    icon: Youtube,
+    description: "Video creation and management",
+    category: "Content",
+  },
+];
+
 // Custom N Logo Component
 const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
   <div
@@ -107,16 +208,95 @@ const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
 export default function Index() {
   const [proxyUrl, setProxyUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"proxy" | "games">("proxy");
+  const [activeTab, setActiveTab] = useState<
+    "proxy" | "games" | "apps" | "tools" | "settings"
+  >("proxy");
   const [currentUrl, setCurrentUrl] = useState("");
   const [displayUrl, setDisplayUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [recentHistory, setRecentHistory] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([
+    "https://google.com",
+    "https://github.com",
+    "https://youtube.com",
+    "https://wikipedia.org",
+  ]);
+
+  // Settings state
+  const [settings, setSettings] = useState({
+    darkMode: true,
+    notifications: true,
+    autoplay: false,
+    privacy: true,
+    volume: [75],
+    quality: "high",
+    aboutBlank: false,
+  });
+
+  // Store reference to about:blank window
+  const [aboutBlankWindow, setAboutBlankWindow] = useState<Window | null>(null);
+
+  // Effect to trigger about:blank immediately when setting is enabled
+  useEffect(() => {
+    if (settings.aboutBlank) {
+      const newWindow = window.open("about:blank", "_blank");
+      if (newWindow) {
+        setAboutBlankWindow(newWindow);
+
+        // Load the actual Nebula app in the about:blank window
+        const currentUrl = window.location.href;
+        newWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Nebula Proxy - About Blank Mode</title>
+            <style>
+              body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+              }
+              iframe {
+                width: 100vw;
+                height: 100vh;
+                border: none;
+                display: block;
+              }
+            </style>
+          </head>
+          <body>
+            <iframe
+              src="${currentUrl}"
+              allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
+              allowfullscreen
+              sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation"
+            ></iframe>
+          </body>
+          </html>
+        `);
+        newWindow.document.close();
+      }
+    } else {
+      setAboutBlankWindow(null);
+    }
+  }, [settings.aboutBlank]);
 
   const handleProxySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (proxyUrl.trim()) {
       const query = proxyUrl.trim();
       setIsLoading(true);
+
+      // Check if about blank is enabled
+      if (settings.aboutBlank) {
+        if (aboutBlankWindow && !aboutBlankWindow.closed) {
+          // Focus the about:blank window that contains the full Nebula app
+          aboutBlankWindow.focus();
+        }
+        setIsLoading(false);
+        setProxyUrl("");
+        return;
+      }
 
       // Check if it's a URL
       const isUrl =
@@ -127,25 +307,44 @@ export default function Index() {
           !query.includes(" ") &&
           query.split(".").length >= 2);
 
+      let finalUrl = "";
       if (isUrl) {
         // Handle as URL
         let url = query;
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
           url = "https://" + url;
         }
+        finalUrl = url;
         setDisplayUrl(url);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
       } else {
         // Handle as search query - redirect to Google
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        finalUrl = searchUrl;
         setDisplayUrl(`Google Search: ${query}`);
         setCurrentUrl(`/api/proxy?url=${encodeURIComponent(searchUrl)}`);
       }
+
+      // Add to recent history
+      setRecentHistory((prev) => {
+        const updated = [finalUrl, ...prev.filter((url) => url !== finalUrl)];
+        return updated.slice(0, 5); // Keep only 5 recent items
+      });
     }
   };
 
   const handleGamePlay = (gameUrl: string) => {
     setIsLoading(true);
+
+    // Check if about blank is enabled
+    if (settings.aboutBlank) {
+      if (aboutBlankWindow && !aboutBlankWindow.closed) {
+        aboutBlankWindow.focus();
+      }
+      setIsLoading(false);
+      return;
+    }
+
     setDisplayUrl(gameUrl);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(gameUrl)}`);
     setActiveTab("proxy"); // Switch to proxy tab to show the iframe
@@ -153,6 +352,16 @@ export default function Index() {
 
   const handleQuickLink = (url: string) => {
     setIsLoading(true);
+
+    // Check if about blank is enabled
+    if (settings.aboutBlank) {
+      if (aboutBlankWindow && !aboutBlankWindow.closed) {
+        aboutBlankWindow.focus();
+      }
+      setIsLoading(false);
+      return;
+    }
+
     setDisplayUrl(url);
     setCurrentUrl(`/api/proxy?url=${encodeURIComponent(url)}`);
   };
@@ -267,9 +476,36 @@ export default function Index() {
               >
                 GAMES
               </button>
-              <span className="text-muted-foreground">APPS</span>
-              <span className="text-muted-foreground">TOOLS</span>
-              <span className="text-muted-foreground">SETTINGS</span>
+              <button
+                onClick={() => setActiveTab("apps")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "apps"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                APPS
+              </button>
+              <button
+                onClick={() => setActiveTab("tools")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "tools"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                TOOLS
+              </button>
+              <button
+                onClick={() => setActiveTab("settings")}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  activeTab === "settings"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                SETTINGS
+              </button>
             </nav>
           </div>
         </div>
@@ -308,7 +544,7 @@ export default function Index() {
                     </Button>
                   </div>
                 </form>
-              ) : (
+              ) : activeTab === "games" ? (
                 <div className="relative">
                   <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
                   <Input
@@ -319,26 +555,103 @@ export default function Index() {
                     className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
                   />
                 </div>
+              ) : activeTab === "apps" ? (
+                <div className="relative">
+                  <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search web applications..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl pl-16 pr-8"
+                  />
+                </div>
+              ) : activeTab === "tools" ? (
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold mb-4">Built-in Tools</h2>
+                  <p className="text-muted-foreground text-lg">
+                    Select a tool from below to get started
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold mb-4">
+                    Settings & Preferences
+                  </h2>
+                  <p className="text-muted-foreground text-lg">
+                    Customize your Nebula experience
+                  </p>
+                </div>
               )}
             </div>
           </div>
 
           {/* Tab Content */}
           {activeTab === "proxy" && (
-            <div className="max-w-4xl mx-auto">
-              <h3 className="text-2xl font-semibold mb-8">Quick Access</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-                {quickLinks.map((link) => (
-                  <Button
-                    key={link.name}
-                    variant="outline"
-                    onClick={() => handleQuickLink(link.url)}
-                    className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl"
-                  >
-                    <span className="text-2xl">{link.icon}</span>
-                    <span className="text-xs font-medium">{link.name}</span>
-                  </Button>
-                ))}
+            <div className="max-w-6xl mx-auto space-y-12">
+              <div>
+                <h3 className="text-2xl font-semibold mb-8">Quick Access</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                  {quickLinks.map((link) => (
+                    <Button
+                      key={link.name}
+                      variant="outline"
+                      onClick={() => handleQuickLink(link.url)}
+                      className="h-20 flex-col gap-3 bg-card/30 hover:bg-card/60 border-border/50 hover:border-primary/50 transition-all duration-200 hover:scale-105 rounded-xl"
+                    >
+                      <span className="text-2xl">{link.icon}</span>
+                      <span className="text-xs font-medium">{link.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {recentHistory.length > 0 && (
+                <div>
+                  <h3 className="text-xl font-semibold mb-6">Recent History</h3>
+                  <div className="grid gap-3">
+                    {recentHistory.map((url, index) => (
+                      <Button
+                        key={url}
+                        variant="outline"
+                        onClick={() => handleQuickLink(url)}
+                        className="justify-start h-auto p-4 bg-card/20 hover:bg-card/40 border-border/30"
+                      >
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
+                            {index + 1}
+                          </div>
+                          <span className="truncate flex-1 text-left">
+                            {url}
+                          </span>
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <h3 className="text-xl font-semibold mb-6">Favorites</h3>
+                <div className="grid gap-3">
+                  {favorites.map((url) => (
+                    <Button
+                      key={url}
+                      variant="outline"
+                      onClick={() => handleQuickLink(url)}
+                      className="justify-start h-auto p-4 bg-card/20 hover:bg-card/40 border-border/30"
+                    >
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                          ⭐
+                        </div>
+                        <span className="truncate flex-1 text-left">
+                          {url.replace(/^https?:\/\//, "")}
+                        </span>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -399,6 +712,94 @@ export default function Index() {
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === "apps" && (
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {webApps
+                  .filter(
+                    (app) =>
+                      app.name
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      app.category
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      app.description
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
+                  )
+                  .map((app) => {
+                    const IconComponent = app.icon;
+                    return (
+                      <Card
+                        key={app.name}
+                        className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl cursor-pointer"
+                        onClick={() => handleQuickLink(app.url)}
+                      >
+                        <CardHeader className="pb-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-lg bg-primary/10">
+                                <IconComponent className="h-6 w-6 text-primary" />
+                              </div>
+                              <div>
+                                <CardTitle className="text-xl">
+                                  {app.name}
+                                </CardTitle>
+                                <CardDescription className="text-base mt-1">
+                                  {app.description}
+                                </CardDescription>
+                              </div>
+                            </div>
+                            <Badge
+                              variant="secondary"
+                              className="text-xs font-medium"
+                            >
+                              {app.category}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <Button
+                            size="sm"
+                            className="w-full gap-2 group-hover:scale-105 transition-transform font-medium"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            Launch App
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+              </div>
+
+              {webApps.filter(
+                (app) =>
+                  app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  app.category
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  app.description
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()),
+              ).length === 0 && (
+                <div className="text-center py-12">
+                  <ExternalLink className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No apps found</h3>
+                  <p className="text-muted-foreground">
+                    Try searching for a different application or category.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "tools" && <Tools />}
+
+          {activeTab === "settings" && (
+            <Settings settings={settings} setSettings={setSettings} />
           )}
         </div>
       </main>
