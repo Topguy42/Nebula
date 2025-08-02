@@ -403,14 +403,10 @@ function processHTML(content: string, targetUrl: URL): string {
 
     if (isGoogle) {
       proxyEnhancements += `
-        /* Google Search optimizations for speed and iframe compatibility */
+        /* Google Search optimizations for iframe compatibility */
         #searchform { position: relative !important; }
-        .sfbg { position: relative !important; }
         #gb { position: relative !important; }
-        .minidiv { display: none !important; } /* Hide chat widget for speed */
-        .kno-ecr-pt { max-height: none !important; } /* Remove height restrictions on knowledge cards */
-        .g { margin-bottom: 20px !important; } /* Better spacing for results */
-        #appbar { position: relative !important; }`;
+        .g { margin-bottom: 15px !important; }`;
     }
 
     proxyEnhancements += `
