@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 export const handleProxy: RequestHandler = async (req, res) => {
   try {
     const { url } = req.query;
+    console.log(`[PROXY] Request for: ${url}`);
 
     if (!url || typeof url !== "string") {
       return res.status(400).send(`
