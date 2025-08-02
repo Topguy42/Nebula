@@ -786,7 +786,7 @@ export default function Index() {
                 {filteredGames.map((game) => (
                   <Card
                     key={game.name}
-                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl animate-float"
+                    className="group hover:scale-[1.02] transition-all duration-300 backdrop-blur-glass border-border/50 hover:border-primary/50 hover:shadow-xl"
                   >
                     <CardHeader className="pb-4">
                       <div className="flex items-start justify-between">
