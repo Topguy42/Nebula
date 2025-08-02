@@ -354,7 +354,7 @@ export default function Index() {
               </div>
             </div>
             <div className="text-sm text-muted-foreground flex items-center gap-1">
-              �� Secure
+              🔒 Secure
             </div>
           </div>
         </div>
@@ -370,26 +370,17 @@ export default function Index() {
         )}
 
         {/* Iframe */}
-        {currentUrl === "about:blank" ? (
-          <div className="w-full h-[calc(100vh-73px)] bg-white flex items-center justify-center">
-            <div className="text-center text-black">
-              <h2 className="text-2xl font-bold mb-2">about:blank</h2>
-              <p className="text-gray-600">About Blank Mode is enabled</p>
-            </div>
-          </div>
-        ) : (
-          <iframe
-            src={currentUrl}
-            className="w-full h-[calc(100vh-73px)] border-0"
-            onLoad={() => setIsLoading(false)}
-            onError={() => {
-              setIsLoading(false);
-              console.log("Iframe failed to load");
-            }}
-            title="Browsing content"
-            sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox"
-          />
-        )}
+        <iframe
+          src={currentUrl}
+          className="w-full h-[calc(100vh-73px)] border-0"
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            console.log("Iframe failed to load");
+          }}
+          title="Browsing content"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox"
+        />
       </div>
     );
   }
