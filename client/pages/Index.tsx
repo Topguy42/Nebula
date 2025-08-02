@@ -1,9 +1,22 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gamepad2, Star, Play, ExternalLink, Search, ArrowLeft } from "lucide-react";
+import {
+  Gamepad2,
+  Star,
+  Play,
+  ExternalLink,
+  Search,
+  ArrowLeft,
+} from "lucide-react";
 
 const popularGames = [
   {
@@ -11,64 +24,64 @@ const popularGames = [
     url: "https://play2048.co/",
     description: "Number puzzle game",
     category: "Puzzle",
-    rating: 4.8
+    rating: 4.8,
   },
   {
     name: "Slope",
     url: "https://slope-game.github.io/",
     description: "3D running game",
     category: "Action",
-    rating: 4.7
+    rating: 4.7,
   },
   {
     name: "Snake",
     url: "https://www.google.com/fbx?fbx=snake_arcade",
     description: "Classic snake game",
     category: "Arcade",
-    rating: 4.6
+    rating: 4.6,
   },
   {
     name: "Tetris",
     url: "https://tetris.com/play-tetris",
     description: "Block puzzle classic",
-    category: "Puzzle", 
-    rating: 4.9
+    category: "Puzzle",
+    rating: 4.9,
   },
   {
     name: "Flappy Bird",
     url: "https://flappybird.io/",
     description: "Side-scrolling mobile game",
     category: "Arcade",
-    rating: 4.5
+    rating: 4.5,
   },
   {
     name: "Pac-Man",
     url: "https://www.google.com/doodles/30th-anniversary-of-pac-man",
     description: "Classic arcade game",
     category: "Arcade",
-    rating: 4.8
+    rating: 4.8,
   },
   {
     name: "Among Us",
     url: "https://skribbl.io/",
     description: "Social deduction party game",
     category: "Social",
-    rating: 4.6
+    rating: 4.6,
   },
   {
     name: "Minecraft Classic",
     url: "https://classic.minecraft.net/",
     description: "Build and explore in creative mode",
     category: "Sandbox",
-    rating: 4.9
+    rating: 4.9,
   },
   {
     name: "Cut the Rope",
     url: "https://www.cuttherope.ie/",
     description: "Physics puzzle game",
     category: "Puzzle",
-    rating: 4.7
-  }
+    rating: 4.7,
+  },
 ];
 
 const quickLinks = [
@@ -79,12 +92,14 @@ const quickLinks = [
   { name: "Twitter", url: "https://twitter.com", icon: "🐦" },
   { name: "GitHub", url: "https://github.com", icon: "⚡" },
   { name: "Instagram", url: "https://instagram.com", icon: "📷" },
-  { name: "TikTok", url: "https://tiktok.com", icon: "🎵" }
+  { name: "TikTok", url: "https://tiktok.com", icon: "🎵" },
 ];
 
 // Custom N Logo Component
 const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
-  <div className={`${className} rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center font-bold text-white shadow-lg`}>
+  <div
+    className={`${className} rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center font-bold text-white shadow-lg`}
+  >
     <span className="text-xl font-black">N</span>
   </div>
 );
@@ -102,15 +117,16 @@ export default function Index() {
     if (proxyUrl.trim()) {
       const query = proxyUrl.trim();
       setIsLoading(true);
-      
+
       // Check if it's a URL
-      const isUrl = (
-        query.startsWith("http://") || 
+      const isUrl =
+        query.startsWith("http://") ||
         query.startsWith("https://") ||
         query.startsWith("www.") ||
-        (query.includes(".") && !query.includes(" ") && query.split(".").length >= 2)
-      );
-      
+        (query.includes(".") &&
+          !query.includes(" ") &&
+          query.split(".").length >= 2);
+
       if (isUrl) {
         // Handle as URL
         let url = query;
@@ -148,9 +164,10 @@ export default function Index() {
     setIsLoading(false);
   };
 
-  const filteredGames = popularGames.filter(game =>
-    game.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    game.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredGames = popularGames.filter(
+    (game) =>
+      game.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      game.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // If showing iframe content
@@ -161,9 +178,9 @@ export default function Index() {
         <div className="bg-card/50 backdrop-blur-sm border-b border-border/50 px-6 py-3 sticky top-0 z-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleBackToHome}
                 className="gap-2"
               >
@@ -185,7 +202,7 @@ export default function Index() {
             </div>
           </div>
         </div>
-        
+
         {/* Loading indicator */}
         {isLoading && (
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-40">
@@ -195,7 +212,7 @@ export default function Index() {
             </div>
           </div>
         )}
-        
+
         {/* Iframe */}
         <iframe
           src={currentUrl}
@@ -203,7 +220,7 @@ export default function Index() {
           onLoad={() => setIsLoading(false)}
           onError={() => {
             setIsLoading(false);
-            console.log('Iframe failed to load');
+            console.log("Iframe failed to load");
           }}
           title="Browsing content"
           sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox"
@@ -227,13 +244,15 @@ export default function Index() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <NebulaLogo className="w-12 h-12" />
-            
+
             {/* Navigation */}
             <nav className="flex items-center space-x-8 text-sm font-medium">
               <button
                 onClick={() => setActiveTab("proxy")}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                  activeTab === "proxy" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  activeTab === "proxy"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 PROXY
@@ -241,7 +260,9 @@ export default function Index() {
               <button
                 onClick={() => setActiveTab("games")}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                  activeTab === "games" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  activeTab === "games"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 GAMES
@@ -265,7 +286,7 @@ export default function Index() {
             <p className="text-lg text-muted-foreground mb-12">
               Browse freely, play endlessly
             </p>
-            
+
             {/* Main Search/Input */}
             <div className="max-w-4xl mx-auto">
               {activeTab === "proxy" ? (
@@ -278,9 +299,9 @@ export default function Index() {
                       onChange={(e) => setProxyUrl(e.target.value)}
                       className="h-20 text-xl bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary rounded-2xl px-8"
                     />
-                    <Button 
-                      type="submit" 
-                      size="lg" 
+                    <Button
+                      type="submit"
+                      size="lg"
                       className="absolute right-3 top-3 h-14 px-6"
                     >
                       <ExternalLink className="h-5 w-5" />
@@ -326,7 +347,10 @@ export default function Index() {
             <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredGames.map((game) => (
-                  <Card key={game.name} className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl">
+                  <Card
+                    key={game.name}
+                    className="group hover:scale-[1.02] transition-all duration-300 bg-card/40 backdrop-blur-sm border-border/50 hover:border-primary/50 hover:shadow-xl"
+                  >
                     <CardHeader className="pb-4">
                       <div className="flex items-start justify-between">
                         <div>
@@ -335,7 +359,10 @@ export default function Index() {
                             {game.description}
                           </CardDescription>
                         </div>
-                        <Badge variant="secondary" className="text-xs font-medium">
+                        <Badge
+                          variant="secondary"
+                          className="text-xs font-medium"
+                        >
                           {game.category}
                         </Badge>
                       </div>
@@ -344,7 +371,9 @@ export default function Index() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium text-muted-foreground">{game.rating}</span>
+                          <span className="text-sm font-medium text-muted-foreground">
+                            {game.rating}
+                          </span>
                         </div>
                         <Button
                           size="sm"
@@ -364,7 +393,9 @@ export default function Index() {
                 <div className="text-center py-12">
                   <Gamepad2 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">No games found</h3>
-                  <p className="text-muted-foreground">Try searching for a different game or category.</p>
+                  <p className="text-muted-foreground">
+                    Try searching for a different game or category.
+                  </p>
                 </div>
               )}
             </div>
