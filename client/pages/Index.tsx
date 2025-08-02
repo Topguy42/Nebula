@@ -483,7 +483,7 @@ export default function Index() {
               </div>
             </div>
             <div className="flex-1 max-w-2xl mx-4">
-              <div className="bg-background/50 rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate">
+              <div className="backdrop-blur-glass rounded-lg px-4 py-2 text-sm text-muted-foreground border border-border/50 truncate">
                 {displayUrl}
               </div>
             </div>
