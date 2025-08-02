@@ -94,59 +94,46 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       ];
 
-      // Check if we should use emulated headers for about:blank
-      const emulatedHeaders = generateRealHeaders(hostname, isAboutBlank);
+      // Use simple, reliable headers for all requests
+      const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
 
-      let headers: Record<string, string>;
+      // Simple referrer rotation
+      let dynamicReferrer = "";
+      if (referrer_rotation === "true") {
+        const referrers = [
+          "https://www.google.com/",
+          "https://duckduckgo.com/",
+          "https://en.wikipedia.org/",
+          "https://www.bing.com/",
+          "https://www.youtube.com/",
+          "https://github.com/",
+        ];
+        const rotationIndex = Math.floor(Date.now() / 10000) % referrers.length;
+        dynamicReferrer = referrers[rotationIndex];
+        console.log(`[PROXY] Using rotating referrer: ${dynamicReferrer}`);
+      }
 
-      if (emulatedHeaders) {
-        // Use emulated headers for about:blank Google requests
-        headers = emulatedHeaders;
-        console.log(`[PROXY] Using emulated headers for about:blank Google request`);
-      } else {
-        // Standard headers for normal requests
-        const randomUA = hostname.includes("google")
-          ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length]
-          : userAgents[Math.floor(Math.random() * userAgents.length)];
+      const headers: Record<string, string> = {
+        "User-Agent": randomUA,
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Cache-Control": "no-cache",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": dynamicReferrer ? "cross-site" : "none",
+        "Sec-Fetch-User": "?1",
+        "Sec-Ch-Ua":
+          '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": '"Windows"',
+      };
 
-        // Simple referrer rotation
-        let dynamicReferrer = "";
-        if (referrer_rotation === "true") {
-          const referrers = [
-            "https://www.google.com/",
-            "https://duckduckgo.com/",
-            "https://en.wikipedia.org/",
-            "https://www.bing.com/",
-            "https://www.youtube.com/",
-            "https://github.com/",
-          ];
-          const rotationIndex = Math.floor(Date.now() / 10000) % referrers.length;
-          dynamicReferrer = referrers[rotationIndex];
-          console.log(`[PROXY] Using rotating referrer: ${dynamicReferrer}`);
-        }
-
-        headers = {
-          "User-Agent": randomUA,
-          Accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-          "Accept-Language": "en-US,en;q=0.9",
-          "Accept-Encoding": "gzip, deflate, br",
-          "Cache-Control": "no-cache",
-          "Upgrade-Insecure-Requests": "1",
-          "Sec-Fetch-Dest": "document",
-          "Sec-Fetch-Mode": "navigate",
-          "Sec-Fetch-Site": dynamicReferrer ? "cross-site" : "none",
-          "Sec-Fetch-User": "?1",
-          "Sec-Ch-Ua":
-            '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
-          "Sec-Ch-Ua-Mobile": "?0",
-          "Sec-Ch-Ua-Platform": '"Windows"',
-        };
-
-        // Add dynamic referrer if rotation is enabled
-        if (referrer_rotation === "true" && dynamicReferrer) {
-          headers["Referer"] = dynamicReferrer;
-        }
+      // Add dynamic referrer if rotation is enabled
+      if (referrer_rotation === "true" && dynamicReferrer) {
+        headers["Referer"] = dynamicReferrer;
       }
 
       // YouTube-specific headers and handling
