@@ -422,7 +422,7 @@ export default function Index() {
           <!DOCTYPE html>
           <html>
           <head>
-            <title>VortexPortal - Professional Web Proxy</title>
+            <title>VortexPortal - Web Access</title>
             <style>
               body {
                 margin: 0;
