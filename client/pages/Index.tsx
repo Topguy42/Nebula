@@ -32,7 +32,7 @@ import {
   Youtube,
   FileText,
   Grid3X3,
-  Settings,
+  Settings as SettingsIcon,
   Wrench,
 } from "lucide-react";
 
