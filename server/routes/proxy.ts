@@ -189,8 +189,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
       if (contentType.includes("text/html")) {
         let content = await response.text();
 
-        // Enhanced HTML processing
-        content = processHTML(content, targetUrl);
+        // Fast-track Google search results with minimal processing
+        if (hostname.includes("google") && targetUrl.pathname.includes("/search")) {
+          content = processGoogleSearchFast(content, targetUrl);
+        } else {
+          // Enhanced HTML processing for other sites
+          content = processHTML(content, targetUrl);
+        }
 
         // Set security headers
         res.setHeader("Content-Type", "text/html; charset=utf-8");
