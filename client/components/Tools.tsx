@@ -35,7 +35,7 @@ const toolsList = [
   },
   {
     name: "Proxy Finder",
-    icon: Zap,
+    icon: Globe,
     description: "Find working proxy servers and bypass methods",
     category: "Bypass",
   },
