@@ -212,7 +212,7 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { key: 'duckduckgo', name: 'DuckDuckGo', desc: 'Privacy-focused' },
-                  { key: 'google', name: 'Google', desc: 'May get rate limited' },
+                  { key: 'google', name: 'Google', desc: 'Most comprehensive' },
                   { key: 'bing', name: 'Bing', desc: 'Microsoft search' },
                   { key: 'startpage', name: 'Startpage', desc: 'Private Google results' },
                 ].map((engine) => {
