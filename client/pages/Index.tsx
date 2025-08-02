@@ -195,44 +195,7 @@ const webApps = [
   },
 ];
 
-const toolsList = [
-  {
-    name: "Calculator",
-    icon: Calculator,
-    description: "Basic arithmetic operations",
-    category: "Math"
-  },
-  {
-    name: "Hash Generator",
-    icon: Hash,
-    description: "Generate MD5, SHA1, SHA256 hashes",
-    category: "Security"
-  },
-  {
-    name: "Text Encoder/Decoder",
-    icon: FileText,
-    description: "Base64, URL encoding/decoding",
-    category: "Text"
-  },
-  {
-    name: "QR Code Generator",
-    icon: QrCode,
-    description: "Generate QR codes for text or URLs",
-    category: "Utility"
-  },
-  {
-    name: "Color Picker",
-    icon: Palette,
-    description: "Pick and convert colors between formats",
-    category: "Design"
-  },
-  {
-    name: "Timestamp Converter",
-    icon: Clock,
-    description: "Convert between timestamps and dates",
-    category: "Time"
-  },
-];
+
 
 // Custom N Logo Component
 const NebulaLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
