@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 
 // About:blank emulation system
 const aboutBlankRequestMap = new Map<string, number>();
-const EMULATION_DELAY = 2000; // 2 second delay for about:blank requests to Google
+const EMULATION_DELAY = 1000; // 1 second delay for about:blank requests to Google
 
 const detectAboutBlank = (req: any): boolean => {
   const referer = req.headers.referer || "";
