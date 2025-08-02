@@ -92,7 +92,7 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">About Blank Mode</p>
-                <p className="text-sm text-muted-foreground">All proxy requests go to about:blank</p>
+                <p className="text-sm text-muted-foreground">Block all requests with styled about:blank page</p>
               </div>
               <Switch
                 checked={settings.aboutBlank}
