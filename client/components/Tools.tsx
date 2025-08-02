@@ -284,7 +284,7 @@ ${selectedProxies.map((proxy) => `• https://${proxy}`).join("\n")}
 
 🛡️ VPN Alternatives:
 • Tor Browser (if allowed)
-• Browser extensions (if permitted)
+��� Browser extensions (if permitted)
 • Mobile hotspot with different carrier
 • Change DNS to 1.1.1.1 or 8.8.8.8
 
@@ -731,55 +731,119 @@ When you browse through the proxy, your referrer will automatically rotate every
             </div>
           )}
 
-          {selectedTool === "studynotes" && (
+          {selectedTool === "cloaker" && (
             <div className="space-y-4">
-              <Textarea
-                placeholder="Type your study notes here. They'll be saved locally in your browser."
-                value={studyNotes}
-                onChange={(e) => {
-                  setStudyNotes(e.target.value);
-                  localStorage.setItem("study-notes", e.target.value);
-                }}
-                className="min-h-[200px]"
-                onFocus={() => {
-                  const saved = localStorage.getItem("study-notes");
-                  if (saved) setStudyNotes(saved);
-                }}
-              />
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Website Title:
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., Google Classroom, Khan Academy, etc."
+                    value={cloakerTitle}
+                    onChange={(e) => setCloakerTitle(e.target.value)}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This will change the title shown in your browser tab
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">
+                    Favicon URL:
+                  </label>
+                  <Input
+                    type="url"
+                    placeholder="https://example.com/favicon.ico"
+                    value={cloakerFavicon}
+                    onChange={(e) => setCloakerFavicon(e.target.value)}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This will change the icon shown in your browser tab
+                  </p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-2">
                 <Button
-                  onClick={() => {
-                    const blob = new Blob([studyNotes], { type: "text/plain" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "study-notes.txt";
-                    a.click();
-                  }}
-                  variant="outline"
+                  onClick={applyCloaker}
+                  className="w-full"
+                  disabled={!cloakerTitle && !cloakerFavicon}
                 >
-                  Download Notes
+                  Apply Cloaker
                 </Button>
                 <Button
-                  onClick={() => {
-                    localStorage.removeItem("study-notes");
-                    setStudyNotes("");
-                    setResult("Notes cleared!");
-                  }}
+                  onClick={restoreCloaker}
                   variant="outline"
+                  className="w-full"
                 >
-                  Clear Notes
+                  Restore Original
                 </Button>
               </div>
-              <div className="text-sm text-muted-foreground">
-                💡 Tip: Your notes are saved locally in your browser. Download
-                them to keep permanently!
+
+              <div className="p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-medium mb-2">💡 Quick Presets:</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Google Classroom");
+                      setCloakerFavicon("https://ssl.gstatic.com/classroom/favicon.png");
+                    }}
+                    className="justify-start"
+                  >
+                    📚 Google Classroom
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Khan Academy");
+                      setCloakerFavicon("https://cdn.kastatic.org/images/favicon.ico");
+                    }}
+                    className="justify-start"
+                  >
+                    🎓 Khan Academy
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Google Docs");
+                      setCloakerFavicon("https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico");
+                    }}
+                    className="justify-start"
+                  >
+                    📄 Google Docs
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setCloakerTitle("Wikipedia");
+                      setCloakerFavicon("https://en.wikipedia.org/static/favicon/wikipedia.ico");
+                    }}
+                    className="justify-start"
+                  >
+                    📖 Wikipedia
+                  </Button>
+                </div>
               </div>
+
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm">{result}</p>
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
+
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>🥸 Changes the appearance of your browser tab for privacy</p>
+                <p>⚠️ Remember to restore when done to avoid confusion</p>
+              </div>
             </div>
           )}
 
