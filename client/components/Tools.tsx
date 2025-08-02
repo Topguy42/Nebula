@@ -402,7 +402,7 @@ This tool demonstrates concepts and provides testing capabilities.`);
 
   const testReferrerRequests = async () => {
     if (!targetUrl) {
-      setResult("��️ Please enter a target URL first!");
+      setResult("⚠️ Please enter a target URL first!");
       return;
     }
 
@@ -809,56 +809,71 @@ ${referrerLinks}
 
           {selectedTool === "referrercontrol" && (
             <div className="space-y-4">
-              <Input
-                type="url"
-                placeholder="Enter target website URL (e.g., example.com)"
-                value={targetUrl}
-                onChange={(e) => setTargetUrl(e.target.value)}
-              />
+              <div className="text-center p-6 bg-muted/50 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-2">Proxy Referrer Rotation</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  When enabled, the proxy will automatically rotate referrer headers every 5 seconds to bypass referrer-based restrictions.
+                </p>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Rotation Interval (seconds):
-                  </label>
-                  <input
-                    type="range"
-                    min="2"
-                    max="30"
-                    value={rotationInterval}
-                    onChange={(e) => setRotationInterval(parseInt(e.target.value))}
-                    className="w-full"
-                  />
-                  <p className="text-center text-xs text-muted-foreground">
-                    {rotationInterval}s
-                  </p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Current Referrer:
-                  </label>
-                  <div className="p-2 bg-muted rounded text-sm font-mono">
-                    {referrerSources.find(r => r.value === currentReferrer)?.name || "None"}
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <div className="text-sm">
+                    <span className="font-medium">Status: </span>
+                    <span className={referrerRotation ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                      {referrerRotation ? "🟢 Active" : "🔴 Disabled"}
+                    </span>
                   </div>
+
+                  {referrerRotation && (
+                    <div className="text-sm">
+                      <span className="font-medium">Current: </span>
+                      <span className="font-mono text-xs bg-background px-2 py-1 rounded">
+                        {referrerSources.find(r => r.value === currentReferrer)?.name || "Rotating..."}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div className="grid grid-cols-3 gap-2">
                 <Button
-                  onClick={startReferrerRotation}
+                  onClick={() => {
+                    setReferrerRotation(!referrerRotation);
+                    // Store the setting in localStorage
+                    localStorage.setItem('proxy-referrer-rotation', (!referrerRotation).toString());
+
+                    if (!referrerRotation) {
+                      setResult(`🔄 Referrer rotation enabled!
+
+When you browse through the proxy, your referrer will automatically rotate every 5 seconds through these sources:
+
+🌍 Rotation Sources:
+• Google Search
+• Bing Search
+• DuckDuckGo
+• Yahoo Search
+• Facebook
+• Twitter
+• Reddit
+• Wikipedia
+• YouTube
+• GitHub
+• Stack Overflow
+• No referrer
+
+💡 How it works:
+• Referrer changes automatically every 5 seconds
+• No manual intervention needed
+• Works with all proxy browsing
+• Helps bypass referrer-based blocks
+
+🚀 Just browse normally through the proxy - the referrer rotation happens automatically in the background!`);
+                    } else {
+                      setResult("🔄 Referrer rotation disabled. Proxy will use standard referrer behavior.");
+                    }
+                  }}
                   variant={referrerRotation ? "destructive" : "default"}
-                  className="w-full"
+                  size="lg"
+                  className="w-full max-w-xs"
                 >
-                  {referrerRotation ? "Stop Rotation" : "Start Auto-Rotation"}
-                </Button>
-
-                <Button onClick={testReferrerRequests} variant="outline" className="w-full">
-                  Test Referrers
-                </Button>
-
-                <Button onClick={generateReferrerLinks} variant="outline" className="w-full">
-                  Manual Links
+                  {referrerRotation ? "Disable Rotation" : "Enable Rotation"}
                 </Button>
               </div>
 
@@ -867,6 +882,11 @@ ${referrerLinks}
                   <pre className="text-sm whitespace-pre-wrap">{result}</pre>
                 </div>
               )}
+
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>💡 Tip: Enable this before browsing to automatically bypass referrer restrictions</p>
+                <p>⚡ Works with all proxy browsing - no need to enter specific URLs</p>
+              </div>
             </div>
           )}
 
