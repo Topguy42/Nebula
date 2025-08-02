@@ -136,6 +136,21 @@ export default function Settings({ settings, setSettings }: SettingsProps) {
               />
             </div>
             <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Anti-GoGuardian</p>
+                <p className="text-sm text-muted-foreground">
+                  Prevent monitoring software from closing tabs
+                </p>
+              </div>
+              <Switch
+                checked={settings.antiGoGuardian}
+                onCheckedChange={(checked) =>
+                  setSettings((prev: any) => ({ ...prev, antiGoGuardian: checked }))
+                }
+              />
+            </div>
+            <Separator />
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
