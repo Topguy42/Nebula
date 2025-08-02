@@ -47,7 +47,7 @@ const toolsList = [
   },
   {
     name: "Filter Bypass",
-    icon: Eye,
+    icon: Zap,
     description: "Methods to bypass content filters and restrictions",
     category: "Bypass",
   },
@@ -270,7 +270,7 @@ ${selectedMethod}
 🔧 General Bypass Techniques:
 • Change DNS servers (1.1.1.1, 8.8.8.8)
 • Use different browsers
-�� Clear browser cache and cookies
+• Clear browser cache and cookies
 • Disable JavaScript temporarily
 • Use incognito/private browsing mode
 • Try different network (mobile hotspot)
