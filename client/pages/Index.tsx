@@ -395,22 +395,24 @@ export default function Index() {
       if (newWindow) {
         setAboutBlankWindow(newWindow);
 
-        // Load the actual Nebula app in the about:blank window
+        // Load the actual Vortex app in the about:blank window with enhanced stealth
         const currentUrl = window.location.href;
         newWindow.document.write(`
           <!DOCTYPE html>
           <html>
           <head>
-            <title>about:blank</title>
+            <title>Google</title>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta name="referrer" content="no-referrer">
+            <meta name="referrer" content="same-origin">
+            <link rel="icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAABAAAAAAAAAA">
             <style>
               body {
                 margin: 0;
                 padding: 0;
                 overflow: hidden;
                 background: white;
+                font-family: arial, sans-serif;
               }
               iframe {
                 width: 100vw;
@@ -420,12 +422,35 @@ export default function Index() {
               }
             </style>
             <script>
-              // Override document.referrer to help with restrictions
+              // Enhanced environment spoofing for about:blank
               Object.defineProperty(document, 'referrer', {
                 value: 'https://www.google.com/',
                 writable: false,
                 configurable: false
               });
+
+              // Override location properties to appear normal
+              Object.defineProperty(window, 'location', {
+                value: {
+                  ...window.location,
+                  href: 'https://www.google.com/',
+                  protocol: 'https:',
+                  host: 'www.google.com',
+                  hostname: 'www.google.com',
+                  origin: 'https://www.google.com'
+                },
+                writable: false
+              });
+
+              // Override navigator properties
+              Object.defineProperty(navigator, 'webdriver', {
+                value: undefined,
+                configurable: true
+              });
+
+              // Add Google-specific globals that sites might check for
+              window.google = window.google || {};
+              window.gapi = window.gapi || {};
             </script>
           </head>
           <body>
@@ -433,7 +458,7 @@ export default function Index() {
               src="${currentUrl}"
               allow="accelerometer; autoplay; camera; encrypted-media; fullscreen; geolocation; gyroscope; microphone; midi; payment; picture-in-picture; usb; vr; xr-spatial-tracking"
               allowfullscreen
-              referrerpolicy="no-referrer-when-downgrade"
+              referrerpolicy="same-origin"
               sandbox="allow-same-origin allow-scripts allow-forms allow-navigation allow-popups allow-popups-to-escape-sandbox allow-presentation allow-top-navigation allow-top-navigation-by-user-activation allow-downloads"
             ></iframe>
           </body>
