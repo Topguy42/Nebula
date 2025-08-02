@@ -163,11 +163,16 @@ export const handleProxy: RequestHandler = async (req, res) => {
         // Set security headers
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.setHeader("X-Frame-Options", "SAMEORIGIN");
-        // Relaxed CSP for YouTube and other sites
+        // Site-specific CSP optimizations
         if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
           res.setHeader(
             "Content-Security-Policy",
             "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; media-src *; img-src *; connect-src *; object-src *; child-src *;",
+          );
+        } else if (hostname.includes("google.com") || hostname.includes("google.")) {
+          res.setHeader(
+            "Content-Security-Policy",
+            "frame-ancestors *; default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; connect-src *;",
           );
         } else {
           res.setHeader(
