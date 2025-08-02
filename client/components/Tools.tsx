@@ -275,6 +275,91 @@ ${selectedMethod}
 `);
   };
 
+  const referrerSources = [
+    { name: "None", value: "none", url: "" },
+    { name: "Google Search", value: "google", url: "https://www.google.com/search?q=" },
+    { name: "Bing Search", value: "bing", url: "https://www.bing.com/search?q=" },
+    { name: "DuckDuckGo", value: "duckduckgo", url: "https://duckduckgo.com/?q=" },
+    { name: "Yahoo Search", value: "yahoo", url: "https://search.yahoo.com/search?p=" },
+    { name: "Facebook", value: "facebook", url: "https://www.facebook.com/" },
+    { name: "Twitter", value: "twitter", url: "https://twitter.com/" },
+    { name: "Reddit", value: "reddit", url: "https://www.reddit.com/" },
+    { name: "Wikipedia", value: "wikipedia", url: "https://en.wikipedia.org/" },
+    { name: "YouTube", value: "youtube", url: "https://www.youtube.com/" },
+    { name: "GitHub", value: "github", url: "https://github.com/" },
+    { name: "Stack Overflow", value: "stackoverflow", url: "https://stackoverflow.com/" },
+  ];
+
+  const startReferrerRotation = () => {
+    if (referrerRotation) {
+      setReferrerRotation(false);
+      setResult("🔄 Referrer rotation stopped.");
+      return;
+    }
+
+    setReferrerRotation(true);
+    let currentIndex = 0;
+
+    const rotateReferrer = () => {
+      const referrer = referrerSources[currentIndex];
+      setCurrentReferrer(referrer.value);
+
+      // Dynamically create and inject meta tag for referrer policy
+      const metaTag = document.querySelector('meta[name="referrer"]') || document.createElement('meta');
+      metaTag.setAttribute('name', 'referrer');
+      metaTag.setAttribute('content', referrer.value === 'none' ? 'no-referrer' : 'unsafe-url');
+
+      if (!document.querySelector('meta[name="referrer"]')) {
+        document.head.appendChild(metaTag);
+      }
+
+      // Override document.referrer in a non-standard way (for demonstration)
+      try {
+        Object.defineProperty(document, 'referrer', {
+          value: referrer.url,
+          writable: true,
+          configurable: true
+        });
+      } catch (e) {
+        // Fallback if can't override referrer
+      }
+
+      setResult(`🔄 Active Referrer Rotation (Every ${rotationInterval}s)
+
+Current Referrer: ${referrer.name}
+URL: ${referrer.url || "No referrer"}
+Status: ${referrerRotation ? "🟢 Active" : "🔴 Stopped"}
+
+🌍 Rotation Sequence:
+${referrerSources.map((r, i) =>
+  `${i === currentIndex ? "👉" : "  "} ${r.name} ${i === currentIndex ? "(CURRENT)" : ""}`
+).join("\n")}
+
+💡 How it works:
+• Automatically rotates referrer every ${rotationInterval} seconds
+• Changes meta referrer policy
+• Simulates requests from different sources
+• Helps bypass referrer-based restrictions
+
+⚠️ Note: Some restrictions may require actual navigation
+from the referrer source for full effectiveness.`);
+
+      currentIndex = (currentIndex + 1) % referrerSources.length;
+    };
+
+    // Initial rotation
+    rotateReferrer();
+
+    // Set up interval for rotation
+    const interval = setInterval(() => {
+      if (referrerRotation) {
+        rotateReferrer();
+      } else {
+        clearInterval(interval);
+      }
+    }, rotationInterval * 1000);
+  };
+
   const generateReferrerLinks = () => {
     if (!targetUrl) return;
 
@@ -282,43 +367,40 @@ ${selectedMethod}
       ? targetUrl
       : `https://${targetUrl}`;
 
+    const referrerLinks = referrerSources.map(source => {
+      if (source.value === "none") {
+        return `• Direct Access: ${cleanUrl}`;
+      }
+      return `• ${source.name}: ${source.url}${encodeURIComponent(cleanUrl)}`;
+    }).join("\n");
+
     setResult(`🔗 Referrer Manipulation for: ${cleanUrl}
 
-📡 No Referrer Methods:
-• Direct typing in address bar
-• Bookmark access
-• New tab/window opening
-• HTTPS → HTTP transition
+🌐 Dynamic Referrer Links:
+${referrerLinks}
 
-🌐 Trusted Referrer Sources:
-• Google Search: https://www.google.com/search?q=${encodeURIComponent(cleanUrl)}
-• Bing Search: https://www.bing.com/search?q=${encodeURIComponent(cleanUrl)}
-• DuckDuckGo: https://duckduckgo.com/?q=${encodeURIComponent(cleanUrl)}
-• Yahoo Search: https://search.yahoo.com/search?p=${encodeURIComponent(cleanUrl)}
-
-🔧 Browser Methods:
-• Right-click link → "Open in new tab"
-• Copy link and paste in new tab
-• Use incognito/private mode
+🔧 Additional Methods:
+• Right-click → "Open in new tab"
+• Copy URL and paste in new tab
+• Use incognito/private browsing
 • Clear browser cache/cookies
 
-📱 Alternative Access:
-• Mobile browser (different referrer patterns)
-• Different browser entirely
-• Browser extensions that modify headers
-• Developer tools to modify requests
+📱 Mobile Tactics:
+• Use mobile browser versions
+• Different mobile apps
+• Mobile network vs WiFi
 
-💡 Referrer Bypassing Tips:
-• Some sites only check for specific referrers
-• Empty referrer often works better than wrong one
-• Social media platforms often whitelist each other
-• Educational sites (.edu) often have relaxed policies
+💡 Advanced Techniques:
+• Browser extensions for header modification
+• Developer tools request interception
+• Proxy servers with custom headers
+• VPN with different geolocation
 
-🔍 Test Methods:
-• Try accessing from different starting points
-• Use search engines as launching pad
-• Access through social media links
-• Try educational site redirects`);
+🔍 Testing Tips:
+• Check if site allows empty referrers
+• Try educational (.edu) referrers
+• Social media platforms often work
+• News sites are usually trusted sources`);
   };
 
   const formatTime = (seconds: number) => {
