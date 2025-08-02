@@ -332,66 +332,19 @@ export default function Index() {
 
       // Check if about blank is enabled
       if (settings.aboutBlank) {
-        const newWindow = window.open("about:blank", "_blank");
-        if (newWindow) {
-          newWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <title>About Blank - Nebula Proxy</title>
-              <style>
-                body {
-                  font-family: system-ui, -apple-system, sans-serif;
-                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                  color: white;
-                  margin: 0;
-                  padding: 0;
-                  min-height: 100vh;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  text-align: center;
-                }
-                .container {
-                  background: rgba(255, 255, 255, 0.1);
-                  padding: 3rem;
-                  border-radius: 20px;
-                  backdrop-filter: blur(10px);
-                  border: 1px solid rgba(255, 255, 255, 0.2);
-                  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                }
-                h1 {
-                  font-size: 3rem;
-                  margin-bottom: 1rem;
-                  font-weight: 800;
-                }
-                p {
-                  font-size: 1.2rem;
-                  opacity: 0.9;
-                  margin-bottom: 1rem;
-                }
-                .status {
-                  background: rgba(34, 197, 94, 0.2);
-                  padding: 1rem;
-                  border-radius: 10px;
-                  margin-top: 2rem;
-                  border: 1px solid rgba(34, 197, 94, 0.3);
-                }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <h1>🌌 Nebula</h1>
-                <p>About Blank Mode Active</p>
-                <p>Your proxy request has been intercepted and redirected to this safe page.</p>
-                <div class="status">
-                  ✅ Privacy Protected • No Tracking • No Logs
-                </div>
-              </div>
-            </body>
-            </html>
-          `);
-          newWindow.document.close();
+        if (aboutBlankWindow && !aboutBlankWindow.closed) {
+          // Load content in existing about:blank window
+          if (isUrl) {
+            let url = query;
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+              url = "https://" + url;
+            }
+            loadInAboutBlank(url, url);
+          } else {
+            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            loadInAboutBlank(searchUrl, `Search: ${query}`);
+          }
+          aboutBlankWindow.focus();
         }
         setIsLoading(false);
         setProxyUrl("");
