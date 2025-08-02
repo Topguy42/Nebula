@@ -40,12 +40,7 @@ const toolsList = [
     description: "Find working proxy servers and bypass methods",
     category: "Bypass",
   },
-  {
-    name: "Study Timer",
-    icon: Timer,
-    description: "Pomodoro timer and focus sessions",
-    category: "Productivity",
-  },
+
   {
     name: "Filter Bypass",
     icon: Zap,
@@ -317,7 +312,7 @@ Your new search engine will take effect on the next search.
 • Use different subdomain: m.${websiteInput} or www.${websiteInput}
 
 🌐 Alternative DNS servers:
-• Cloudflare: 1.1.1.1
+�� Cloudflare: 1.1.1.1
 • OpenDNS: 208.67.222.222
 • Quad9: 9.9.9.9`);
       }
