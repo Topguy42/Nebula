@@ -132,11 +132,6 @@ export const handleProxy: RequestHandler = async (req, res) => {
         hostname.includes("google.") ||
         hostname === "google.com"
       ) {
-        // Detect if this is likely from about:blank based on headers
-        const isFromAboutBlank = req.headers.referer === "https://www.google.com/" ||
-                                req.headers.origin === "https://www.google.com" ||
-                                !req.headers.referer;
-
         if (isFromAboutBlank) {
           // Special handling for about:blank - make it look exactly like a normal Google request
           headers["Origin"] = "https://www.google.com";
