@@ -239,6 +239,14 @@ export default function Index() {
       const query = proxyUrl.trim();
       setIsLoading(true);
 
+      // Check if about blank is enabled
+      if (settings.aboutBlank) {
+        setDisplayUrl("about:blank");
+        setCurrentUrl("about:blank");
+        setIsLoading(false);
+        return;
+      }
+
       // Check if it's a URL
       const isUrl =
         query.startsWith("http://") ||
