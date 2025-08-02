@@ -869,7 +869,7 @@ export default function Index() {
                     Settings & Options
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Customize your VortexPortal experience and adjust privacy
+                    Customize your Vortex experience and adjust privacy
                     settings
                   </p>
                 </div>
