@@ -1124,7 +1124,7 @@ export default function Index() {
               <VortexLogo className="w-8 h-8" />
               <div>
                 <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">VortexPortal</span>
-                <p className="text-xs text-muted-foreground font-medium">Professional Web Proxy</p>
+                <p className="text-xs text-muted-foreground font-medium">Fast Web Access</p>
               </div>
             </div>
 
