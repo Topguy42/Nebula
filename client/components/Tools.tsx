@@ -371,6 +371,99 @@ from the referrer source for full effectiveness.`);
     }, rotationInterval * 1000);
   };
 
+  const testReferrerRequests = async () => {
+    if (!targetUrl) {
+      setResult("⚠️ Please enter a target URL first!");
+      return;
+    }
+
+    const cleanUrl = targetUrl.startsWith("http")
+      ? targetUrl
+      : `https://${targetUrl}`;
+
+    setResult("🔄 Testing referrer requests...");
+
+    const testResults = [];
+
+    for (const source of referrerSources.slice(0, 5)) { // Test first 5 sources
+      try {
+        // Create a temporary iframe to test the request
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.style.width = '1px';
+        iframe.style.height = '1px';
+
+        // Set referrer policy
+        if (source.value === 'none') {
+          iframe.referrerPolicy = 'no-referrer';
+        } else {
+          iframe.referrerPolicy = 'unsafe-url';
+        }
+
+        document.body.appendChild(iframe);
+
+        // Test the request (simplified)
+        const startTime = Date.now();
+        try {
+          // For demonstration, we'll use a proxy endpoint
+          const response = await fetch(`/api/proxy-check?url=${encodeURIComponent(cleanUrl)}&referrer=${encodeURIComponent(source.url)}`, {
+            headers: {
+              'Referer': source.url || undefined
+            }
+          });
+
+          const loadTime = Date.now() - startTime;
+
+          testResults.push({
+            source: source.name,
+            status: response.ok ? "✅ Success" : "❌ Blocked",
+            time: `${loadTime}ms`,
+            code: response.status
+          });
+        } catch (error) {
+          testResults.push({
+            source: source.name,
+            status: "⚠️ Error",
+            time: "N/A",
+            code: "ERR"
+          });
+        }
+
+        document.body.removeChild(iframe);
+
+        // Add delay between requests
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+      } catch (error) {
+        testResults.push({
+          source: source.name,
+          status: "❌ Failed",
+          time: "N/A",
+          code: "ERR"
+        });
+      }
+    }
+
+    const resultsText = testResults.map(result =>
+      `${result.source}: ${result.status} (${result.time})`
+    ).join("\n");
+
+    setResult(`🧪 Referrer Test Results for: ${cleanUrl}
+
+📊 Test Results:
+${resultsText}
+
+💡 Analysis:
+• ✅ Success = Request went through normally
+• ❌ Blocked = Likely referrer-based blocking
+• ⚠️ Error = Network or other issues
+
+🔄 Current Auto-Rotation: ${referrerRotation ? "🟢 Active" : "🔴 Stopped"}
+Current Referrer: ${referrerSources.find(r => r.value === currentReferrer)?.name || "None"}
+
+🚀 Try opening the target URL now while auto-rotation is active!`);
+  };
+
   const generateReferrerLinks = () => {
     if (!targetUrl) return;
 
