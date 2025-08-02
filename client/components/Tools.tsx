@@ -553,16 +553,16 @@ Fragment: ${url.hash}
             </div>
           )}
 
-          {selectedTool === "textbrowser" && (
+          {selectedTool === "networktester" && (
             <div className="space-y-4">
               <Input
-                type="url"
-                placeholder="Enter website for text-only access tips"
-                value={textBrowserUrl}
-                onChange={(e) => setTextBrowserUrl(e.target.value)}
+                type="text"
+                placeholder="Enter website to test (e.g., google.com) or leave empty"
+                value={networkTestUrl}
+                onChange={(e) => setNetworkTestUrl(e.target.value)}
               />
-              <Button onClick={getTextBrowserInfo} className="w-full">
-                Get Text-Only Access Info
+              <Button onClick={testNetworkConnectivity} className="w-full">
+                Test Network Connectivity
               </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
