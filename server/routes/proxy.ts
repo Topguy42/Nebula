@@ -113,9 +113,9 @@ export const handleProxy: RequestHandler = async (req, res) => {
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       ];
 
-      // Use more conservative UA selection for Google to avoid patterns
+      // Optimized UA selection for Google
       const randomUA = hostname.includes("google")
-        ? userAgents[Math.floor(Date.now() / 30000) % userAgents.length] // Changes every 30 seconds (less frequent)
+        ? userAgents[Math.floor(Date.now() / 10000) % userAgents.length] // Changes every 10 seconds
         : userAgents[Math.floor(Math.random() * userAgents.length)];
 
       // More conservative dynamic referrer rotation for Google
