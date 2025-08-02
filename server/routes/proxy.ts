@@ -9,7 +9,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
       return res.status(400).send(`
         <html>
           <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-            <h2>❌ Error</h2>
+            <h2>��� Error</h2>
             <p>URL parameter is required</p>
             <button onclick="history.back()">Go Back</button>
           </body>
@@ -103,10 +103,13 @@ export const handleProxy: RequestHandler = async (req, res) => {
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
 
-          // Add optimized parameters
+          // Add speed-optimized parameters
           searchParams.set("safe", "active");
           searchParams.set("lr", "lang_en");
-          searchParams.set("hl", "en"); // Interface language
+          searchParams.set("hl", "en");
+          searchParams.set("num", "20"); // More results per page
+          searchParams.set("start", "0"); // Ensure first page
+          searchParams.set("udm", "14"); // Use lighter search interface
 
           targetUrl.search = searchParams.toString();
         }
