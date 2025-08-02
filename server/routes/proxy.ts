@@ -166,62 +166,37 @@ export const handleProxy: RequestHandler = async (req, res) => {
         }
       }
 
-      // Google-specific headers - standard for all requests
+      // Google-specific headers - minimal to avoid detection
       if (
         hostname.includes("google.com") ||
         hostname.includes("google.") ||
         hostname === "google.com"
       ) {
-        // Standard Google headers that work for all environments
-        headers["Referer"] = dynamicReferrer || "https://www.google.com/";
-        headers["Sec-Fetch-Site"] = dynamicReferrer
-          ? "cross-site"
-          : "same-origin";
-        headers["Sec-Fetch-Mode"] = "navigate";
-        headers["Sec-Fetch-User"] = "?1";
-        headers["Sec-Fetch-Dest"] = "document";
-        headers["Cache-Control"] = "no-cache";
+        // Minimal headers for Google
+        headers["Referer"] = "https://www.google.com/";
+        delete headers["DNT"]; // Remove DNT to avoid detection
+        delete headers["Sec-Ch-Ua"]; // Remove Chrome-specific headers
+        delete headers["Sec-Ch-Ua-Mobile"];
+        delete headers["Sec-Ch-Ua-Platform"];
+        delete headers["Sec-Fetch-Site"];
+        delete headers["Sec-Fetch-Mode"];
+        delete headers["Sec-Fetch-User"];
+        delete headers["Sec-Fetch-Dest"];
 
-        headers["DNT"] = "1";
-        headers["Accept"] =
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
-        headers["Accept-Language"] = "en-US,en;q=0.9";
-        headers["Connection"] = "keep-alive";
-        headers["Upgrade-Insecure-Requests"] = "1";
-
-        // Standard Google search parameters for all requests
+        // Clean search parameters only if necessary
         if (targetUrl.pathname.includes("/search")) {
           const searchParams = new URLSearchParams(targetUrl.search);
-
-          // Check if we have a search query
           const query = searchParams.get("q");
+
           if (!query) {
-            // If no query, redirect to homepage to avoid empty search
             targetUrl.pathname = "/";
             targetUrl.search = "";
           } else {
-            // Clean, standard search parameters
-            searchParams.set("safe", "active");
-            searchParams.set("lr", "lang_en");
-            searchParams.set("hl", "en");
-            searchParams.set("num", "10");
-            searchParams.set("start", "0");
-            searchParams.set("client", "firefox-b-d");
-            searchParams.set("source", "hp");
-
-            // Remove tracking parameters
-            const paramsToRemove = [
-              "ved",
-              "uact",
-              "gs_lcp",
-              "sclient",
-              "sourceid",
-              "ei",
-              "iflsig",
-            ];
-            paramsToRemove.forEach((param) => searchParams.delete(param));
-
-            targetUrl.search = searchParams.toString();
+            // Keep minimal parameters
+            const newParams = new URLSearchParams();
+            newParams.set("q", query);
+            newParams.set("hl", "en");
+            targetUrl.search = newParams.toString();
           }
         }
       }
