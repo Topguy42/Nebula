@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -106,7 +106,7 @@ const quickLinks = [
   { name: "Twitter", url: "https://twitter.com", icon: "🐦" },
   { name: "GitHub", url: "https://github.com", icon: "⚡" },
   { name: "Instagram", url: "https://instagram.com", icon: "📷" },
-  { name: "TikTok", url: "https://tiktok.com", icon: "🎵" },
+  { name: "TikTok", url: "https://tiktok.com", icon: "��" },
 ];
 
 const webApps = [
