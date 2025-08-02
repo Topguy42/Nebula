@@ -283,7 +283,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
             googleRequestTimes.set(clientIP, Date.now() + (GOOGLE_RATE_LIMIT_MS * 2)); // Extend cooldown
           }
 
-          const retryDelay = hostname.includes('google') ? 10 : 5; // Longer delay for Google
+          const retryDelay = hostname.includes('google') ? 3 : 2; // Shorter delay for better UX
 
           return res.status(200).send(`
             <html>
