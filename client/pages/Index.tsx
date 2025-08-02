@@ -826,40 +826,10 @@ export default function Index() {
       <main className="relative z-10 flex-1 flex items-center justify-center">
         <div className="container mx-auto px-6 text-center">
           {/* Hero Section */}
-          <div className="mb-20">
-            <div className="space-y-8">
-              {/* Main Title */}
-              <div className="space-y-6">
-                <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent leading-none">
-                  VortexPortal
-                </h1>
-                <div className="space-y-4">
-                  <p className="text-2xl md:text-3xl font-semibold text-foreground/90 leading-tight">
-                    Fast & Secure Web Access
-                  </p>
-                  <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                    Browse any website freely with lightning-fast speeds and complete privacy.
-                    Access blocked content, stream videos, and use your favorite apps without restrictions.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature Highlights */}
-              <div className="flex flex-wrap justify-center gap-4 text-sm">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                  <span className="font-medium">No Logging</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20">
-                  <div className="w-2 h-2 rounded-full bg-teal-500"></div>
-                  <span className="font-medium">Secure Access</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-                  <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
-                  <span className="font-medium">Fast Speeds</span>
-                </div>
-              </div>
-            </div>
+          <div className="mb-16">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent leading-none mb-12">
+              VortexPortal
+            </h1>
 
             {/* Main Search/Input */}
             <div className="max-w-4xl mx-auto">
