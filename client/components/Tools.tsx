@@ -81,11 +81,14 @@ export default function Tools({}: ToolsProps) {
   const [timerRunning, setTimerRunning] = useState(false);
   const [filterType, setFilterType] = useState("keyword");
   const [targetUrl, setTargetUrl] = useState("");
-  const [studyNotes, setStudyNotes] = useState("");
   const [result, setResult] = useState("");
   const [selectedTool, setSelectedTool] = useState("sitechecker");
   const [timeLeft, setTimeLeft] = useState(studyTime * 60);
   const [referrerRotation, setReferrerRotation] = useState(false);
+  const [cloakerTitle, setCloakerTitle] = useState("");
+  const [cloakerFavicon, setCloakerFavicon] = useState("");
+  const [originalTitle, setOriginalTitle] = useState("");
+  const [originalFavicon, setOriginalFavicon] = useState("");
 
   // Initialize referrer rotation from localStorage
   useEffect(() => {
