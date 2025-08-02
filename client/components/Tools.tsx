@@ -948,6 +948,64 @@ When you browse through the proxy, your referrer will automatically rotate every
             </div>
           )}
 
+          {selectedTool === "searchengine" && (
+            <div className="space-y-4">
+              <div className="text-center p-4 bg-muted/50 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-2">Default Search Engine</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Choose your preferred search engine. Some work better than others in proxy environments.
+                </p>
+
+                <div className="space-y-3">
+                  {searchEngines.map((engine) => (
+                    <label
+                      key={engine.id}
+                      className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${
+                        selectedSearchEngine === engine.id
+                          ? "bg-primary/10 border-primary/50 text-primary"
+                          : "bg-background border-border hover:bg-muted/50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="searchEngine"
+                        value={engine.id}
+                        checked={selectedSearchEngine === engine.id}
+                        onChange={(e) => setSelectedSearchEngine(e.target.value)}
+                        className="sr-only"
+                      />
+                      <div className="flex-1 text-left">
+                        <div className="font-medium">{engine.name}</div>
+                        <div className="text-xs text-muted-foreground">{engine.description}</div>
+                      </div>
+                      {selectedSearchEngine === engine.id && (
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      )}
+                    </label>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={updateSearchEngine}
+                  className="w-full mt-4"
+                >
+                  Set as Default Search Engine
+                </Button>
+              </div>
+
+              {result && (
+                <div className="p-4 bg-muted rounded-lg">
+                  <pre className="text-sm whitespace-pre-wrap">{result}</pre>
+                </div>
+              )}
+
+              <div className="text-xs text-muted-foreground text-center space-y-1">
+                <p>🔍 DuckDuckGo is recommended for privacy and proxy compatibility</p>
+                <p>⚠️ Google may have restrictions in some environments</p>
+              </div>
+            </div>
+          )}
+
           {selectedTool === "privacycheck" && (
             <div className="space-y-4">
               <Button onClick={checkPrivacy} className="w-full">
