@@ -144,21 +144,25 @@
 
   .backdrop-blur-glass {
     backdrop-filter: blur(16px) saturate(200%);
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   .dark .backdrop-blur-glass {
     background-color: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: none;
   }
 
   .card-gradient-light {
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(240, 253, 250, 0.8) 100%
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(240, 253, 250, 0.9) 100%
     );
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   }
 
   .dark .card-gradient-dark {
