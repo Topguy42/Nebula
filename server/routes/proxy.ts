@@ -38,6 +38,7 @@ export const handleProxy: RequestHandler = async (req, res) => {
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
     try {
+      console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
       const response = await fetch(targetUrl.toString(), {
         signal: controller.signal,
         headers: {
