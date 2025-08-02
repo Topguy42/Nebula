@@ -546,16 +546,22 @@ ${selectedMethod}
             </div>
           )}
 
-          {selectedTool === "networktester" && (
+          {selectedTool === "filterbypass" && (
             <div className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Enter website to test (e.g., google.com) or leave empty"
-                value={networkTestUrl}
-                onChange={(e) => setNetworkTestUrl(e.target.value)}
-              />
-              <Button onClick={testNetworkConnectivity} className="w-full">
-                Test Network Connectivity
+              <div>
+                <label className="text-sm font-medium mb-2 block">Filter Type:</label>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full p-2 border rounded-md bg-background"
+                >
+                  <option value="keyword">Keyword Filters</option>
+                  <option value="url">URL/Domain Blocks</option>
+                  <option value="content">Content Restrictions</option>
+                </select>
+              </div>
+              <Button onClick={getFilterBypassMethods} className="w-full">
+                Get Bypass Methods
               </Button>
               {result && (
                 <div className="p-4 bg-muted rounded-lg">
