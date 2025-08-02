@@ -76,10 +76,10 @@ interface ToolsProps {}
 export default function Tools({}: ToolsProps) {
   const [websiteInput, setWebsiteInput] = useState("");
   const [dnsServer, setDnsServer] = useState("8.8.8.8");
-  const [urlToolsInput, setUrlToolsInput] = useState("");
+  const [proxyRegion, setProxyRegion] = useState("global");
   const [studyTime, setStudyTime] = useState(25);
   const [timerRunning, setTimerRunning] = useState(false);
-  const [networkTestUrl, setNetworkTestUrl] = useState("");
+  const [filterType, setFilterType] = useState("keyword");
   const [searchQuery, setSearchQuery] = useState("");
   const [studyNotes, setStudyNotes] = useState("");
   const [result, setResult] = useState("");
