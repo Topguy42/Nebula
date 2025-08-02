@@ -4,6 +4,11 @@ import { RequestHandler } from "express";
 const aboutBlankRequestMap = new Map<string, number>();
 const EMULATION_DELAY = 1000; // 1 second delay for about:blank requests to Google
 
+// Rate limiting to prevent 429 errors
+const requestTimestamps = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const MAX_REQUESTS_PER_MINUTE = 10; // Conservative limit for Google
+
 const detectAboutBlank = (req: any): boolean => {
   const referer = req.headers.referer || "";
   const origin = req.headers.origin || "";
