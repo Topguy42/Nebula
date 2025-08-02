@@ -29,6 +29,7 @@ import {
   Code,
   Globe,
   Youtube,
+  FileText,
 } from "lucide-react";
 
 const popularGames = [
