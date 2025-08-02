@@ -33,9 +33,15 @@ export const handleProxy: RequestHandler = async (req, res) => {
       `);
     }
 
+    // Add small delay for certain sites to avoid rate limiting
+    const hostname = targetUrl.hostname.toLowerCase();
+    if (hostname.includes('speedtest') || hostname.includes('fast.com')) {
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+    }
+
     // Fetch the content with better error handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
     try {
       console.log(`[PROXY] Fetching: ${targetUrl.toString()}`);
