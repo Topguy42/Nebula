@@ -80,7 +80,7 @@ export default function Tools({}: ToolsProps) {
   const [studyTime, setStudyTime] = useState(25);
   const [timerRunning, setTimerRunning] = useState(false);
   const [filterType, setFilterType] = useState("keyword");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [targetUrl, setTargetUrl] = useState("");
   const [studyNotes, setStudyNotes] = useState("");
   const [result, setResult] = useState("");
   const [selectedTool, setSelectedTool] = useState("sitechecker");
