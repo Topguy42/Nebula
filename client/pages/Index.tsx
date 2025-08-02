@@ -1069,40 +1069,15 @@ export default function Index() {
 
       {/* Footer */}
       <footer className="relative z-10 mt-8 border-t border-border/40 backdrop-blur-sm bg-background/80">
-        <div className="container mx-auto px-6 py-6">
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-4">
-              <VortexLogo className="w-8 h-8" />
-              <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">VortexPortal</span>
-                <p className="text-xs text-muted-foreground font-medium">Fast Web Access</p>
-              </div>
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <VortexLogo className="w-6 h-6" />
+              <span className="text-lg font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">VortexPortal</span>
             </div>
-
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span>Secure & Private</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" style={{ animationDelay: "0.5s" }}></div>
-                <span>No Activity Logs</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" style={{ animationDelay: "1s" }}></div>
-                <span>Super Fast Speeds</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" style={{ animationDelay: "1.5s" }}></div>
-                <span>Always Available</span>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border/40">
-              <p className="text-xs text-muted-foreground/80">
-                © 2024 VortexPortal. Browse freely, access anything.
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground/80">
+              © 2024 VortexPortal. Browse freely, access anything.
+            </p>
           </div>
         </div>
       </footer>
